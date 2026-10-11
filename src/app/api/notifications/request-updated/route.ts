@@ -42,7 +42,7 @@ export async function POST(request:Request){
   const quote=typeof data.quotedPrice==="number"?" · Quote P"+data.quotedPrice.toFixed(2):"";
   const title="The Plug · "+status;
   const body=String(data.product??"Your sourcing request")+quote+" — open My Plug for details.";
-  const base=(process.env.NEXT_PUBLIC_BASE_URL||"https://the-plug-pearl.vercel.app").replace(/\\/$/,"");
+  const base=(process.env.NEXT_PUBLIC_BASE_URL||"https://the-plug-pearl.vercel.app");
   const response=await getMessaging(a).sendEachForMulticast({
    tokens:validTokens.map(item=>item.token),
    notification:{title,body},

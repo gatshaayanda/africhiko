@@ -42,7 +42,7 @@ export async function POST(request:Request){
    const [pref,tokens]=await Promise.all([db.collection("notificationPreferences").doc(recipient).get(),db.collection("notificationTokens").doc(recipient).collection("tokens").get()]);
    return {recipient,enabled:pref.data()?.enabled===true,tokens:tokens.docs.map(t=>({doc:t,token:String(t.data().token??"")})).filter(t=>t.token)};
   }));
-  const messaging=getMessaging(a),preview=(String(msg.text??"").trim()||"Attachment sent").slice(0,120),base=(process.env.NEXT_PUBLIC_BASE_URL||"https://the-plug-pearl.vercel.app").replace(/\\/$/,"");
+  const messaging=getMessaging(a),preview=(String(msg.text??"").trim()||"Attachment sent").slice(0,120),base=(process.env.NEXT_PUBLIC_BASE_URL||"https://the-plug-pearl.vercel.app");
   let sent=0,failed=0;
   for(const target of dbPrefs){
    if(!target.enabled||!target.tokens.length)continue;

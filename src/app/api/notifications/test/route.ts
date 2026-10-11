@@ -28,7 +28,7 @@ export async function POST(request:Request){
   const title=isAdmin?"The Plug operations alerts are on":"The Plug notifications are on";
   const bodyText=isAdmin?"This device is ready for sourcing-request and customer-reply alerts.":"This device is ready for sourcing-request updates and replies from The Plug.";
   const link=isAdmin?"/admin":"/account";
-  const base=(process.env.NEXT_PUBLIC_BASE_URL||"https://the-plug-pearl.vercel.app").replace(/\\/$/,"");
+  const base=(process.env.NEXT_PUBLIC_BASE_URL||"https://the-plug-pearl.vercel.app");
   const result=await getMessaging(a).send({
    token:body.deviceToken,
    notification:{title,body:bodyText},
