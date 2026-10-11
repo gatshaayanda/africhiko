@@ -675,6 +675,7 @@ button.plugProductAction{width:100%;align-items:center;background:transparent;bo
   .plugEditorialNav .plugNavInner{flex-wrap:wrap;min-height:0;padding-top:10px}
   .plugEditorialNav .plugBrand{order:1}
   .plugEditorialNav .plugActions{order:2;margin-left:auto}
+  .plugEditorialNav .plugActions .plugMyPlugLink{display:inline-flex}
   .plugEditorialNav .plugEditorialLinks{
     display:flex;
     order:3;
