@@ -1,8 +1,8 @@
-const CACHE_VERSION = "theplug-shell-v13";
+const CACHE_VERSION = "theplug-shell-v14";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
 const PUBLIC_PAGE_LIMIT = 12;
-const APP_SHELL = ["/", "/offline", "/plug-icon.svg", "/manifest.webmanifest"];
+const APP_SHELL = ["/", "/request", "/offline", "/plug-icon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
@@ -55,7 +55,7 @@ self.addEventListener("fetch", event => {
   if (url.pathname.startsWith("/api/")) return;
 
   const isNavigation = request.mode === "navigate" || request.headers.get("accept")?.includes("text/html");
-  const isPrivate = /^\/(?:account|request|requests|orders|admin|invite)(?:\/|$)/.test(url.pathname);
+  const isPrivate = /^\/(?:account|requests|orders|admin|invite)(?:\/|$)/.test(url.pathname);
 
   // Private/member routes are network-only. Never serve a cached account/request page as
   // a substitute for a different route or when the authenticated page cannot be fetched.
