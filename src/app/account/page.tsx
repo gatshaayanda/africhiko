@@ -65,9 +65,31 @@ export default function AccountPage(){
   setBusy(true);setMessage("");
   try{
    const provider=new GoogleAuthProvider();provider.setCustomParameters({prompt:"select_account"});
-   if(user?.isAnonymous){const linked=await linkWithPopup(user,provider);const saved=await getCustomerProfile(linked.user.uid);if(saved)setProfile(saved)}
+   let recoveredExistingAccount=false;
+   if(user?.isAnonymous){
+    try{
+     const linked=await linkWithPopup(user,provider);
+     const saved=await getCustomerProfile(linked.user.uid);
+     if(saved)setProfile(saved);
+    }catch(error){
+     const code=typeof error==="object"&&error&&"code" in error?String((error as {code?:unknown}).code):"";
+     if(code!=="auth/credential-already-in-use"&&code!=="auth/account-exists-with-different-credential")throw error;
+     // The Google identity already has its own UID. Sign into that existing account
+     // instead of trapping the customer in an anonymous-session linking error.
+     // Do not claim or attempt to merge the separate histories.
+     const result=await signInWithPopup(auth,provider);
+     const now=new Date().toISOString();
+     const saved=await getCustomerProfile(result.user.uid);
+     if(saved)setProfile(saved);
+     else{
+      const nextProfile={uid:result.user.uid,name:result.user.displayName??"",email:result.user.email??"",phone:"",preferredDeliveryLocation:"",notes:"",createdAt:now,updatedAt:now};
+      await saveCustomerProfile(nextProfile);setProfile(nextProfile);
+     }
+     recoveredExistingAccount=true;
+    }
+   }
    else if(!user){const result=await signInWithPopup(auth,provider);const now=new Date().toISOString();const saved=await getCustomerProfile(result.user.uid);if(saved)setProfile(saved);else{const nextProfile={uid:result.user.uid,name:result.user.displayName??"",email:result.user.email??"",phone:"",preferredDeliveryLocation:"",notes:"",createdAt:now,updatedAt:now};await saveCustomerProfile(nextProfile);setProfile(nextProfile)}}
-   setMessage("Your The Plug account is connected.");
+   setMessage(recoveredExistingAccount?"You’re signed in to your existing The Plug Google account. The separate guest-session history has not been merged.":"Your The Plug account is connected.");
    const destination=new URLSearchParams(window.location.search).get("next");
    if(destination&&destination.startsWith("/")&&!destination.startsWith("//"))window.location.assign(destination);
   }catch(error){setMessage(authMessage(error))}finally{setBusy(false)}
