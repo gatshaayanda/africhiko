@@ -702,3 +702,20 @@ button.plugProductAction{width:100%;align-items:center;background:transparent;bo
     border-radius:3px;
   }
 }
+
+
+/* Saved finds and launch analytics controls */
+.plugSavedGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:18px;margin-top:22px}
+.plugSavedGrid .plugProductCard{min-width:0}
+.plugProductImage{position:relative}
+.plugSaveFindButton{position:absolute;right:10px;top:10px;z-index:2;display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;border:1px solid #111;background:#fff;color:#111;font-family:inherit;font-size:.78rem;font-weight:600;line-height:1.2;border-radius:999px;box-shadow:0 2px 8px #0002;cursor:pointer}
+.plugSaveFindButton[aria-pressed="true"]{background:#111;color:#fff;border-color:#fff}
+.plugSaveFindButton:focus-visible,.plugSavedFindsLink:focus-visible,.analyticsPeriodControl select:focus-visible{outline:3px solid #0866ff;outline-offset:3px}
+.plugSavedFindsLink{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;border:1px solid #111;background:#fff;color:#111;text-decoration:none;font-size:.78rem;font-weight:650}
+.analyticsPeriodControl{display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:#111;font-weight:650;font-size:.82rem}
+.analyticsPeriodControl select{min-height:40px;padding:8px 34px 8px 10px;border:1px solid #767676;border-radius:6px;background:#fff;color:#111;font:inherit}
+.journeyAnalyticsProducts{color:#111}
+.journeyAnalyticsProducts>strong{display:block;margin-bottom:8px;color:#111}
+.journeyAnalyticsProducts>div{color:#111}
+.journeyAnalyticsProducts>div span,.journeyAnalyticsProducts>div b{color:#111}
+@media(max-width:560px){.plugSavedGrid{grid-template-columns:minmax(0,1fr)}.plugSaveFindButton{right:8px;top:8px;min-height:40px}.analyticsPeriodControl{align-items:stretch;flex-direction:column}.analyticsPeriodControl select{width:100%}}

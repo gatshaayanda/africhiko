@@ -40,6 +40,9 @@ export type PlugRequest = {
   deliveryDetails?:string;
   adminNote?:string;
   customerApprovedAt?:string;
+  customerApprovedPrice?:number;
+  customerApprovalSource?:string;
+  customerApprovalUid?:string;
 };
 
 const requests = collection(db,"sourcingRequests");

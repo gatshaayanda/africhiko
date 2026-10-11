@@ -313,3 +313,40 @@ This is a reusable product pattern, not a one-off The Plug workaround. Reproduce
 - Google-account recovery candidate on `main`: `3c5210e707482b68fcf4c3cdb8e082049c94c840` (“Allow returning Google account access after link conflict”). Source diff inspected; it attempts sign-in to the existing Google account after a credential-link collision and explicitly says the guest history was not merged. Production deployment and end-to-end browser sign-in have **not** been confirmed at the time of this note. Do not ask the owner to QA this candidate until the exact SHA has a READY production deployment.
 - The earlier push/rollback incident showed why commit state, deployment state and customer behavior must be tracked separately. Preserve the privacy-copy work and other unrelated changes; do not broadly reset to an older commit to recover account access.
 - After the recovery candidate is deployed, test the existing Google account and confirm its previous profile/requests are accessible, confirm the guest session remains separate and is not misrepresented as merged, test first-time linking with a fresh guest, and verify request submission and private conversation access. Then replace this incident note with the verified SHA/deployment and remaining limitations.
+
+## Admin preparation — inspected 2026-10-11
+
+### Privacy save integrity
+- `MemberPrivacySettings.tsx` stores the public/friends sharing choice and Circle visibility in `memberSettings/{uid}`, and interest toggles in `memberFeedPreferences/{uid}`.
+- Privacy changes and removal of community posts outside the selected audience must remain atomic. Do not split a privacy downgrade from cleanup in a way that leaves a now-disallowed public/friends post visible.
+- `memberSettings` has a strict allow-list in Firestore rules. When saving it, replace the known preference document with its complete approved schema instead of merging unknown legacy fields. Do not weaken rules to accept arbitrary legacy keys.
+- Keep failures truthful and actionable. Log only the Firebase error code for diagnostics; never log customer preference payloads or private profile details.
+
+### Quote approval implementation checkpoint
+- Customer quote approval must be an explicit action in My Plug, not an admin checkbox that could imply consent. The authenticated customer endpoint verifies the Firebase ID token and request ownership server-side before recording approval.
+- Store `customerApprovedAt`, `customerApprovedPrice`, `customerApprovalSource`, and `customerApprovalUid`; approval is valid only for the exact currently quoted amount. If the quote changes, the customer must approve the new amount before the request can progress to deposit/sourcing.
+- The approval endpoint uses Firebase Admin credentials on the server and must return safe, actionable errors. It must never allow a customer to approve another customer's request, approve a missing quote, or approve a request outside the quote-ready states.
+- Verify the API with owner, unrelated customer, no-token, missing quote, stale approval after price change, repeated approval, and valid approval cases. Build success alone does not prove the live approval write works.
+
+### Current admin surface and intended build order
+- `/admin` uses `AdminGate` and `PlugAdminDashboard`: sourcing-request queue, quote/deposit fields, delivery expectations, status progression, conversations and journey analytics. Keep customer-facing notifications truthful and tied to a confirmed successful request update.
+- `/admin/storefront` uses `StorefrontPublishing` for `storefrontContent` CRUD: find/deal type, title, description, optional confirmed price in pula, image URL, audience, status, start/end, CTA and sort order. Preserve draft/scheduled/published/paused/archived lifecycle and honest public empty states.
+- `/admin/community` publishes completed-find community activity. Publishing must continue to respect each member's current privacy choice and only eligible Delivered/Collected requests.
+- Before expanding admin CRUD, inspect every field written by the UI against Firestore rules, confirm server-side/admin-role enforcement, and test read/create/update/delete independently. A protected route is not a substitute for rules protecting the underlying collection.
+- Admin pricing has two distinct meanings: (1) an optional confirmed storefront-find price, and (2) a sourcing quote/deposit recorded against a specific request. Never treat an unconfirmed storefront price or requested product as an accepted quote/order. Validate non-negative finite amounts and retain an explicit customer-approval checkpoint before sourcing progression.
+- Next admin QA sequence: request queue and customer ownership → quote/deposit/approval gates → status save and customer tracker → notification failure/duplicate behavior → private inbox and attachments → storefront CRUD and publish windows → image upload and removal/replacement → community publishing/privacy revocation → analytics and role-denied access.
+- Keep this admin focused on the real workflow. Do not introduce a general inventory/ERP or mirror WhatsApp Business's entire catalogue; Frank curates only the finds/offers The Plug publishes.
+
+### Image upload and reference-repository findings
+- The Plug currently uses UploadThing for customer sourcing attachments through `src/app/api/uploadthing/core.ts` and `src/lib/uploadthing.ts`. The current file route accepts one image (4 MB) or PDF (4 MB) and has no auth middleware. It is not an admin-only upload boundary.
+- The current `StorefrontPublishing` image picker uses Firebase Storage path `storefrontMedia/`, with admin-only Storage rules and a 12 MB image limit. If migrating this workflow to UploadThing, add a distinct admin-only file route whose server middleware verifies the Firebase ID token and the user's `admins/{uid}` role. Do not make the existing customer attachment endpoint admin-only or copy its public authorization model.
+- `gatshaayanda/theihub` and `gatshaayanda/adminhub-global` use the UploadThing App Router `createUploadthing` / `FileRouter` pattern and `generateReactHelpers` client helper. Their inspected upload core logs an UploadThing secret prefix; do not copy that logging or expose any part of secrets. Use UploadThing's official App Router/file-route docs: https://docs.uploadthing.com/getting-started/appdir and https://docs.uploadthing.com/file-routes.
+- `gatshaayanda/boemo-joos-food-deals` uses Firebase Storage patterns and has no UploadThing dependency in its inspected package manifest. Reuse its authenticated CRUD/storage approach only where applicable; never copy its Firebase project configuration, food-specific models, or credentials into The Plug.
+- Uploads need honest progress (real percentages only when supplied by the API), a clear uploading/saved/error state, file type/size validation on both client and server, no duplicate submit while busy, and safe image preview/replacement. An uploaded image is not a published item until the Firestore content record is saved.
+- Never claim a production UploadThing integration works based on source inspection alone. Verify required Vercel environment variables are configured without printing their values, and test admin authorization, successful upload, URL persistence, image rendering, failed upload, replacement, and rejected non-admin access.
+
+### Security and release guardrails
+- The supplied Firestore rules file includes both Plug-specific collections and older BOEMO-style food collections. Review each collection against actual The Plug call sites before changing rules; do not blindly replace the file with a different repo's rules.
+- Inspect Firestore and Storage rules as source, then separately verify which rules are deployed. Do not broaden the default-deny catch-all.
+- Deployment state is independent of Git merge state. Do not ask the owner to QA until the exact merged SHA has a READY deployment and the production alias is confirmed to point to it.
+
