@@ -228,6 +228,12 @@ This is a reusable product pattern, not a one-off The Plug workaround. Reproduce
 - Research basis: Firebase documents credential linking to preserve anonymous-session data when a user signs up (https://firebase.google.com/docs/auth/web/anonymous-auth); Firestore rules are per-document authorization and are not filters (https://firebase.google.com/docs/firestore/security/rules-structure); Nielsen Norman Group's progressive disclosure guidance supports revealing useful choices at the right time (https://www.nngroup.com/articles/progressive-disclosure/). These are design principles, not proven outcomes for The Plug's Botswana audience.
 
 
+## Account navigation and first-session onboarding
+- My Plug must always expose clear navigation back to Finds and into Settings; do not strand customers on the account page with only a product-request button.
+- For a new session after a request, prioritize the optional onboarding panel before the settled account dashboard: explain notification value first, then invite a friend, then interests/privacy settings. Requests and private conversations remain immediately available below; onboarding must never block them or require completion.
+- Keep settings easy to revisit. Google linking is optional and must preserve anonymous-session data; if the Google credential belongs to a different account, explain the conflict without forcing a switch or claiming data was merged.
+- Use evidence-informed progressive disclosure: defer account friction until after the first value event, show one clear next action at a time, and keep friend invitations and all sharing opt-in. Never expose private request or conversation details to friends.
+
 ## External social and catalogue links — settings only
 - Do not show WhatsApp catalogue or Instagram links on the homepage, landing-page sections, or global footer. Those destinations pull customers away from The Plug while engagement and support can happen in-app.
 - Place these links at the bottom of the signed-in account/settings experience as low-priority external utilities, after requests, private conversations, preferences, circle controls, activity and profile details. Keep them easy to find in settings but never promote them as the next step in the shopping journey.
