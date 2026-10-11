@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import {GoogleAuthProvider,browserLocalPersistence,linkWithPopup,onAuthStateChanged,setPersistence,signInAnonymously,signInWithPopup,signOut,type User} from "firebase/auth";
-import {useEffect,useRef,useState} from "react";
+import {GoogleAuthProvider,browserLocalPersistence,linkWithPopup,onAuthStateChanged,setPersistence,signInWithPopup,signOut,type User} from "firebase/auth";
+import {useEffect,useState} from "react";
 import {auth,hasFirebaseWebConfig} from "@/lib/firebase/client";
 import NotificationSettings from "@/components/NotificationSettings";
 import CustomerConversations from "@/components/CustomerConversations";
@@ -14,7 +14,7 @@ import MemberActivityFeed from "@/components/MemberActivityFeed";
 function authMessage(error:unknown){
  const code=typeof error==="object"&&error&&"code" in error?String((error as {code?:unknown}).code):"";
  if(code==="auth/popup-closed-by-user")return "Google sign-in was cancelled.";
- if(code==="auth/credential-already-in-use"||code==="auth/account-exists-with-different-credential")return "That Google account already has a separate The Plug account. Your current activity has not been merged. Keep this session open; choose the existing account only when you’re sure which history you need.";
+ if(code==="auth/credential-already-in-use"||code==="auth/account-exists-with-different-credential")return "That Google account belongs to a separate The Plug account. The histories have not been merged, and your current session is unchanged. Keep this session open; The Plug cannot safely combine those histories automatically.";
  if(code==="auth/popup-blocked")return "Your browser blocked the Google sign-in window. Allow pop-ups for The Plug and try again.";
  if(code==="auth/unauthorized-domain")return "Google sign-in is not enabled for this website yet. Try again later; your current session has not been changed.";
  if(code==="auth/configuration-not-found"||code==="auth/operation-not-allowed")return "Google sign-in is not available yet. The Plug's sign-in setup is incomplete. Try again later.";
@@ -25,25 +25,38 @@ const terminal=new Set(["Delivered","Collected","Cancelled"]);
 
 export default function AccountPage(){
  const[user,setUser]=useState<User|null>(null),[profile,setProfile]=useState<CustomerProfile|null>(null),[requests,setRequests]=useState<PlugRequest[]>([]),[busy,setBusy]=useState(false),[authReady,setAuthReady]=useState(false),[message,setMessage]=useState(""),[showPostSubmitSetup,setShowPostSubmitSetup]=useState(false);
- const suppressAutoAnonymous=useRef(false);
+
 
  useEffect(()=>{const params=new URLSearchParams(window.location.search);if(params.has("submitted")){setMessage("Your request is saved. Frank will review it and confirm availability, final price and timing. Nothing is ordered or charged yet.");setShowPostSubmitSetup(true)}},[]);
  useEffect(()=>{
   let stopRequests=()=>{};
-  void setPersistence(auth,browserLocalPersistence).catch(()=>{});
-  const stopAuth=onAuthStateChanged(auth,async next=>{
-   stopRequests();stopRequests=()=>{};
-   if(!next&&hasFirebaseWebConfig&&!suppressAutoAnonymous.current){try{await signInAnonymously(auth);return}catch{setMessage("The Plug could not start a private session on this device. Please try again in your normal browser. Nothing was changed.")}}
-   if(next&&await isAdminUser(next.uid)){await signOut(auth);setUser(null);setProfile(null);setRequests([]);setAuthReady(true);return}
-   setUser(next);
-   if(next){
-    const saved=await getCustomerProfile(next.uid).catch(()=>null);
-    setProfile(saved??{uid:next.uid,name:next.displayName??"",email:next.email??"",phone:"",preferredDeliveryLocation:"",notes:"",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
-    stopRequests=subscribeToCustomerPlugRequests(next.uid,setRequests,error=>setMessage(error.message));
-   }else{setProfile(null);setRequests([])}
-   setAuthReady(true);
-  });
-  return()=>{stopRequests();stopAuth()};
+  let stopAuth=()=>{};
+  let disposed=false;
+  const start=async()=>{
+   if(hasFirebaseWebConfig){
+    try{await setPersistence(auth,browserLocalPersistence)}catch{if(!disposed)setMessage("This browser could not confirm saved sign-in. Keep this browser session available while using The Plug.")}
+   }
+   if(disposed)return;
+   stopAuth=onAuthStateChanged(auth,async next=>{
+    stopRequests();stopRequests=()=>{};
+    if(next&&await isAdminUser(next.uid)){
+     await signOut(auth);
+     if(disposed)return;
+     setUser(null);setProfile(null);setRequests([]);setAuthReady(true);return;
+    }
+    if(disposed)return;
+    setUser(next);
+    if(next){
+     const saved=await getCustomerProfile(next.uid).catch(()=>null);
+     if(disposed)return;
+     setProfile(saved??{uid:next.uid,name:next.displayName??"",email:next.email??"",phone:"",preferredDeliveryLocation:"",notes:"",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+     stopRequests=subscribeToCustomerPlugRequests(next.uid,setRequests,error=>setMessage(error.message));
+    }else{setProfile(null);setRequests([])}
+    setAuthReady(true);
+   });
+  };
+  void start();
+  return()=>{disposed=true;stopRequests();stopAuth()};
  },[]);
 
  async function google(){
@@ -70,8 +83,8 @@ export default function AccountPage(){
  return <main className="orderPage"><div className="orderWrap">
   <div className="orderHeader"><Link href="/" className="logo"><span className="logoMark">P</span><span>THE PLUG</span></Link><nav aria-label="My Plug navigation" className="accountTopNav"><Link href="/#featured" className="button buttonLight">Finds</Link><Link href="#profile" className="button buttonLight">Settings</Link><Link href="/request" className="button buttonPrimary">Request a product</Link></nav></div>
   <section className="orderCard accountHome" style={{maxWidth:920,margin:"0 auto"}}>
-   <div className="accountHero"><div><span className="kicker">MY THE PLUG</span><h1>Your requests.</h1><p>Track sourcing, talk to Frank and keep your next finds in one place.</p></div></div>
-   {((!user&&!hasFirebaseWebConfig)||user?.isAnonymous)&&<section id="connect" className="accountConnect accountConnectPrimary"><div><strong>{user?.isAnonymous?"Keep your history and set up your circle.":"Your space is almost ready."}</strong><p>{user?.isAnonymous?"Connecting Google is optional for now, but helps you keep access to request history and private conversations across devices. You can set up notifications first; your requests stay private.":"Start with a product request from the edit."}</p>{!hasFirebaseWebConfig&&<p className="notice" role="status">The Plug cannot save requests in this session yet. Try again later; nothing has been sent.</p>}</div><button className="googleSignInButton" type="button" onClick={()=>void google()} disabled={busy||!authReady||!hasFirebaseWebConfig}><span>{!authReady?"Opening The Plug…":busy?"Connecting…":!hasFirebaseWebConfig?"Not available yet":user?.isAnonymous?"Connect Google":"Continue with Google"}</span></button></section>}
+   <div className="accountHero"><div><span className="kicker">MY THE PLUG</span><h1>Your requests.</h1><p>Track sourcing, talk to Frank and keep your next finds in one place.</p></div>{user&&profile&&<span className="accountStatus">{user.isAnonymous?"Guest session":"Google connected"}</span>}</div>
+   {(!user||user.isAnonymous)&&<section id="connect" className="accountConnect accountConnectPrimary"><div><strong>{user?.isAnonymous?"Keep your history and set up your circle.":"Already have a Plug account?"}</strong><p>{user?.isAnonymous?"Connecting Google is optional, but helps preserve this session’s request history and private conversations across devices.":"Continue with Google to reopen an existing account and its saved history. New to The Plug? Start a request first; your private session is created only when you submit."}</p>{!hasFirebaseWebConfig&&<p className="notice" role="status">The Plug cannot connect or save requests in this deployment yet. Try again later; nothing has been sent.</p>}</div><div className="actions"><button className="googleSignInButton" type="button" onClick={()=>void google()} disabled={busy||!authReady||!hasFirebaseWebConfig}><span>{!authReady?"Restoring your session…":busy?"Connecting…":user?.isAnonymous?"Connect Google":"Continue with Google"}</span></button><Link className="button buttonLight" href="/request">Start a request</Link></div></section>}
 
 
 
@@ -86,7 +99,7 @@ export default function AccountPage(){
    {message&&<p className="notice" role="status">{message}</p>}
 
    {user&&!user.isAnonymous&&profile&&<><MemberActivityFeed user={user}/>
-      <div className="accountBottomActions"><button className="button buttonLight" type="button" onClick={()=>{suppressAutoAnonymous.current=true;void signOut(auth)}}>Sign out</button><span className="orderTruth">Your account keeps your member activity together.</span></div></>}
+      <div className="accountBottomActions"><button className="button buttonLight" type="button" onClick={()=>void signOut(auth)}>Sign out</button><span className="orderTruth">Your account keeps your member activity together.</span></div></>}
    {user&&profile&&<details id="profile" className="accountDetails"><summary><span><strong>Your details</strong><small>Name, WhatsApp, delivery preference and notes</small></span><b>Edit</b></summary><form className="adminForm" onSubmit={save}><label>Name<input name="name" defaultValue={profile.name} required/></label><label>Email<input name="email" type="email" defaultValue={profile.email} readOnly={Boolean(user.email)} required={!user.isAnonymous}/>{user.isAnonymous&&<span>Optional until you connect Google.</span>}</label><label>WhatsApp / phone<input name="phone" type="tel" defaultValue={profile.phone} required/></label><label>Preferred delivery location <span>(optional)</span><input name="preferredDeliveryLocation" defaultValue={profile.preferredDeliveryLocation}/></label><label>Notes <span>(optional)</span><textarea name="notes" defaultValue={profile.notes}/></label><button className="button buttonPrimary" type="submit" disabled={busy}>{busy?"Saving…":"Save my details"}</button></form></details>}
    {user&&!user.isAnonymous&&<details id="external-links" className="accountDetails"><summary><span><strong>External links</strong><small>For when you actually need them</small></span><b>Open</b></summary><div className="adminForm"><p className="orderTruth">Your requests, conversations and The Plug activity come first. Open these only when you want to leave The Plug.</p><p><a href="https://wa.me/c/26776411150" target="_blank" rel="noreferrer">WhatsApp catalogue ↗</a></p><p><a href="https://www.instagram.com/the.plugworldwidebw/" target="_blank" rel="noreferrer">Instagram ↗</a></p></div></details>}
    <p className="accountFooterNote orderTruth">{user?.isAnonymous?"Connect Google before changing devices if you want to keep access to your history.":"Frank confirms the price and timing before you pay."}</p>
