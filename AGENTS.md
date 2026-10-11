@@ -228,6 +228,11 @@ This is a reusable product pattern, not a one-off The Plug workaround. Reproduce
 - Research basis: Firebase documents credential linking to preserve anonymous-session data when a user signs up (https://firebase.google.com/docs/auth/web/anonymous-auth); Firestore rules are per-document authorization and are not filters (https://firebase.google.com/docs/firestore/security/rules-structure); Nielsen Norman Group's progressive disclosure guidance supports revealing useful choices at the right time (https://www.nngroup.com/articles/progressive-disclosure/). These are design principles, not proven outcomes for The Plug's Botswana audience.
 
 
+## External social and catalogue links — settings only
+- Do not show WhatsApp catalogue or Instagram links on the homepage, landing-page sections, or global footer. Those destinations pull customers away from The Plug while engagement and support can happen in-app.
+- Place these links at the bottom of the signed-in account/settings experience as low-priority external utilities, after requests, private conversations, preferences, circle controls, activity and profile details. Keep them easy to find in settings but never promote them as the next step in the shopping journey.
+- Existing customers may already know Frank on WhatsApp; do not assume they need a prominent contact shortcut. Keep in-app requests and private conversations as the default.
+
 ## Clarified customer journey — supersedes earlier broad fallback wording
 - The Plug is the primary experience. Customers browse real featured finds and published offers first; do not push WhatsApp/Instagram as a first step or make contacting Frank the default answer.
 - Keep the homepage concise and product-led. Remove oversized “not on the edit?”/source-it messaging from the primary path. Sourcing remains a useful secondary path for unlisted items, not the storefront's headline.
