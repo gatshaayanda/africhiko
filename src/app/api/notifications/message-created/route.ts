@@ -14,7 +14,7 @@ function app(){
 }
 export async function POST(request:Request){
  try{
-  const a=app(),header=request.headers.get("authorization")||"",match=header.match(/^Bearer\\s+(.+)$/i);
+  const a=app(),header=request.headers.get("authorization")||"",match=header.match(/^Bearer\s+(.+)$/i);
   if(!match)throw new Error("Missing authentication token.");
   const uid=(await getAuth(a).verifyIdToken(match[1])).uid;
   const {conversationId,messageId}=await request.json() as {conversationId?:unknown;messageId?:unknown};

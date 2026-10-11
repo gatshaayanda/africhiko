@@ -15,7 +15,7 @@ function app(){
 export async function POST(request:Request){
  try{
   const header=request.headers.get("authorization")||"";
-  const match=header.match(/^Bearer\\s+(.+)$/i);
+  const match=header.match(/^Bearer\s+(.+)$/i);
   if(!match)throw new Error("Missing Firebase authentication token.");
   const a=app(),decoded=await getAuth(a).verifyIdToken(match[1]);
   const body=await request.json().catch(()=>({})) as {deviceToken?:unknown};

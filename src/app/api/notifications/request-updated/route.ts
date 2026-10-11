@@ -19,7 +19,7 @@ export async function POST(request:Request){
  try{
   const a=adminApp();
   const header=request.headers.get("authorization")||"";
-  const match=header.match(/^Bearer\\s+(.+)$/i);
+  const match=header.match(/^Bearer\s+(.+)$/i);
   if(!match)throw new Error("Admin authentication is required.");
   const uid=(await getAuth(a).verifyIdToken(match[1])).uid;
   const db=getFirestore(a);
