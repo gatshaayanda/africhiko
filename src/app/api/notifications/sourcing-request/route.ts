@@ -28,7 +28,7 @@ export async function POST(request:Request){
   for(const admin of admins.docs){
    const pref=(await db.collection("notificationPreferences").doc(admin.id).get()).data();if(!pref?.enabled)continue;
    const tokens=await db.collection("notificationTokens").doc(admin.id).collection("tokens").get();
-   for(const token of tokens.docs){try{await messaging.send({token:String(token.data().token),notification:{title:"New The Plug sourcing request",body:String(data.customerName??"Customer")+" · "+String(data.product??"Product")},data:{link:"/admin",requestId},webpush:{fcmOptions:{link:(process.env.NEXT_PUBLIC_BASE_URL||"https://the-plug.vercel.app")+"/admin"}}});sent++}catch{}}
+   for(const token of tokens.docs){try{await messaging.send({token:String(token.data().token),notification:{title:"New The Plug sourcing request",body:String(data.customerName??"Customer")+" · "+String(data.product??"Product")},data:{link:"/admin",requestId},webpush:{fcmOptions:{link:(process.env.NEXT_PUBLIC_BASE_URL||"https://the-plug-pearl.vercel.app")+"/admin"}}});sent++}catch{}}
   }
   return NextResponse.json({sent});
  }catch(error){console.error("The Plug sourcing notification failed:",error);return NextResponse.json({sent:0,error:error instanceof Error?error.message:"Notification unavailable while The Plug is being built."},{status:400})}

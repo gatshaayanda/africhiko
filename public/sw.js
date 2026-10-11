@@ -1,3 +1,50 @@
+importScripts(
+  "https://www.gstatic.com/firebasejs/11.9.0/firebase-app-compat.js",
+  "https://www.gstatic.com/firebasejs/11.9.0/firebase-messaging-compat.js",
+  "/api/firebase/messaging-sw-config"
+);
+
+let thePlugMessaging = null;
+try {
+  const config = self.__THE_PLUG_FIREBASE_CONFIG__;
+  if (config && config.apiKey && config.projectId && config.messagingSenderId && config.appId) {
+    firebase.initializeApp(config);
+    thePlugMessaging = firebase.messaging();
+    thePlugMessaging.onBackgroundMessage((payload) => {
+      // Notification payloads are displayed automatically by Firebase. Only render
+      // data-only pushes here to avoid showing the same notification twice.
+      if (payload.notification) return;
+      const title = payload.data?.title || "The Plug update";
+      const options = {
+        body: payload.data?.body || "Open The Plug to check your latest account information.",
+        icon: "/plug-icon.svg",
+        badge: "/plug-icon.svg",
+        data: { link: payload.data?.link || "/account" },
+      };
+      self.registration.showNotification(title, options);
+    });
+  } else {
+    console.error("The Plug Firebase Messaging web config is incomplete.");
+  }
+} catch (error) {
+  console.error("The Plug Firebase Messaging service worker could not initialize.", error);
+}
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const rawLink = event.notification.data?.link || "/account";
+  const link = rawLink.startsWith("/") ? rawLink : "/account";
+  event.waitUntil(clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+    for (const client of list) {
+      if ("focus" in client) {
+        void client.navigate(link);
+        return client.focus();
+      }
+    }
+    return clients.openWindow(link);
+  }));
+});
+
 const CACHE_VERSION = "theplug-shell-v14";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
