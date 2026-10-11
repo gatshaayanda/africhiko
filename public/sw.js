@@ -48,55 +48,6 @@ self.addEventListener("activate", event => {
   })());
 });
 
-// Handle background Firebase Cloud Messaging pushes in The Plug's existing PWA worker.
-self.addEventListener("push", event => {
-  event.waitUntil((async () => {
-    let payload = {};
-    try {
-      payload = event.data ? event.data.json() : {};
-    } catch {
-      payload = { notification: { body: event.data?.text() || "" } };
-    }
-    const notification = payload.notification || {};
-    const data = payload.data || {};
-    const title = notification.title || data.title || "The Plug update";
-    const body = notification.body || data.body || "Open The Plug to check your latest update.";
-    const requestedLink = data.link || notification.click_action || "/account";
-    let link = "/account";
-    try {
-      const target = new URL(requestedLink, self.location.origin);
-      if (target.origin === self.location.origin) link = target.pathname + target.search + target.hash;
-    } catch {}
-    await self.registration.showNotification(title, {
-      body,
-      icon: notification.icon || "/plug-icon.svg",
-      badge: notification.badge || "/plug-icon.svg",
-      tag: notification.tag || data.tag || undefined,
-      data: { link }
-    });
-  })());
-});
-
-self.addEventListener("notificationclick", event => {
-  event.notification.close();
-  event.waitUntil((async () => {
-    const requestedLink = event.notification.data?.link || "/account";
-    let targetUrl = new URL("/account", self.location.origin).href;
-    try {
-      const target = new URL(requestedLink, self.location.origin);
-      if (target.origin === self.location.origin) targetUrl = target.href;
-    } catch {}
-    const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-    for (const client of windows) {
-      if (new URL(client.url).origin !== self.location.origin) continue;
-      if ("navigate" in client) await client.navigate(targetUrl).catch(() => {});
-      await client.focus();
-      return;
-    }
-    await self.clients.openWindow(targetUrl);
-  })());
-});
-
 self.addEventListener("fetch", event => {
   const request = event.request;
   if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
