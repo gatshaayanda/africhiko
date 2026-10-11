@@ -65,6 +65,12 @@ The Plug is the customer's primary storefront and ongoing customer relationship�
 - When implementing the demand feed, add Firestore rules/indexes and test anonymous owner, linked owner, unrelated visitor, accepted friend, admin and unauthenticated access. Test duplicate “interested” taps and cross-account privacy. Until this separate demand/interest data model is implemented and verified, do not claim that the customer-intelligence loop is complete.
 - UX rationale: avoid forced account creation before the core action (Baymard research on guest checkout and delayed account creation: https://baymard.com/research-articles/delayed-account-creation and https://baymard.com/research-articles/make-guest-checkout-prominent). Use Firebase anonymous auth and credential linking to retain the same UID (https://firebase.google.com/docs/auth/web/anonymous-auth and https://firebase.google.com/docs/auth/web/account-linking). For readable text, meet WCAG AA contrast (https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Perceivable/Color_contrast).
 
+## Post-request onboarding and in-app communication — required
+- After a successful sourcing request, route the customer to My The Plug with their saved request visible first. Their next steps should be clearly sequenced: (1) optionally enable supported notifications after a benefit explanation, (2) invite/connect a friend, (3) personalise interests and privacy, and (4) return to request progress and the private feed. Do not gate requests, messaging, or feed access on completing onboarding.
+- The request tracker must lead to private in-app conversation for follow-up. Customers can write messages and attach supported images/PDFs for Frank/admin review; conversations must remain owner-scoped and allow replies inside The Plug. WhatsApp is an optional final external contact channel, never the default CTA or the only way to recover from a tracker error.
+- Keep the request tracker focused on truthful status, quote/deposit state and recorded delivery expectation. Do not claim that a request is an order or redirect customers off-app just to communicate.
+- Onboarding prompts must be easy to revisit from My The Plug. Explain the value before asking for notification permission; invitations and feed audience are opt-in. Never share private request details, phone numbers, attachments or messages with friends.
+
 ## Customer sourcing and commercial workflow
 1. Customer shares a listed item or submits a sourcing request while signed in.
 2. Frank checks the sourcing route.
