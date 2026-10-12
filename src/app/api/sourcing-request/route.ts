@@ -38,7 +38,7 @@ function validRequestData(data:Record<string,unknown>,uid:string){
 
 export async function POST(request:Request){
   try{
-    const match=(request.headers.get("authorization")||"").match(/^Bearer\\s+(.+)$/i);
+    const match=(request.headers.get("authorization")||"").match(/^Bearer\s+(.+)$/i);
     if(!match)return NextResponse.json({error:"Your private session expired. Retry the request."},{status:401});
     const app=adminApp();
     const decoded=await getAuth(app).verifyIdToken(match[1]);
