@@ -47,10 +47,12 @@ export type PlugRequest = {
 
 const requests = collection(db,"sourcingRequests");
 
-export async function createPlugRequest(data:Omit<PlugRequest,"id">){
-  const ref = doc(requests);
-  await setDoc(ref,data);
-  return ref.id;
+export async function createPlugRequest(data:Omit<PlugRequest,"id">,idToken:string){
+  const ref=doc(requests);
+  const response=await fetch("/api/sourcing-request",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+idToken},body:JSON.stringify({requestId:ref.id,data})});
+  const result=await response.json().catch(()=>({error:"The request service returned an unreadable response."})) as {requestId?:string;error?:string};
+  if(!response.ok||!result.requestId)throw new Error(result.error||"The request could not be confirmed. Your details remain on this page.");
+  return result.requestId;
 }
 
 export async function getPlugRequest(id:string):Promise<PlugRequest|null>{
