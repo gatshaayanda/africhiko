@@ -267,16 +267,16 @@ service cloud.firestore {
     match /storefrontContent/{contentId} {
       function validStorefrontContent() {
         return request.resource.data.keys().hasOnly(['type','category','title','description','imageUrl','price','status','audience','startsAt','endsAt','ctaLabel','sortOrder','createdAt','updatedAt'])
-          && request.resource.data.keys().hasAll(['type','title','description','imageUrl','status','audience','startsAt','endsAt','ctaLabel','sortOrder','createdAt','updatedAt'])
+          && request.resource.data.keys().hasAll(['type','title','description','imageUrl','price','status','audience','startsAt','endsAt','ctaLabel','sortOrder','createdAt','updatedAt'])
           && request.resource.data.type in ['find','deal'] && (!request.resource.data.keys().hasAny(['category']) || request.resource.data.category in ['Sneakers','Apparel','Accessories','Kids','Other']) && request.resource.data.title is string
           && request.resource.data.title.size() > 0 && request.resource.data.title.size() <= 100
-          && request.resource.data.description is string && request.resource.data.imageUrl is string
+          && request.resource.data.description is string && request.resource.data.imageUrl is string && request.resource.data.imageUrl.size() > 0
           && request.resource.data.status in ['draft','scheduled','published','paused','archived']
           && request.resource.data.audience in ['everyone','circle']
           && request.resource.data.startsAt is string && request.resource.data.endsAt is string
           && request.resource.data.ctaLabel is string && request.resource.data.sortOrder is number
           && request.resource.data.createdAt is string && request.resource.data.updatedAt is string
-          && (!request.resource.data.keys().hasAny(['price']) || (request.resource.data.price is number && request.resource.data.price >= 0));
+          && request.resource.data.price is number && request.resource.data.price >= 0;
       }
       allow read: if isAdmin() || (resource.data.status in ['published','scheduled'] && resource.data.audience == 'everyone');
       allow create: if isAdmin() && validStorefrontContent();
