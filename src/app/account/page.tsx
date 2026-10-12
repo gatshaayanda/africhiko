@@ -77,7 +77,7 @@ export default function AccountPage(){
      // The Google identity already has its own UID. Sign into that existing account
      // instead of trapping the customer in an anonymous-session linking error.
      // Do not claim or attempt to merge the separate histories.
-     const credential=GoogleAuthProvider.credentialFromError(error);
+     const credential=GoogleAuthProvider.credentialFromError(error as import("firebase/app").FirebaseError);
      if(!credential)throw error;
      const result=await signInWithCredential(auth,credential);
      const now=new Date().toISOString();
