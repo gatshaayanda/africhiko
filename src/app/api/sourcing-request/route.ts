@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {cert,getApps,initializeApp} from "firebase-admin/app";
 import {getAuth} from "firebase-admin/auth";
-import {getFirestore} from "firebase-admin/firestore";
+import {getFirestore,type DocumentData} from "firebase-admin/firestore";
 
 export const runtime="nodejs";
 
@@ -55,7 +55,7 @@ export async function POST(request:Request){
         if(saved.customerId===decoded.uid&&saved.product===data.product&&saved.customerName===data.customerName)return {id:ref.id,duplicate:true};
         throw new Error("That request reference already exists. Please refresh My requests before retrying.");
       }
-      tx.create(ref,data);
+      tx.create(ref,data as DocumentData);
       return {id:ref.id,duplicate:false};
     });
     return NextResponse.json({requestId:result.id,alreadySaved:result.duplicate},{status:result.duplicate?200:201});
