@@ -719,3 +719,51 @@ button.plugProductAction{width:100%;align-items:center;background:transparent;bo
 .journeyAnalyticsProducts>div{color:#111}
 .journeyAnalyticsProducts>div span,.journeyAnalyticsProducts>div b{color:#111}
 @media(max-width:560px){.plugSavedGrid{grid-template-columns:minmax(0,1fr)}.plugSaveFindButton{right:8px;top:8px;min-height:40px}.analyticsPeriodControl{align-items:stretch;flex-direction:column}.analyticsPeriodControl select{width:100%}}
+
+
+/* Admin mobile fit and clear access to landing-page content management. */
+.adminPage,.adminPage *{box-sizing:border-box}
+.adminShell{min-width:0;width:min(1200px,calc(100% - 28px))}
+.adminPage .adminHeader,.adminPage .adminPanel,.adminPage .journeyAnalytics,.adminPage .adminLandingCrudCallout{min-width:0;max-width:100%}
+.adminHeaderActions{display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+.adminLandingCrudCallout{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 22px;padding:20px;border:1px solid #416bb0;border-radius:15px;background:#111c2d;color:#fff}
+.adminLandingCrudCallout>div{min-width:0}
+.adminLandingCrudCallout h2{margin:6px 0;font-size:clamp(1.35rem,3vw,1.9rem);line-height:1.15}
+.adminLandingCrudCallout p{max-width:700px;margin:0;color:#e0e8f6;font-size:.88rem;line-height:1.55}
+.adminLandingCrudCallout .button{flex:0 0 auto;white-space:normal;text-align:center}
+.journeyAnalytics .analyticsPeriodControl{color:#f4f4f4}
+.journeyAnalytics .analyticsPeriodControl select{width:auto;max-width:100%;background:#fff;color:#111;border:1px solid #8c8c8c}
+.journeyAnalytics .journeyAnalyticsProducts,.journeyAnalytics .journeyAnalyticsProducts>strong,.journeyAnalytics .journeyAnalyticsProducts>div,.journeyAnalytics .journeyAnalyticsProducts>div span,.journeyAnalytics .journeyAnalyticsProducts>div b{color:#f4f4f4}
+.journeyAnalytics .journeyAnalyticsProducts>div{border-top-color:#3a3a3a}
+@media(max-width:680px){
+  .adminPage{padding:16px 0 36px}
+  .adminShell{width:calc(100% - 24px);max-width:100%}
+  .adminPage .adminHeader{align-items:stretch;flex-direction:column;gap:14px}
+  .adminPage .adminHeader h1{font-size:clamp(2.2rem,11vw,3.2rem);overflow-wrap:anywhere}
+  .adminPage .adminHeaderActions{display:grid;grid-template-columns:minmax(0,1fr);width:100%}
+  .adminPage .adminHeaderActions .button{width:100%;min-width:0;white-space:normal;text-align:center}
+  .adminLandingCrudCallout{align-items:stretch;flex-direction:column;padding:16px;gap:14px}
+  .adminLandingCrudCallout .button{width:100%;min-height:46px}
+  .journeyAnalytics{padding:14px;margin:16px 0}
+  .journeyAnalytics>.panelHeading{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+  .journeyAnalytics .analyticsPeriodControl{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;width:100%;font-size:.85rem;color:#fff}
+  .journeyAnalytics .analyticsPeriodControl select{width:100%;min-width:0;min-height:44px}
+  .journeyAnalyticsGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .journeyAnalyticsGrid article{padding:11px;min-width:0;overflow-wrap:anywhere}
+  .journeyAnalyticsGrid article strong{font-size:1.45rem}
+  .adminPanel{padding:15px}
+  .queueRow{grid-template-columns:minmax(0,1fr);min-width:0}
+  .queueRow>*{min-width:0;overflow-wrap:anywhere}
+  .queueActions{flex-wrap:wrap}
+  .plugStudioForm{grid-template-columns:minmax(0,1fr)}
+  .plugStudioUpload{grid-template-columns:minmax(0,1fr)}
+  .plugStudioPreview{width:100%;max-width:100%}
+  .plugStudioList,.plugStudioRow,.plugStudioRowInfo{min-width:0;max-width:100%}
+  .plugStudioRow{grid-template-columns:64px minmax(0,1fr)}
+  .plugStudioRowActions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:7px}
+  .plugStudioRowActions .button,.plugStudioRowActions button{max-width:100%;min-height:40px}
+}
+@media(max-width:380px){
+  .journeyAnalyticsGrid{grid-template-columns:minmax(0,1fr)}
+  .adminShell{width:calc(100% - 20px)}
+}
