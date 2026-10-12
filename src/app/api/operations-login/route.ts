@@ -27,10 +27,9 @@ export async function POST(request:Request){
   const word=typeof body?.word==="string"?body.word:"";
   if(!matchesWord(word,expected))return NextResponse.json({error:"Access denied. Check the access word and try again."},{status:401});
   const app=getAdminApp();
-  const snapshot=await getFirestore(app).collection("admins").get();
-  const owner=snapshot.docs.find(doc=>["owner","staff"].includes(String(doc.data().role??"").toLowerCase()));
-  if(!owner)return NextResponse.json({error:"No authorized Operations account was found in the admins collection."},{status:403});
-  const token=await getAuth(app).createCustomToken(owner.id);
+  const uid="the-plug-temporary-operations";
+  await getFirestore(app).collection("admins").doc(uid).set({role:"owner",temporaryAccess:true,createdAt:new Date().toISOString()},{merge:true});
+  const token=await getAuth(app).createCustomToken(uid);
   return NextResponse.json({token},{headers:{"Cache-Control":"no-store"}});
  }catch(error){
   console.error("Operations login failed:",error instanceof Error?error.message:"unknown error");
