@@ -1,10 +1,10 @@
 "use client";
-import {addDoc,collection,deleteDoc,deleteField,doc,onSnapshot,updateDoc} from "firebase/firestore";
+import {addDoc,collection,deleteDoc,doc,onSnapshot,updateDoc} from "firebase/firestore";
 import type {FieldValue} from "firebase/firestore";
 import {uploadFiles} from "@/lib/uploadthing";
 import {useEffect,useState} from "react";
 import Link from "next/link";
-import {db,storage} from "@/lib/firebase/client";
+import {db} from "@/lib/firebase/client";
 type Kind="find"|"deal";type Status="draft"|"scheduled"|"published"|"paused"|"archived";type Audience="everyone"|"circle";
 type Item={id:string;type:Kind;title:string;description:string;imageUrl:string;price?:number;status:Status;audience:Audience;startsAt:string;endsAt:string;ctaLabel:string;sortOrder:number;createdAt:string;updatedAt:string};
 type Draft=Omit<Item,"id">&{id?:string;priceText:string};
