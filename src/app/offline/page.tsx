@@ -11,8 +11,8 @@ export default function OfflinePage() {
           <div className="confirmIcon">📶</div>
           <span className="kicker">Offline mode</span>
           <h1>The Plug is still here.</h1>
-          <p>The The Plug app shell and previously loaded public pages can remain available on this device while your connection is away.</p>
-          <p>A request can only be treated as received after The Plug confirms it was saved. If you are offline, reconnect before submitting or contact Frank on WhatsApp.</p>
+          <p>The app shell and public finds you have already loaded may remain available on this device. Saved information can be out of date.</p>
+          <p>Prices, stock and offers can change while you are offline. Requests, account updates and messages are not sent until a connection is available and The Plug confirms the action.</p>
           <div className="actions centered">
             <Link className="button buttonPrimary" href="/request">Open request</Link>
             <Link className="button buttonLight" href="/">Open The Plug</Link>

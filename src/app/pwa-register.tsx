@@ -347,7 +347,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   ) : null;
 
   return <>
-    {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · The Plug is still being built, but this device can keep the app shell available. Requests may wait for reconnection.</div>}
+    {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Saved public finds may still be available on this device. Requests and account changes need a connection.</div>}
     {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · The Plug is syncing and checking for the latest information.</div>}
     {!environment().standalone && installState !== "embedded" && (
       <button

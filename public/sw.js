@@ -45,7 +45,8 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "theplug-shell-v14";
+const CACHE_VERSION = "theplug-shell-v15";
+const MEDIA_CACHE = "theplug-media-v1";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
 const PUBLIC_PAGE_LIMIT = 12;
@@ -90,7 +91,7 @@ self.addEventListener("message", event => {
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => key.startsWith("theplug-shell-") && key !== SHELL_CACHE).map(key => caches.delete(key)));
+    await Promise.all(keys.filter(key => (key.startsWith("theplug-shell-") && key !== SHELL_CACHE) || (key.startsWith("theplug-media-") && key !== MEDIA_CACHE)).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
