@@ -1,5 +1,5 @@
 "use client";
-import {GoogleAuthProvider,onAuthStateChanged,signInWithEmailAndPassword,signInWithPopup,signOut,type User} from "firebase/auth";
+import {onAuthStateChanged,signInWithCustomToken,signOut,type User} from "firebase/auth";
 import {doc,onSnapshot} from "firebase/firestore";
 import {useEffect,useState} from "react";
 import {auth,db} from "@/lib/firebase/client";
@@ -19,7 +19,7 @@ function friendlyAuthError(err:unknown){
 }
 
 export default function AdminGate({children}:{children:React.ReactNode}){
- const[user,setUser]=useState<User|null>(null),[checking,setChecking]=useState(true),[authorized,setAuthorized]=useState(false),[offline,setOffline]=useState(false),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[error,setError]=useState(""),[busy,setBusy]=useState(false);
+ const[user,setUser]=useState<User|null>(null),[checking,setChecking]=useState(true),[authorized,setAuthorized]=useState(false),[offline,setOffline]=useState(false),[accessWord,setAccessWord]=useState(""),[error,setError]=useState(""),[busy,setBusy]=useState(false);
 
  useEffect(()=>{
   let stopAdmin:undefined|(()=>void);
@@ -43,28 +43,25 @@ export default function AdminGate({children}:{children:React.ReactNode}){
   return ()=>{if(stopAdmin)stopAdmin();stopAuth()};
  },[]);
 
- async function finishSignIn(action:()=>Promise<User>){
-  setBusy(true);setError("");
+ async function signIn(e:React.FormEvent){
+  e.preventDefault();setBusy(true);setError("");
   try{
-   const next=await action();
+   const response=await fetch("/api/operations-login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({word:accessWord})});
+   const payload=await response.json() as {token?:string;error?:string};
+   if(!response.ok||!payload.token)throw new Error(payload.error??"Access denied. Check the access word and try again.");
+   const credential=await signInWithCustomToken(auth,payload.token);
    const adminSnapshot=await new Promise<{exists:boolean;data:()=>Record<string,unknown>}|null>(resolve=>{
-    const stop=onSnapshot(doc(db,"admins",next.uid),snapshot=>{stop();resolve({exists:snapshot.exists(),data:()=>snapshot.data()??{}})},()=>{stop();resolve(null)});
+    const stop=onSnapshot(doc(db,"admins",credential.user.uid),snapshot=>{stop();resolve({exists:snapshot.exists(),data:()=>snapshot.data()??{}})},()=>{stop();resolve(null)});
    });
    if(!adminSnapshot||!adminSnapshot.exists||!hasAdminRole(adminSnapshot.data())){
-    setError("This account is not enabled for The Plug Admin. Add this user's UID to the admins collection with role owner or staff.");
+    setError("This account is not enabled for The Plug Operations.");
     await signOut(auth);
-   }else{
-    setAuthorized(true);
-    setOffline(false);
-   }
-  }catch(err){setError(friendlyAuthError(err))}
+   }else{setAuthorized(true);setOffline(false);setAccessWord("")}
+  }catch(err){setError(err instanceof Error?err.message:"We could not sign you in. Check the access word and try again.")}
   finally{setBusy(false)}
  }
 
- async function signIn(e:React.FormEvent){e.preventDefault();await finishSignIn(async()=> (await signInWithEmailAndPassword(auth,email.trim(),password)).user)}
- async function google(){await finishSignIn(async()=> (await signInWithPopup(auth,new GoogleAuthProvider())).user)}
-
  if(checking)return <main className="adminPage"><div className="adminShell"><div className="emptyState"><div>🔐</div><h1>Opening The Plug Admin</h1><p>Checking access…</p></div></div></main>;
  if(user&&authorized)return <div className="adminAuthorized">{offline&&<div className="adminAccountBar"><span>The Plug Admin · Offline mode · cached admin access</span><span>Changes will sync when connection returns.</span></div>}<div className="adminAccountBar"><span>The Plug Admin · {user.email??"authorized staff"}</span><button className="button buttonLight" type="button" onClick={()=>void signOut(auth)}>Sign out</button></div>{children}</div>;
- return <main className="adminPage"><div className="adminShell"><section className="adminPanel" style={{maxWidth:520,margin:"80px auto"}}><span className="kicker">The Plug · Operations</span><h1>Operations sign in</h1><p>Use an authorized owner or staff account to manage sourcing requests, catalogue and customer conversations.</p><button className="button buttonPrimary" type="button" onClick={()=>void google()} disabled={busy}>{busy?"Signing in…":"Continue with Google"}</button><div className="adminDivider">or</div><form className="adminForm" onSubmit={signIn}><label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email" required/></label><label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} autoComplete="current-password" required/></label><button className="button buttonLight" type="submit" disabled={busy}>{busy?"Signing in…":"Sign in with email"}</button></form>{error&&<p role="alert" className="notice">{error}{user&&<><br/><small>Firebase UID: {user.uid}</small></>}</p>}</section></div></main>
+ return <main className="adminPage"><div className="adminShell"><section className="adminPanel" style={{maxWidth:520,margin:"80px auto"}}><span className="kicker">The Plug · Operations</span><h1>Operations sign in</h1><p>Enter your Operations access word to manage sourcing requests, catalogue and customer conversations.</p><form className="adminForm" onSubmit={signIn}><label>Access word<input type="password" value={accessWord} onChange={e=>setAccessWord(e.target.value)} autoComplete="current-password" required autoFocus/></label><button className="button buttonPrimary" type="submit" disabled={busy}>{busy?"Checking access…":"Enter Operations"}</button></form>{error&&<p role="alert" className="notice">{error}</p>}</section></div></main>
 }
