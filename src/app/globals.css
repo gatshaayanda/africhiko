@@ -770,6 +770,7 @@ button.plugProductAction{width:100%;align-items:center;background:transparent;bo
 
 /* Discounted live offers */
 .plugProductPrice{display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-variant-numeric:tabular-nums}
+.plugProductCurrentPrice{display:block;font-size:1.15rem;font-weight:950;color:var(--plug-white)}
 .plugProductOriginalPrice{display:block;color:#9b9b9b;font-size:.78rem;font-weight:650;text-decoration-thickness:2px}
 .plugProductSaving{display:block;color:#c8ff6b;font-size:.72rem;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
 .plugProductBadge{font-weight:950}
