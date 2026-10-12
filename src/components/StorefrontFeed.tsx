@@ -8,7 +8,7 @@ import {isFindSaved,toggleSavedFind,savedFindsChangedEvent} from "@/lib/saved-fi
 import PlugLoadingState from "@/components/PlugLoadingState";
 
 type StorefrontItem={id:string;type:"find"|"deal";category?:string;title:string;description:string;imageUrl:string;price?:number;status:string;audience:string;startsAt?:string;endsAt?:string;ctaLabel?:string;sortOrder?:number;updatedAt?:string};
-function isLive(item:StorefrontItem,now:number){return item.status==="published"&&item.audience==="everyone"&&(!item.startsAt||new Date(item.startsAt).getTime()<=now)&&(!item.endsAt||new Date(item.endsAt).getTime()>=now);}
+function isLive(item:StorefrontItem,now:number){return item.status==="published"&&item.audience==="everyone"&&typeof item.price==="number"&&Number.isFinite(item.price)&&item.price>=0&&Boolean(item.imageUrl?.trim())&&(!item.startsAt||new Date(item.startsAt).getTime()<=now)&&(!item.endsAt||new Date(item.endsAt).getTime()>=now);}
 function money(value:number){return new Intl.NumberFormat("en-BW",{style:"currency",currency:"BWP",maximumFractionDigits:2}).format(value);}
 function categoryOf(item:Pick<StorefrontItem,"category"|"title"|"description">){if(item.category)return item.category;const text=(item.title+" "+item.description).toLowerCase();if(/\b(kids?|children|toddler|baby)\b/.test(text))return "Kids";if(/\b(sneaker|trainers?|shoes?|jordan|air max|dunk|yeezy|adidas|nike)\b/.test(text))return "Sneakers";if(/\b(hoodie|t-?shirt|tee|tracksuit|jacket|pants|jeans|shirt|dress|shorts|apparel|outfit)\b/.test(text))return "Apparel";if(/\b(cap|bag|socks|belt|wallet|watch|accessor)\b/.test(text))return "Accessories";return "Other";}
 function ProductCard({item}:{item:StorefrontItem}){
