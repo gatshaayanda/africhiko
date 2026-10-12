@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import {getIdToken,GoogleAuthProvider,browserLocalPersistence,linkWithPopup,onAuthStateChanged,setPersistence,signInWithPopup,signOut,type User} from "firebase/auth";
+import {getIdToken,GoogleAuthProvider,browserLocalPersistence,linkWithPopup,onAuthStateChanged,setPersistence,signInWithCredential,signInWithPopup,signOut,type User} from "firebase/auth";
 import {useEffect,useState} from "react";
 import {auth,hasFirebaseWebConfig} from "@/lib/firebase/client";
 import NotificationSettings from "@/components/NotificationSettings";
@@ -77,7 +77,9 @@ export default function AccountPage(){
      // The Google identity already has its own UID. Sign into that existing account
      // instead of trapping the customer in an anonymous-session linking error.
      // Do not claim or attempt to merge the separate histories.
-     const result=await signInWithPopup(auth,provider);
+     const credential=GoogleAuthProvider.credentialFromError(error);
+     if(!credential)throw error;
+     const result=await signInWithCredential(auth,credential);
      const now=new Date().toISOString();
      const saved=await getCustomerProfile(result.user.uid);
      if(saved)setProfile(saved);
