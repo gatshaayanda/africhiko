@@ -63,3 +63,14 @@ Verify the actual target project, not just code patterns:
 Start by asking which repository is the target and which repository is the foundation if not already stated. Read this file plus both repositories' `AGENTS.md` files. Treat this checklist as a baseline, not proof that the foundation implements it correctly. Compare the actual code and deployment to the checklist, report gaps, and make the smallest controlled changes.
 
 If cloning BOEMO, reuse only the mechanics that inspection confirms are reusable; reset BOEMO identity, Firebase resources, notification configuration and food-ordering business logic. If cloning The Plug, preserve its install journey and safe service-worker patterns while explicitly adapting its account-first and embedded-browser policies to the new product. If using PurePress or another foundation, inspect it with the same rigor. Never copy configuration blindly or claim success without evidence.
+
+## The Plug public-storefront offline QA
+
+For The Plug, public finds and offers may be retained locally only after they have been published for the public audience. Treat this cache as a convenience copy, not a source of truth:
+
+- Show when the feed is using saved content and when it was last refreshed; clearly warn that prices, stock and availability may have changed.
+- Cache only public product media with a bounded cache. Never cache account, request, message, admin or other private responses in the public shell.
+- On reconnect, attempt to refresh from the live source. If refresh fails, keep eligible saved public content visible and make the stale/offline state explicit.
+- Do not report a request, account change or save as successful without server confirmation. Offline mode is browse-only unless a separately designed and tested queue explicitly communicates pending/synced/failed states.
+- QA sequence: open the storefront online and wait for items/images; enable airplane mode and revisit the storefront; verify saved items, stale timestamp and image fallbacks; attempt a network-dependent action and verify honest feedback; restore connectivity and confirm the feed refreshes.
+- The default find-details disclaimer must remain usable if its settings document is missing or unreadable. Only authorized admins may edit it; restoring the default should remove the override rather than leave a duplicate setting.
