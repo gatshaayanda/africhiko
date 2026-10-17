@@ -3,7 +3,7 @@ import Link from "next/link";
 import {useEffect,useState} from "react";
 import {useSearchParams} from "next/navigation";
 import {onAuthStateChanged,signInAnonymously,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,EmailAuthProvider,linkWithCredential,type User} from "firebase/auth";
-import {addDoc,collection,deleteDoc,doc,onSnapshot,query,serverTimestamp,setDoc,updateDoc,where} from "firebase/firestore";
+import {addDoc,collection,doc,onSnapshot,query,serverTimestamp,setDoc,updateDoc,where} from "firebase/firestore";
 import {getDownloadURL,ref,uploadBytes} from "firebase/storage";
 import {auth,db,hasFirebaseWebConfig,storage} from "@/lib/firebase/client";
 
