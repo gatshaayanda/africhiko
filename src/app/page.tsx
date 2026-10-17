@@ -3,7 +3,7 @@ import Link from "next/link";
 import StorefrontFeed from "@/components/StorefrontFeed";
 import CommunityFeed from "@/components/CommunityFeed";
 import {useEffect,useState} from "react";
-function openInstallPrompt(){window.dispatchEvent(new Event("theplug-open-install"));}
+function openInstallPrompt(){window.dispatchEvent(new Event("africhiko-open-install"));}
 export default function Home(){const [benefitsOpen,setBenefitsOpen]=useState(false);return <main className="plugSite plugEditorialHome">
 <div className="plugNotice"><div className="plugContainer"><span>🇧🇼 BOTSWANA</span><strong>If we can source it, you can get it.</strong><span>GABORONE · BW</span></div></div>
 <header className="plugNav plugEditorialNav"><div className="plugContainer plugNavInner"><Link href="/" className="plugBrand"><span className="plugMark">P</span><span><strong>THE PLUG</strong><small>SNEAKERS · APPAREL · SOURCING</small></span></Link><nav className="plugEditorialLinks" aria-label="Main navigation"><a href="#featured">Finds</a><a href="#deals">Live offers</a><Link href="/saved">Saved finds</Link></nav><div className="plugActions"><Link href="/account" className="plugButton plugButtonGhost plugMyPlugLink">My Plug ↗</Link><button type="button" onClick={openInstallPrompt} className="plugButton plugButtonGhost">Install ↓</button></div></div></header>
