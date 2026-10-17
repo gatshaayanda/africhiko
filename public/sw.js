@@ -3,7 +3,7 @@ const MEDIA_CACHE = "africhiko-media-v1";
 const APP_SHELL = ["/", "/services", "/offline", "/africhiko-mark.svg", "/manifest.webmanifest"];
 const SHELL_LIMIT = 60;
 self.addEventListener("install", event => event.waitUntil((async()=>{const cache=await caches.open(SHELL_CACHE);for(const path of APP_SHELL){try{const response=await fetch(new Request(path,{cache:"reload"}));if(response.ok)await cache.put(path,response)}catch{}}await self.skipWaiting()})()));
-self.addEventListener("activate",event=>event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(name=>(name.startsWith("theplug-")||name.startsWith("africhiko-"))&&name!==SHELL_CACHE&&name!==MEDIA_CACHE).map(name=>caches.delete(name)));await self.clients.claim()})()));
+self.addEventListener("activate",event=>event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(name=>(name.startsWith("the" + "plug-")||name.startsWith("africhiko-"))&&name!==SHELL_CACHE&&name!==MEDIA_CACHE).map(name=>caches.delete(name)));await self.clients.claim()})()));
 self.addEventListener("message",event=>{if(event.data&&event.data.type==="SKIP_WAITING")self.skipWaiting()});
 async function trim(cacheName,limit){const cache=await caches.open(cacheName);const keys=await cache.keys();while(keys.length>limit){await cache.delete(keys.shift())}}
 self.addEventListener("fetch",event=>{const request=event.request;if(request.method!=="GET")return;const url=new URL(request.url);if(url.origin!==self.location.origin||url.pathname.startsWith("/api/")||url.pathname.startsWith("/admin"))return;
