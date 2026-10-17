@@ -23,3 +23,4 @@
 
 .af-toast{position:fixed;left:16px;bottom:16px;z-index:82;max-width:min(420px,calc(100vw - 32px));padding:12px 16px;border:1px solid #c5b4e5;border-radius:9px;background:#fff;color:#28183f;font-size:.8rem;font-weight:800;box-shadow:0 8px 30px #17151d22;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .18s ease,transform .18s ease}.af-toast-visible{opacity:1;transform:translateY(0)}@media(max-width:620px){.af-toast{left:12px;bottom:68px;max-width:calc(100vw - 24px)}}@media(prefers-reduced-motion:reduce){.af-toast{transition:none}}
 \n@media(prefers-reduced-motion:reduce){.af-media-tile video,.af-media-fallback{transition:none}}\n
+.af-media-tile>.af-media-image{opacity:1;transition:none}\n
