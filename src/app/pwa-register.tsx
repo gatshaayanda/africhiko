@@ -279,7 +279,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         className="plugPwaInstallButton"
         onClick={() => void install()}
       >
-        Install Africhiko ↓
+        Add to home screen ↓
       </button>
     )}
     {installCard}
