@@ -15,11 +15,14 @@ export default async function RootLayout({children}:{children:React.ReactNode}){
  const android=/Android/i.test(userAgent);
  return <html lang="en"><body><Script id="africhiko-early-install-capture" strategy="beforeInteractive">{`
 (function () {
+  if (window.__africhikoInstallListenerInstalled) return;
+  window.__africhikoInstallListenerInstalled = true;
   window.addEventListener("beforeinstallprompt", function (event) {
     var standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
     if (standalone) return;
     event.preventDefault();
     window.__africhikoInstallPrompt = event;
+    window.dispatchEvent(new Event("africhiko-install-prompt-ready"));
   });
 })();
 `}</Script><PwaRegister initialEmbedded={embedded} initialAndroid={android}/>{children}<Analytics/><SpeedInsights/></body></html>
