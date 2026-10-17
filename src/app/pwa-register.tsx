@@ -11,7 +11,6 @@ type InstallPromptEvent = Event & {
 };
 type InstallState = "hidden" | "native" | "embedded";
 
-const APP_NAME = "Africhiko";
 const INSTALL_DISMISSED_KEY = "africhiko:install:dismissed-at";
 const INSTALL_DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -24,26 +23,6 @@ function environment() {
   const embedded = /WhatsApp|Instagram|FBAN|FBAV|Messenger|Line\/|Twitter|TikTok|Snapchat/i.test(ua) ||
     (/Android/i.test(ua) && /; wv\)/i.test(ua));
   return { standalone, ios, android, embedded };
-}
-
-function isIosSafari() {
-  if (typeof window === "undefined") return false;
-  const nav = window.navigator;
-  const ios = /iPad|iPhone|iPod/i.test(nav.userAgent) ||
-    (nav.platform === "MacIntel" && nav.maxTouchPoints > 1);
-  return ios && /Safari/i.test(nav.userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo/i.test(nav.userAgent);
-}
-
-function dismissedRecently() {
-  try {
-    const value = window.localStorage.getItem(INSTALL_DISMISSED_KEY);
-    if (!value) return false;
-    const at = Date.parse(value);
-    if (!Number.isFinite(at)) return false;
-    return Date.now() - at < INSTALL_DISMISS_MS;
-  } catch {
-    return false;
-  }
 }
 
 function rememberDismissal() {
@@ -66,7 +45,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const [updateReady, setUpdateReady] = useState<ServiceWorker | null>(null);
   const [embeddedAndroid, setEmbeddedAndroid] = useState(initialEmbedded && initialAndroid);
   const [installHelpOpen, setInstallHelpOpen] = useState(false);
-  const [installPlatform, setInstallPlatform] = useState<"android" | "ios" | "other">("ios");
   const embeddedActionRef = useRef<HTMLButtonElement | null>(null);
   const reloadForUpdate = useRef(false);
 
@@ -75,7 +53,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     const env = environment();
     const embedded = initialEmbedded || env.embedded;
     setEmbeddedAndroid((initialEmbedded && initialAndroid) || (env.embedded && env.android));
-    setInstallPlatform(env.ios ? "ios" : env.android ? "android" : "other");
 
     const online = () => {
       setOffline(false);
@@ -133,8 +110,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       }
       // Match the working Odi install flow: never let a visible install CTA silently
       // do nothing when this browser has not emitted beforeinstallprompt.
-      const platform = current.ios ? "ios" : current.android ? "android" : "other";
-      setInstallPlatform(platform);
       setInstallHelpOpen(true);
       setInstallState("native");
     };
@@ -217,7 +192,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       // Native install events are browser-controlled. Show the same explicit
       // platform-specific fallback as Odi rather than silently returning.
       const env = environment();
-      setInstallPlatform(env.ios ? "ios" : env.android ? "android" : "other");
       setInstallHelpOpen(true);
       setInstallState("native");
       return;
@@ -320,8 +294,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
             return;
           }
           const env = environment();
-          setInstallPlatform(env.ios ? "ios" : env.android ? "android" : "other");
-          setInstallHelpOpen(true);
+              setInstallHelpOpen(true);
           setInstallState("native");
         }}
       >
