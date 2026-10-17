@@ -7,23 +7,17 @@ import Script from "next/script";
 import "./globals.css"; import "./pwa.css";
 const siteUrl=process.env.NEXT_PUBLIC_BASE_URL||"http://localhost:3000";
 const EMBEDDED_BROWSER_PATTERN=/WhatsApp|Instagram|FBAN|FBAV|Messenger|Line[/]|Twitter|TikTok|Snapchat/i;
-export const metadata:Metadata={metadataBase:new URL(siteUrl),title:{default:"Africhiko | Welding & Steel Fabrication",template:"%s | Africhiko"},description:"Welding and steel fabrication services in Gaborone, Botswana.",applicationName:"Africhiko",keywords:["Africhiko","steel fabrication","fabrication","Botswana","fabrication"],alternates:{canonical:"/"},openGraph:{type:"website",url:siteUrl,siteName:"Africhiko",title:"Africhiko | Welding & Steel Fabrication",description:"Steel work, made your way."},twitter:{card:"summary",title:"Africhiko | Welding & Steel Fabrication",description:"Steel work, made your way."},icons:{icon:"/africhiko-mark.svg",apple:"/africhiko-mark.svg"},manifest:"/manifest.webmanifest",appleWebApp:{capable:true,title:"Africhiko",statusBarStyle:"default"}};
+export const metadata:Metadata={metadataBase:new URL(siteUrl),title:{default:"Africhiko | Welding & Steel Fabrication",template:"%s | Africhiko"},description:"Welding and steel fabrication services in Gaborone, Botswana.",applicationName:"Africhiko",keywords:["Africhiko","steel fabrication","fabrication","Botswana"],alternates:{canonical:"/"},openGraph:{type:"website",url:siteUrl,siteName:"Africhiko",title:"Africhiko | Welding & Steel Fabrication",description:"Steel work, made your way."},twitter:{card:"summary",title:"Africhiko | Welding & Steel Fabrication",description:"Steel work, made your way."},icons:{icon:[{url:"/icons/icon-192.png",sizes:"192x192",type:"image/png"},{url:"/icons/icon-512.png",sizes:"512x512",type:"image/png"}],apple:"/apple-touch-icon.png"},manifest:"/manifest.webmanifest",appleWebApp:{capable:true,title:"Africhiko",statusBarStyle:"default"}};
 export const viewport:Viewport={themeColor:"#6d28d9",colorScheme:"light"};
 export default async function RootLayout({children}:{children:React.ReactNode}){
- const requestHeaders=await headers();
- const userAgent=requestHeaders.get("user-agent")||"";
- const requestedWith=requestHeaders.get("x-requested-with")||"";
- // A social referrer does not prove this browser is embedded: Chrome opened from WhatsApp
- // must not be trapped in the in-app-browser install gate.
- const embedded=EMBEDDED_BROWSER_PATTERN.test(userAgent)
-   || (/Android/i.test(userAgent)&&/\bwv\b/i.test(userAgent))
-   || /^(com\.whatsapp|com\.instagram\.android|com\.facebook\.katana|com\.facebook\.lite|com\.facebook\.orca)$/i.test(requestedWith);
+ const requestHeaders=await headers(),userAgent=requestHeaders.get("user-agent")||"",requestedWith=requestHeaders.get("x-requested-with")||"";
+ const embedded=EMBEDDED_BROWSER_PATTERN.test(userAgent)||(/Android/i.test(userAgent)&&/\bwv\b/i.test(userAgent))||/^(com\.whatsapp|com\.instagram\.android|com\.facebook\.katana|com\.facebook\.lite|com\.facebook\.orca)$/i.test(requestedWith);
  const android=/Android/i.test(userAgent);
  return <html lang="en"><body><Script id="africhiko-early-install-capture" strategy="beforeInteractive">{`
 (function () {
   window.addEventListener("beforeinstallprompt", function (event) {
     var standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-    if (standalone || window.__africhikoPwaListenerReady === true) return;
+    if (standalone) return;
     event.preventDefault();
     window.__africhikoInstallPrompt = event;
   });
