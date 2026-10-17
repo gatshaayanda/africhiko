@@ -95,16 +95,5 @@
   .af-service-card{transition:none}
 }
 
-
-/* Customer media polish: use the supplied workshop footage instead of generated placeholders. */
-.af-hero-visual{isolation:isolate}
-.af-hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.9}
-.af-hero-visual:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(17,15,23,.04) 20%,rgba(17,15,23,.82) 100%);pointer-events:none}
-.af-visual-label,.af-visual-caption{z-index:1}
-.af-service-art{position:relative;isolation:isolate;overflow:hidden;background:#24202b}
-.af-service-art:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(18,15,25,.08),rgba(18,15,25,.82));pointer-events:none}
-.af-service-art video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.9}
-.af-service-art span,.af-service-art small{position:relative;z-index:1;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.55)}
-.af-service-art small{letter-spacing:.14em}
-.af-media-fallback-hidden{opacity:0;pointer-events:none}
-@media(prefers-reduced-motion:reduce){.af-service-art video,.af-hero-video{display:none}}
+/* Africhiko media polish: use the supplied workshop footage instead of generated placeholders. */
+.af-hero-visual{isolation:isolate}.af-hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.9}.af-hero-visual:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(17,15,23,.04) 20%,rgba(17,15,23,.82) 100%);pointer-events:none}.af-visual-label,.af-visual-caption{z-index:1}.af-service-art{position:relative;isolation:isolate;overflow:hidden;background:#24202b}.af-service-art:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(18,15,25,.08),rgba(18,15,25,.82));pointer-events:none}.af-service-art video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.9}.af-service-art span,.af-service-art small{position:relative;z-index:1;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.55)}.af-service-art small{letter-spacing:.14em}.af-media-fallback-hidden{opacity:0;pointer-events:none}@media(prefers-reduced-motion:reduce){.af-service-art video,.af-hero-video{display:none}}
