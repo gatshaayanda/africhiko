@@ -16,3 +16,5 @@
 .af-media-tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.af-media-toggle{position:absolute;right:16px;bottom:40px;z-index:3;padding:8px 10px;border:1px solid #ffffff80;border-radius:6px;background:#17151ddd;color:#fff;font-size:.72rem;font-weight:800}.af-media-toggle:focus-visible{outline:3px solid #8be9f3;outline-offset:3px}
 
 .af-media-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+
+.af-review-field{display:flex;flex-direction:column;gap:5px;padding:14px 0;border-bottom:1px solid var(--line)}.af-review-field>span{color:var(--muted);font-size:.68rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.af-review-field>strong{font-size:.88rem;line-height:1.45}.af-review-field>small{color:var(--muted);font-size:.75rem;line-height:1.5}.af-review-field>a{align-self:flex-start;margin-top:3px;color:var(--violet-dark);font-size:.72rem;font-weight:900}
