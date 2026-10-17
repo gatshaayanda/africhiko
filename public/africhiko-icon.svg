@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Africhiko welding and steel fabrication">
+<rect width="512" height="512" rx="96" fill="#111318"/>
+<path d="M110 360 218 130h72l112 230h-78l-23-52h-94l-22 52z" fill="#fff"/>
+<path d="m225 250 25-58 25 58z" fill="#6D28D9"/>
+<path d="M320 100 340 62l8 40 40-10-28 31 28 27-42-7-13 39-8-41-41 7 28-28-27-30z" fill="#35C8E8"/>
+<path d="M80 405h352" stroke="#35C8E8" stroke-width="16" stroke-linecap="round"/>
+<path d="m140 440 20-15 20 15 20-15 20 15 20-15 20 15 20-15 20 15 20-15 20 15 20-15" fill="none" stroke="#6D28D9" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

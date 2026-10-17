@@ -4,8 +4,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { getIdToken, onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase/client";
 
 type InstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -13,8 +11,7 @@ type InstallPromptEvent = Event & {
 };
 type InstallState = "hidden" | "native" | "embedded";
 
-const APP_NAME = "The Plug";
-const INSTALL_DISMISSED_KEY = "theplug:install:dismissed-at";
+const INSTALL_DISMISSED_KEY = "africhiko:install:dismissed-at";
 const INSTALL_DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
 
 function environment() {
@@ -26,26 +23,6 @@ function environment() {
   const embedded = /WhatsApp|Instagram|FBAN|FBAV|Messenger|Line\/|Twitter|TikTok|Snapchat/i.test(ua) ||
     (/Android/i.test(ua) && /; wv\)/i.test(ua));
   return { standalone, ios, android, embedded };
-}
-
-function isIosSafari() {
-  if (typeof window === "undefined") return false;
-  const nav = window.navigator;
-  const ios = /iPad|iPhone|iPod/i.test(nav.userAgent) ||
-    (nav.platform === "MacIntel" && nav.maxTouchPoints > 1);
-  return ios && /Safari/i.test(nav.userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo/i.test(nav.userAgent);
-}
-
-function dismissedRecently() {
-  try {
-    const value = window.localStorage.getItem(INSTALL_DISMISSED_KEY);
-    if (!value) return false;
-    const at = Date.parse(value);
-    if (!Number.isFinite(at)) return false;
-    return Date.now() - at < INSTALL_DISMISS_MS;
-  } catch {
-    return false;
-  }
 }
 
 function rememberDismissal() {
@@ -68,7 +45,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const [updateReady, setUpdateReady] = useState<ServiceWorker | null>(null);
   const [embeddedAndroid, setEmbeddedAndroid] = useState(initialEmbedded && initialAndroid);
   const [installHelpOpen, setInstallHelpOpen] = useState(false);
-  const [installPlatform, setInstallPlatform] = useState<"android" | "ios" | "other">("ios");
   const embeddedActionRef = useRef<HTMLButtonElement | null>(null);
   const reloadForUpdate = useRef(false);
 
@@ -77,33 +53,12 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     const env = environment();
     const embedded = initialEmbedded || env.embedded;
     setEmbeddedAndroid((initialEmbedded && initialAndroid) || (env.embedded && env.android));
-    setInstallPlatform(env.ios ? "ios" : env.android ? "android" : "other");
-
-    const retryPendingOrderNotifications = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-      const idToken = await getIdToken(user).catch(() => null);
-      if (!idToken) return;
-      const pendingKeys = Object.keys(localStorage).filter(key => key.startsWith("plug-pending-order-notification-"));
-      for (const key of pendingKeys) {
-        const orderId = key.replace("plug-pending-order-notification-", "");
-        try {
-          const response = await fetch("/api/notifications/order-created", {
-            method: "POST",
-            headers: { Authorization: "Bearer " + idToken, "Content-Type": "application/json" },
-            body: JSON.stringify({ orderId })
-          });
-          if (response.ok) localStorage.removeItem(key);
-        } catch {}
-      }
-    };
 
     const online = () => {
       setOffline(false);
       setReconnecting(true);
       window.setTimeout(() => {
         setReconnecting(false);
-        void retryPendingOrderNotifications();
       }, 1200);
     };
     const off = () => {
@@ -123,13 +78,13 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
 
     window.addEventListener("online", online);
     window.addEventListener("offline", off);
-    const promptWindow = window as Window & { __thePlugInstallPrompt?: Event; __thePlugPwaListenerReady?: boolean };
+    const promptWindow = window as Window & { __africhikoInstallPrompt?: Event; __africhikoPwaListenerReady?: boolean };
     // The browser can emit beforeinstallprompt before React hydrates. Adopt the
     // event captured by the tiny beforeInteractive script before listening normally.
-    promptWindow.__thePlugPwaListenerReady = true;
-    const earlyPrompt = promptWindow.__thePlugInstallPrompt;
+    promptWindow.__africhikoPwaListenerReady = true;
+    const earlyPrompt = promptWindow.__africhikoInstallPrompt;
     if (earlyPrompt) {
-      delete promptWindow.__thePlugInstallPrompt;
+      delete promptWindow.__africhikoInstallPrompt;
       onBeforeInstallPrompt(earlyPrompt);
     }
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
@@ -155,8 +110,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       }
       // Match the working Odi install flow: never let a visible install CTA silently
       // do nothing when this browser has not emitted beforeinstallprompt.
-      const platform = current.ios ? "ios" : current.android ? "android" : "other";
-      setInstallPlatform(platform);
       setInstallHelpOpen(true);
       setInstallState("native");
     };
@@ -166,7 +119,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       setInstallState("hidden");
       clearDismissal();
     };
-    window.addEventListener("theplug-open-install", requestInstall);
+    window.addEventListener("africhiko-open-install", requestInstall);
     window.addEventListener("appinstalled", appInstalled);
 
     let registration: ServiceWorkerRegistration | null = null;
@@ -189,19 +142,16 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     };
 
     void register();
-    void retryPendingOrderNotifications();
-    const stopPendingAuth = onAuthStateChanged(auth, () => { void retryPendingOrderNotifications(); });
     const controllerChange = () => { if (reloadForUpdate.current) window.location.reload(); };
     navigator.serviceWorker?.addEventListener("controllerchange", controllerChange);
 
     return () => {
-      window.removeEventListener("theplug-open-install", requestInstall);
+      window.removeEventListener("africhiko-open-install", requestInstall);
       window.removeEventListener("appinstalled", appInstalled);
       window.removeEventListener("online", online);
       window.removeEventListener("offline", off);
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
       navigator.serviceWorker?.removeEventListener("controllerchange", controllerChange);
-      stopPendingAuth();
     };
   }, [initialEmbedded, initialAndroid]);
 
@@ -239,10 +189,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   async function install() {
     const prompt = installPromptRef.current;
     if (!prompt) {
-      // Native install events are browser-controlled. Show the same explicit
-      // platform-specific fallback as Odi rather than silently returning.
-      const env = environment();
-      setInstallPlatform(env.ios ? "ios" : env.android ? "android" : "other");
+      // A native prompt is browser-controlled and may not be available in this session.
       setInstallHelpOpen(true);
       setInstallState("native");
       return;
@@ -298,34 +245,20 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const installCard = installState === "native" ? (
     <div style={installShellStyle} role="presentation">
       <section className="plugInstallModal" role="dialog" aria-modal="false" aria-labelledby="plug-install-title" aria-describedby="plug-install-message">
-        <div className="plugInstallTop"><span className="plugInstallMark">P</span><span className="plugInstallTag">THE PLUG · BOTSWANA</span><button type="button" className="plugInstallClose" aria-label="Close install prompt" onClick={dismissInstall}>×</button></div>
-        <div className="plugInstallKicker">YOUR SOURCING APP</div>
-        <h2 id="plug-install-title">The Plug.<br/><em>One tap away.</em></h2>
-        <p id="plug-install-message">Install The Plug on your device for a direct home-screen shortcut to your sourcing requests, account and private conversations with Frank.</p>
+        <div className="plugInstallTop"><span className="plugInstallMark">A</span><span className="plugInstallTag">AFRICHIKO · BOTSWANA</span><button type="button" className="plugInstallClose" aria-label="Close install prompt" onClick={dismissInstall}>×</button></div>
+        <div className="plugInstallKicker">WELDING & STEEL FABRICATION</div>
+        <h2 id="plug-install-title">Africhiko.<br/><em>One tap away.</em></h2>
+        <p id="plug-install-message">If your browser provides a native install prompt, this button opens it directly. Installation is optional; Africhiko also works as a website.</p>
         {installHelpOpen ? (
           <div className="plugInstallSteps" role="status" aria-live="polite">
-            {installPlatform === "ios" ? (
-              <>
-                <strong>Add The Plug from Safari</strong>
-                <p>Open this page in <b>Safari</b>, tap <b>Share</b>, choose <b>Add to Home Screen</b>, then tap <b>Add</b>.</p>
-              </>
-            ) : installPlatform === "android" ? (
-              <>
-                <strong>Add The Plug from Chrome</strong>
-                <p>In Chrome, tap the <b>⋮ menu</b> and choose <b>Install app</b> or <b>Add to Home screen</b>. The wording depends on your Chrome version.</p>
-              </>
-            ) : (
-              <>
-                <strong>Install The Plug from your browser</strong>
-                <p>In Chrome or Edge, open the browser menu and choose <b>Install The Plug</b> or <b>Install page as app</b>, if offered.</p>
-              </>
-            )}
-            <button type="button" className="plugInstallPrimary" onClick={dismissInstall}>Got it</button>
+            <strong>Native install prompt unavailable</strong>
+            <p>Your browser has not offered its install prompt in this session. Africhiko still works here as a website. You can try installation again later in a supported browser.</p>
+            <button type="button" className="plugInstallPrimary" onClick={dismissInstall}>Continue on the website</button>
           </div>
         ) : (
           <>
-            <div className="plugInstallModalBenefits"><span><b>01</b><strong>Quick access</strong><small>Open The Plug from your home screen.</small></span><span><b>02</b><strong>Your requests</strong><small>Return to your sourcing journey and account.</small></span><span><b>03</b><strong>Private by account</strong><small>Keep your conversations in your member space.</small></span></div>
-            <button type="button" className="plugInstallPrimary" onClick={() => void install()}>Install The Plug →</button>
+            <div className="plugInstallModalBenefits"><span><b>01</b><strong>Quick access</strong><small>Open Africhiko from your home screen.</small></span><span><b>02</b><strong>Your requests</strong><small>Return to your sourcing journey and account.</small></span><span><b>03</b><strong>Private by account</strong><small>Keep your project information close.</small></span></div>
+            <button type="button" className="plugInstallPrimary" onClick={() => void install()}>Install Africhiko →</button>
             <button type="button" className="plugInstallSecondary" onClick={dismissInstall}>Not now</button>
           </>
         )}
@@ -336,11 +269,11 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     <div style={embeddedInstallStyle} role="alertdialog" aria-modal="true" aria-labelledby="plug-embedded-title" aria-describedby="plug-embedded-message">
       <div className="pwaInstallInfo" style={{...installShellStyle, position: "relative", left: "auto", right: "auto", bottom: "auto", width: "100%", maxWidth: 520, margin: 0}}>
         <div>
-          <strong id="plug-embedded-title"><span aria-hidden="true">🌐 </span>OPEN THE PLUG IN YOUR BROWSER</strong>
-          <span id="plug-embedded-message">{embeddedAndroid ? <>Tap below to open The Plug in Chrome. Then open the <b>⋮ menu</b> and choose <b>Install app</b>.</> : <>The Plug opened inside another app. Use that app’s menu to open this page in your browser, then look for <b>Install app</b> in the browser menu.</>}</span>
+          <strong id="plug-embedded-title"><span aria-hidden="true">🌐 </span>OPEN AFRICHIKO IN YOUR BROWSER</strong>
+          <span id="plug-embedded-message">{embeddedAndroid ? <>Tap below to open Africhiko in Chrome. Then open the <b>⋮ menu</b> and choose <b>Install app</b>.</> : <>Africhiko opened inside another app. Use that app’s menu to open this page in your browser, then look for <b>Install app</b> in the browser menu.</>}</span>
         </div>
         <div className="pwaInstallActions" style={{display:"flex",justifyContent:"flex-end"}}>
-          <button ref={embeddedActionRef} type="button" style={{background:"#0866FF",color:"#fff"}} onClick={openBrowser}>{embeddedAndroid ? "OPEN IN CHROME" : "OPEN IN BROWSER"}</button>
+          <button ref={embeddedActionRef} type="button" style={{background:"#6D28D9",color:"#fff"}} onClick={openBrowser}>{embeddedAndroid ? "OPEN IN CHROME" : "OPEN IN BROWSER"}</button>
         </div>
       </div>
     </div>
@@ -348,7 +281,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
 
   return <>
     {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Saved public finds may still be available on this device. Requests and account changes need a connection.</div>}
-    {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · The Plug is syncing and checking for the latest information.</div>}
+    {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is syncing and checking for the latest information.</div>}
     {!environment().standalone && installState !== "embedded" && (
       <button
         type="button"
@@ -359,15 +292,14 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
             return;
           }
           const env = environment();
-          setInstallPlatform(env.ios ? "ios" : env.android ? "android" : "other");
-          setInstallHelpOpen(true);
+              setInstallHelpOpen(true);
           setInstallState("native");
         }}
       >
-        Install The Plug ↓
+        Install Africhiko ↓
       </button>
     )}
     {installCard}
-    {updateReady && <div className="pwaUpdate" role="status" aria-live="polite"><div><strong>The Plug update is ready</strong><span>Refresh when you are ready.</span></div><button type="button" className="button buttonPrimary" onClick={applyUpdate}>Refresh</button></div>}
+    {updateReady && <div className="pwaUpdate" role="status" aria-live="polite"><div><strong>Africhiko update is ready</strong><span>Refresh when you are ready.</span></div><button type="button" className="button buttonPrimary" onClick={applyUpdate}>Refresh</button></div>}
   </>;
 }
