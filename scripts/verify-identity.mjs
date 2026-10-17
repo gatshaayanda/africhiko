@@ -45,14 +45,17 @@ for(const file of walk(root)){
   }
 }
 
+const identity=JSON.parse(fs.readFileSync(path.join(root,"scripts/identity.config.json"),"utf8"));
 const manifest=JSON.parse(fs.readFileSync(path.join(root,"public/manifest.webmanifest"),"utf8"));
-if(manifest.name!=="Africhiko | Welding & Steel Fabrication") failures.push("public/manifest.webmanifest: wrong name");
-if(manifest.short_name!=="Africhiko") failures.push("public/manifest.webmanifest: wrong short_name");
-if(manifest.theme_color!=="#6d28d9") failures.push("public/manifest.webmanifest: wrong theme color");
-if(!manifest.icons?.some(icon=>icon.src==="/africhiko-mark.svg")) failures.push("public/manifest.webmanifest: canonical Africhiko icon missing");
-if(!fs.existsSync(path.join(root,"public/africhiko-mark.svg"))) failures.push("public/africhiko-mark.svg: missing");
+if(manifest.name!==identity.appName) failures.push("public/manifest.webmanifest: wrong name");
+if(manifest.short_name!==identity.shortName) failures.push("public/manifest.webmanifest: wrong short_name");
+if(manifest.theme_color!==identity.themeColor) failures.push("public/manifest.webmanifest: wrong theme color");
+if(!manifest.icons?.some(icon=>icon.src===identity.canonicalIcon)) failures.push("public/manifest.webmanifest: canonical Africhiko icon missing");
+if(!fs.existsSync(path.join(root,"public",identity.canonicalIcon.replace(/^\//,"")))) failures.push("public/africhiko-mark.svg: missing");
 const sw=fs.readFileSync(path.join(root,"public/sw.js"),"utf8");
-if(!/africhiko-shell-v\d+/.test(sw)) failures.push("public/sw.js: missing Africhiko cache namespace");
+const generated=fs.readFileSync(path.join(root,"src/app/manifest.ts"),"utf8");
+if(!generated.includes(identity.appName)||!generated.includes(identity.themeColor)||!generated.includes(identity.canonicalIcon)) failures.push("src/app/manifest.ts: identity differs from configured identity");
+if(!sw.includes(identity.cachePrefix+"-shell-v")) failures.push("public/sw.js: missing Africhiko cache namespace");
 if(!sw.includes("/africhiko-mark.svg")) failures.push("public/sw.js: canonical icon missing from app shell");
 if(failures.length){
   console.error("IDENTITY VERIFICATION FAILED");
