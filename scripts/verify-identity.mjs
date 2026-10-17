@@ -32,6 +32,7 @@ function walk(dir){
 }
 
 const failures=[];
+if(!fs.existsSync(path.join(root,"src/components/AfrichikoPortal.tsx"))) failures.push("Africhiko customer/admin portal missing");
 for(const file of walk(root)){
   const rel=path.relative(root,file).replaceAll(path.sep,"/");
   if(ignoredFiles.has(rel)) continue;
@@ -43,17 +44,17 @@ for(const file of walk(root)){
 }
 
 const manifest=JSON.parse(fs.readFileSync(path.join(root,"public/manifest.webmanifest"),"utf8"));
-if(manifest.name!=="The Plug | Sneakers & Apparel") failures.push("public/manifest.webmanifest: wrong name");
-if(manifest.short_name!=="The Plug") failures.push("public/manifest.webmanifest: wrong short_name");
-if(manifest.theme_color!=="#0866FF") failures.push("public/manifest.webmanifest: wrong theme color");
-if(!manifest.icons?.some(icon=>icon.src==="/plug-icon.svg")) failures.push("public/manifest.webmanifest: canonical The Plug icon missing");
-if(!fs.existsSync(path.join(root,"public/plug-icon.svg"))) failures.push("public/plug-icon.svg: missing");
+if(manifest.name!=="Africhiko | Welding & Steel Fabrication") failures.push("public/manifest.webmanifest: wrong name");
+if(manifest.short_name!=="Africhiko") failures.push("public/manifest.webmanifest: wrong short_name");
+if(manifest.theme_color!=="#6d28d9") failures.push("public/manifest.webmanifest: wrong theme color");
+if(!manifest.icons?.some(icon=>icon.src==="/africhiko-mark.svg")) failures.push("public/manifest.webmanifest: canonical Africhiko icon missing");
+if(!fs.existsSync(path.join(root,"public/africhiko-mark.svg"))) failures.push("public/africhiko-mark.svg: missing");
 const sw=fs.readFileSync(path.join(root,"public/sw.js"),"utf8");
 if(!/theplug-shell-v\d+/.test(sw)) failures.push("public/sw.js: missing The Plug cache namespace");
-if(!sw.includes("/plug-icon.svg")) failures.push("public/sw.js: canonical icon missing from app shell");
+if(!sw.includes("/africhiko-mark.svg")) failures.push("public/sw.js: canonical icon missing from app shell");
 if(failures.length){
   console.error("IDENTITY VERIFICATION FAILED");
   for(const failure of failures) console.error(" - "+failure);
   process.exit(1);
 }
-console.log("IDENTITY VERIFIED — The Plug identity is isolated from the BOEMO foundation.");
+console.log("IDENTITY VERIFIED — Africhiko manifest, icon and cache identity match.");
