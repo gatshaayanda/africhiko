@@ -45,6 +45,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const [updateReady, setUpdateReady] = useState<ServiceWorker | null>(null);
   const [embeddedAndroid, setEmbeddedAndroid] = useState(initialEmbedded && initialAndroid);
   const [installHelpOpen, setInstallHelpOpen] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
   const embeddedActionRef = useRef<HTMLButtonElement | null>(null);
   const reloadForUpdate = useRef(false);
 
@@ -72,6 +73,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       event.preventDefault();
       const prompt = event as InstallPromptEvent;
       installPromptRef.current = prompt;
+      setCanInstall(true);
       // Retain the one-shot native event for the user's explicit Install click.
       // Do not interrupt page load with a second, custom install screen.
     };
@@ -103,18 +105,11 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         setInstallState("embedded");
         return;
       }
-      if (installPromptRef.current) {
-        // Invoke the browser's native prompt directly from the customer's click.
-        void install();
-        return;
-      }
-      // Match the working Odi install flow: never let a visible install CTA silently
-      // do nothing when this browser has not emitted beforeinstallprompt.
-      setInstallHelpOpen(true);
-      setInstallState("native");
+      if (installPromptRef.current) void install();
     };
     const appInstalled = () => {
       installPromptRef.current = null;
+      setCanInstall(false);
       setInstallHelpOpen(false);
       setInstallState("hidden");
       clearDismissal();
@@ -188,12 +183,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
 
   async function install() {
     const prompt = installPromptRef.current;
-    if (!prompt) {
-      // A native prompt is browser-controlled and may not be available in this session.
-      setInstallHelpOpen(true);
-      setInstallState("native");
-      return;
-    }
+    if (!prompt) return;
     try {
       await prompt.prompt();
       const choice = await prompt.userChoice;
@@ -203,6 +193,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       // generic Chrome-menu instructions when the native prompt fails.
     } finally {
       installPromptRef.current = null;
+      setCanInstall(false);
       setInstallHelpOpen(false);
       setInstallState("hidden");
     }
@@ -282,19 +273,11 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   return <>
     {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Saved public finds may still be available on this device. Requests and account changes need a connection.</div>}
     {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is syncing and checking for the latest information.</div>}
-    {!environment().standalone && installState !== "embedded" && (
+    {canInstall && !environment().standalone && installState !== "embedded" && (
       <button
         type="button"
         className="plugPwaInstallButton"
-        onClick={() => {
-          if (installPromptRef.current) {
-            void install();
-            return;
-          }
-          const env = environment();
-              setInstallHelpOpen(true);
-          setInstallState("native");
-        }}
+        onClick={() => void install()}
       >
         Install Africhiko ↓
       </button>
