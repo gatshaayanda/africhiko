@@ -1,0 +1,1 @@
+This route hosts the Africhiko project enquiry page.
