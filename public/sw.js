@@ -4,30 +4,30 @@ importScripts(
   "/api/firebase/messaging-sw-config"
 );
 
-let thePlugMessaging = null;
+let africhikoMessaging = null;
 try {
   const config = self.__THE_PLUG_FIREBASE_CONFIG__;
   if (config && config.apiKey && config.projectId && config.messagingSenderId && config.appId) {
     firebase.initializeApp(config);
-    thePlugMessaging = firebase.messaging();
-    thePlugMessaging.onBackgroundMessage((payload) => {
+    africhikoMessaging = firebase.messaging();
+    africhikoMessaging.onBackgroundMessage((payload) => {
       // Notification payloads are displayed automatically by Firebase. Only render
       // data-only pushes here to avoid showing the same notification twice.
       if (payload.notification) return;
-      const title = payload.data?.title || "The Plug update";
+      const title = payload.data?.title || "Africhiko update";
       const options = {
-        body: payload.data?.body || "Open The Plug to check your latest account information.",
-        icon: "/plug-icon.svg",
-        badge: "/plug-icon.svg",
+        body: payload.data?.body || "Open Africhiko to check your latest account information.",
+        icon: "/africhiko-mark.svg",
+        badge: "/africhiko-mark.svg",
         data: { link: payload.data?.link || "/account" },
       };
       self.registration.showNotification(title, options);
     });
   } else {
-    console.error("The Plug Firebase Messaging web config is incomplete.");
+    console.error("Africhiko Firebase Messaging web config is incomplete.");
   }
 } catch (error) {
-  console.error("The Plug Firebase Messaging service worker could not initialize.", error);
+  console.error("Africhiko Firebase Messaging service worker could not initialize.", error);
 }
 
 self.addEventListener("notificationclick", (event) => {
@@ -45,12 +45,12 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "theplug-shell-v15";
-const MEDIA_CACHE = "theplug-media-v1";
+const CACHE_VERSION = "africhiko-shell-v1";
+const MEDIA_CACHE = "africhiko-media-v1";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
 const PUBLIC_PAGE_LIMIT = 12;
-const APP_SHELL = ["/", "/request", "/offline", "/plug-icon.svg", "/manifest.webmanifest"];
+const APP_SHELL = ["/", "/services", "/basket", "/enquiry", "/account", "/offline", "/africhiko-mark.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
@@ -91,7 +91,7 @@ self.addEventListener("message", event => {
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => (key.startsWith("theplug-shell-") && key !== SHELL_CACHE) || (key.startsWith("theplug-media-") && key !== MEDIA_CACHE)).map(key => caches.delete(key)));
+    await Promise.all(keys.filter(key => (key.startsWith("africhiko-shell-") && key !== SHELL_CACHE) || (key.startsWith("africhiko-media-") && key !== MEDIA_CACHE)).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
@@ -105,7 +105,7 @@ self.addEventListener("fetch", event => {
   const isNavigation = request.mode === "navigate" || request.headers.get("accept")?.includes("text/html");
   const isPrivate = /^\/(?:account|requests|orders|admin|invite)(?:\/|$)/.test(url.pathname);
 
-  // Private/member routes are network-only. Never serve a cached account/request page as
+  // Private/member routes are network-only. Never serve a cached account/enquiry page as
   // a substitute for a different route or when the authenticated page cannot be fetched.
   if (isNavigation && isPrivate) {
     event.respondWith(fetch(request).catch(() => caches.open(SHELL_CACHE).then(cache => cache.match("/offline")).then(response => response || Response.error())));
