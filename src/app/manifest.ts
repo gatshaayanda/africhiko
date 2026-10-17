@@ -24,9 +24,9 @@ export default function manifest(): MetadataRoute.Manifest {
   prefer_related_applications:false,
   icons,
   shortcuts:[
-   {name:"Browse services",short_name:"Services",description:"Browse Africhiko fabrication services",url:"/services",icons:[icons[0]]},
-   {name:"Project enquiry",short_name:"Enquiry",description:"Describe a fabrication project",url:"/enquiry",icons:[icons[0]]},
-   {name:"Project basket",short_name:"Basket",description:"Review selected fabrication services",url:"/basket",icons:[icons[0]]}
+   {name:"Browse services",short_name:"Services",description:"Browse Africhiko fabrication services",url:"/services",icons:[icons[0]!]},
+   {name:"Project enquiry",short_name:"Enquiry",description:"Describe a fabrication project",url:"/enquiry",icons:[icons[0]!]},
+   {name:"Project basket",short_name:"Basket",description:"Review selected fabrication services",url:"/basket",icons:[icons[0]!]}
   ]
  };
 }
