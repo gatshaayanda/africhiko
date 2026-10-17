@@ -84,9 +84,9 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       if (!user) return;
       const idToken = await getIdToken(user).catch(() => null);
       if (!idToken) return;
-      const pendingKeys = Object.keys(localStorage).filter(key => key.startsWith("plug-pending-order-notification-"));
+      const pendingKeys = Object.keys(localStorage).filter(key => key.startsWith("africhiko-pending-notification-"));
       for (const key of pendingKeys) {
-        const orderId = key.replace("plug-pending-order-notification-", "");
+        const orderId = key.replace("africhiko-pending-notification-", "");
         try {
           const response = await fetch("/api/notifications/order-created", {
             method: "POST",
@@ -298,33 +298,19 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const installCard = installState === "native" ? (
     <div style={installShellStyle} role="presentation">
       <section className="plugInstallModal" role="dialog" aria-modal="false" aria-labelledby="plug-install-title" aria-describedby="plug-install-message">
-        <div className="plugInstallTop"><span className="plugInstallMark">P</span><span className="plugInstallTag">THE PLUG · BOTSWANA</span><button type="button" className="plugInstallClose" aria-label="Close install prompt" onClick={dismissInstall}>×</button></div>
+        <div className="plugInstallTop"><span className="plugInstallMark">A</span><span className="plugInstallTag">AFRICHIKO · BOTSWANA</span><button type="button" className="plugInstallClose" aria-label="Close install prompt" onClick={dismissInstall}>×</button></div>
         <div className="plugInstallKicker">WELDING & STEEL FABRICATION</div>
         <h2 id="plug-install-title">Africhiko.<br/><em>One tap away.</em></h2>
-        <p id="plug-install-message">Install Africhiko on your device for a direct home-screen shortcut to your project enquiries and direct contact with Africhiko.</p>
+        <p id="plug-install-message">If your browser provides a native install prompt, this button opens it directly. Installation is optional; Africhiko also works as a website.</p>
         {installHelpOpen ? (
           <div className="plugInstallSteps" role="status" aria-live="polite">
-            {installPlatform === "ios" ? (
-              <>
-                <strong>Add Africhiko from Safari</strong>
-                <p>Open this page in <b>Safari</b>, tap <b>Share</b>, choose <b>Add to Home Screen</b>, then tap <b>Add</b>.</p>
-              </>
-            ) : installPlatform === "android" ? (
-              <>
-                <strong>Add Africhiko from Chrome</strong>
-                <p>In Chrome, tap the <b>⋮ menu</b> and choose <b>Install app</b> or <b>Add to Home screen</b>. The wording depends on your Chrome version.</p>
-              </>
-            ) : (
-              <>
-                <strong>Install Africhiko from your browser</strong>
-                <p>In Chrome or Edge, open the browser menu and choose <b>Install Africhiko</b> or <b>Install page as app</b>, if offered.</p>
-              </>
-            )}
-            <button type="button" className="plugInstallPrimary" onClick={dismissInstall}>Got it</button>
+            <strong>Native install prompt unavailable</strong>
+            <p>Your browser has not offered its install prompt in this session. Africhiko still works here as a website. You can try installation again later in a supported browser.</p>
+            <button type="button" className="plugInstallPrimary" onClick={dismissInstall}>Continue on the website</button>
           </div>
         ) : (
           <>
-            <div className="plugInstallModalBenefits"><span><b>01</b><strong>Quick access</strong><small>Open Africhiko from your home screen.</small></span><span><b>02</b><strong>Your requests</strong><small>Return to your sourcing journey and account.</small></span><span><b>03</b><strong>Private by account</strong><small>Keep your conversations in your member space.</small></span></div>
+            <div className="plugInstallModalBenefits"><span><b>01</b><strong>Quick access</strong><small>Open Africhiko from your home screen.</small></span><span><b>02</b><strong>Your requests</strong><small>Return to your sourcing journey and account.</small></span><span><b>03</b><strong>Private by account</strong><small>Keep your project information close.</small></span></div>
             <button type="button" className="plugInstallPrimary" onClick={() => void install()}>Install Africhiko →</button>
             <button type="button" className="plugInstallSecondary" onClick={dismissInstall}>Not now</button>
           </>
@@ -336,7 +322,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     <div style={embeddedInstallStyle} role="alertdialog" aria-modal="true" aria-labelledby="plug-embedded-title" aria-describedby="plug-embedded-message">
       <div className="pwaInstallInfo" style={{...installShellStyle, position: "relative", left: "auto", right: "auto", bottom: "auto", width: "100%", maxWidth: 520, margin: 0}}>
         <div>
-          <strong id="plug-embedded-title"><span aria-hidden="true">🌐 </span>OPEN THE PLUG IN YOUR BROWSER</strong>
+          <strong id="plug-embedded-title"><span aria-hidden="true">🌐 </span>OPEN AFRICHIKO IN YOUR BROWSER</strong>
           <span id="plug-embedded-message">{embeddedAndroid ? <>Tap below to open Africhiko in Chrome. Then open the <b>⋮ menu</b> and choose <b>Install app</b>.</> : <>Africhiko opened inside another app. Use that app’s menu to open this page in your browser, then look for <b>Install app</b> in the browser menu.</>}</span>
         </div>
         <div className="pwaInstallActions" style={{display:"flex",justifyContent:"flex-end"}}>
