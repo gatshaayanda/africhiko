@@ -189,9 +189,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   async function install() {
     const prompt = installPromptRef.current;
     if (!prompt) {
-      // Native install events are browser-controlled. Show the same explicit
-      // platform-specific fallback as Odi rather than silently returning.
-      const env = environment();
+      // A native prompt is browser-controlled and may not be available in this session.
       setInstallHelpOpen(true);
       setInstallState("native");
       return;
