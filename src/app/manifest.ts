@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "Africhiko | Welding & Steel Fabrication",
     short_name: "Africhiko",
-    description: "Install Africhiko for one-tap access to welding and steel fabrication in Botswana. Request a quotation for your project.",
+    description: "Welding and steel fabrication in Botswana. Describe your project and request a quotation.",
     start_url: "/",
     scope: "/",
     display: "standalone",
@@ -23,22 +23,8 @@ export default function manifest(): MetadataRoute.Manifest {
         name: "Request a quotation",
         short_name: "Request",
         description: "Describe your welding or fabrication project",
-        url: "/request",
+        url: "/#enquire",
         icons: [{ src: "/africhiko-icon.svg", sizes: "any", type: "image/svg+xml" }]
-      },
-      {
-        name: "My enquiries",
-        short_name: "Orders",
-        description: "Review your project enquiries",
-        url: "/account",
-        icons: [{ src: "/africhiko-icon.svg", sizes: "192x192", type: "image/png" }]
-      },
-      {
-        name: "Africhiko admin",
-        short_name: "Admin",
-        description: "Open protected business control",
-        url: "/admin",
-        icons: [{ src: "/africhiko-icon.svg", sizes: "192x192", type: "image/png" }]
       }
     ]
   };
