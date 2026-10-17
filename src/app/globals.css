@@ -26,3 +26,71 @@
 @media(prefers-reduced-motion:reduce){.af-media-tile video,.af-media-fallback{transition:none}}
 
 .af-media-tile>.af-media-image{opacity:1;transition:none}
+
+
+/* Africhiko visual refinement — layout and PWA behavior remain unchanged. */
+.af-hero{
+  position:relative;
+  isolation:isolate;
+  border-bottom:1px solid var(--line);
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.96),rgba(246,242,252,.93)),
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(59,23,109,.045) 32px 33px),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(59,23,109,.045) 32px 33px);
+}
+.af-hero>div:first-child{max-width:650px}
+.af-hero-visual{border:1px solid #ffffff30;box-shadow:0 28px 72px #21152f38,0 4px 0 #6d28d922}
+.af-visual-caption{backdrop-filter:blur(5px)}
+.af-service-card{
+  overflow:hidden;
+  border:1px solid #e2dce9;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 7px 24px #21152f0b;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.af-service-card:hover{transform:translateY(-3px);border-color:#b7a2d8;box-shadow:0 15px 34px #21152f16}
+.af-service-copy{padding:22px}
+.af-card-meta{align-items:flex-start;gap:10px}
+.af-card-meta b{color:var(--violet-dark);text-align:right}
+.af-card-actions{gap:12px}
+.af-media-strip{border-bottom:1px solid var(--line)}
+.af-media-grid{align-items:stretch;gap:18px}
+.af-media-tile{min-height:320px;border:1px solid #38313f;border-radius:14px;box-shadow:0 14px 34px #17151d18;isolation:isolate}
+.af-media-tile video{background:#17151d}
+.af-media-tile>span{letter-spacing:.13em}
+.af-media-tile>small{max-width:100%;padding-right:100px;line-height:1.5}
+.af-media-toggle{bottom:18px}
+.af-search-row input,.af-form input:not([type=file]),.af-form select,.af-form textarea,.af-admin-enquiry select,.af-admin-enquiry textarea{
+  min-height:46px;
+  border:1px solid #bdb4ca;
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+}
+.af-search-row input{padding:12px 14px}
+.af-form input:not([type=file]),.af-form select,.af-form textarea{padding:12px 13px}
+.af-form input::placeholder,.af-form textarea::placeholder,.af-search-row input::placeholder{color:#696273;opacity:1}
+.af-form input:focus-visible,.af-form select:focus-visible,.af-form textarea:focus-visible,.af-search-row input:focus-visible{border-color:var(--violet);outline:3px solid #087f8c;outline-offset:2px}
+.af-category-chips button{min-height:40px;padding:9px 13px;border:1px solid #c7bfd2;border-radius:999px;background:#fff;color:#30283c;font-weight:750}
+.af-category-chips button.active{border-color:var(--violet-dark);background:var(--violet-dark);color:#fff}
+.af-custom-band{border:1px solid #d9c9ee;background:linear-gradient(115deg,#f0e8fb,#e8f8fa)}
+.af-process{background:linear-gradient(125deg,#17151d,#2b2335);border-top:4px solid var(--cyan)}
+.af-footer{border-top:1px solid #3b3544}
+.af-button{box-shadow:0 4px 12px #3b176d16}
+.af-button:focus-visible,.af-category-chips button:focus-visible,.af-quantity button:focus-visible{outline:3px solid #087f8c;outline-offset:3px}
+@media(max-width:900px){
+  .af-media-tile{min-height:285px}
+}
+@media(max-width:620px){
+  .af-service-copy{padding:18px}
+  .af-media-grid{gap:14px}
+  .af-media-tile{min-height:245px}
+  .af-media-toggle{right:12px;bottom:14px}
+  .af-media-tile>small{padding-right:95px}
+  .af-custom-band{border-radius:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .af-service-card:hover{transform:none}
+  .af-service-card{transition:none}
+}
