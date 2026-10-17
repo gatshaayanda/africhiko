@@ -1,57 +1,31 @@
-# The Plug
+# Africhiko
 
-**The Plug — Sneakers & Apparel Sourcing**
+**Africhiko Proprietary Limited — welding and steel fabrication in Gaborone, Botswana.**
 
-Mobile-first sourcing and customer operations PWA for sneaker and apparel requests in Botswana.
+This repository starts from the mandatory `gatshaayanda/the-plug` foundation and is being adapted into Africhiko's service storefront and project-enquiry workflow. The supplied company details are owner-provided; they have not been independently verified.
 
-## Customer flow
-Home → Catalogue → Request a product → Request tracking → Customer account
+## Customer journey
+Discover services → search/filter → add services to a basket → describe project and attach a reference → review the enquiry summary → submit for review → follow up. Customers may browse and submit a first enquiry without creating an account. A request is not a quotation, accepted quote, payment or confirmed job.
 
-Customers can browse available products, ask The Plug to source a specific sneaker or apparel item, follow request progress, and message the business.
-
-## Operations
-/admin is protected by Firebase Authentication plus admins/{uid} with role owner/staff.
+## Admin
+`/admin` requires Firebase Authentication and a matching `admins/{uid}` record with role `owner` or `staff`. Authorized staff can manage service descriptions/prices and review/update enquiry status. Provision admin records only through a trusted Firebase Console/Admin SDK process; the client cannot grant its own role.
 
 ## Development
-npm install
+```bash
+npm ci
 npm run dev
-
-Quality gates:
+npm run verify:identity
+npm run verify:clone-readiness
 npx tsc --noEmit
 npm run lint
-npm run verify:identity
 npm run build
+git diff --check
+```
 
-See AGENTS.md for the implementation contract.
+Copy `.env.example` to an ignored local `.env.local` and supply the dedicated Africhiko Firebase web configuration. Do not commit environment files. Set `NEXT_PUBLIC_BASE_URL` to the actual canonical URL before a deployment. Firebase rules in this repository are source only; deploying rules is a separate authorized action.
 
-## Notifications
-Customer and operations notifications use Firebase Cloud Messaging. Notification permission is requested only from the user's explicit settings action.
+## PWA
+Website use does not require installation. The app retains a native `beforeinstallprompt` path where supported, a browser handoff for embedded browsers, platform guidance when no native prompt is available, and a distinct Africhiko service-worker/cache namespace. The offline page explicitly states that enquiries are not sent offline. Real-device install/offline behavior remains to be tested.
 
-## Customer journey analytics
-
-The admin dashboard records server-side journey events for request-flow entry, account confirmation, request submission, sharing and invites, notification choices, and external catalogue/Instagram visits. Admin activity is excluded from customer journey counts. Event access is governed by Firestore rules; review the rules and analytics route together when changing event names or payloads.
-
-## Storefront launch QA
-
-Run this checklist against the exact preview commit before merging or announcing a public launch.
-
-### Customer
-- [ ] Open the home page on mobile and desktop; confirm published, in-date public finds/offers render with their images and prices.
-- [ ] Save a find or offer, open Saved Finds, refresh, and confirm the snapshot remains available.
-- [ ] Remove a saved item and confirm it disappears from Saved Finds; confirm saving it again works.
-- [ ] Start a request from a product card and confirm the product title, listed-price snapshot, and item type carry into the form and submitted private request.
-- [ ] Confirm request copy makes clear that submitting is not payment, a stock reservation, or a confirmed sale.
-- [ ] Confirm a request is visible in the customer tracking flow and the admin queue after submission.
-- [ ] Test source-request entry, navigation, install/PWA behavior, and browser back on a phone-sized viewport.
-
-### Admin
-- [ ] Sign in as an authorized admin; confirm a non-admin account cannot access admin data or write storefront content.
-- [ ] Create a draft find and a draft offer with category, price, image, and display order; confirm drafts do not appear publicly.
-- [ ] Edit the title, price, category, image, audience, status, and active dates; verify each saved value after refresh.
-- [ ] Publish an in-date public item and confirm it appears on the storefront; pause/archive/delete it and verify the expected public behavior.
-- [ ] Confirm image upload, saved image URL, preview, replacement, and removal work with the configured Firebase Storage rules.
-- [ ] Open journey analytics and compare 7/30/90-day and all-time views; verify product interest, bookmarks, and monthly demand signals.
-- [ ] Treat analytics as interaction signals, not unique people, paid orders, confirmed sales, or proof of stock.
-
-### Release boundary
-Saved Finds are stored in the current browser/device and are not synced across devices. Product requests are purchase intent only; Frank confirms availability, final price, and payment directly. Do not describe this release as online payment checkout.
+## Media
+The three viewport-aware media slots are wired to the supplied `/videos/gear.mp4`, `/videos/outside.mp4` and `/videos/enter.mp4` assets. They fall back to CSS illustrations if a video is unavailable, respect reduced-motion preferences, and can be paused. Verify the media content and approvals before public launch.

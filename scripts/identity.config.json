@@ -1,0 +1,18 @@
+{
+  "appName": "Africhiko | Welding & Steel Fabrication",
+  "shortName": "Africhiko",
+  "themeColor": "#6d28d9",
+  "canonicalIcon": "/africhiko-mark.svg",
+  "cachePrefix": "africhiko",
+  "forbiddenSourceIdentity": [
+    "The Plug",
+    "the-plug-pearl.vercel.app",
+    "plug-icon.svg",
+    "Frank",
+    "sneakers",
+    "apparel"
+  ],
+  "allowedLegacyStrings": [
+    "name.startsWith(\"the\" + \"plug-\")"
+  ]
+}

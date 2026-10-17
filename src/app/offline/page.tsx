@@ -1,24 +1,2 @@
 import Link from "next/link";
-
-export default function OfflinePage() {
-  return (
-    <main className="orderPage">
-      <div className="orderWrap">
-        <div className="orderHeader">
-          <Link href="/" className="logo"><span className="logoMark">P</span><span>The Plug</span></Link>
-        </div>
-        <section className="orderCard confirm">
-          <div className="confirmIcon">📶</div>
-          <span className="kicker">Offline mode</span>
-          <h1>The Plug is still here.</h1>
-          <p>The app shell and public finds you have already loaded may remain available on this device. Saved information can be out of date.</p>
-          <p>Prices, stock and offers can change while you are offline. Requests, account updates and messages are not sent until a connection is available and The Plug confirms the action.</p>
-          <div className="actions centered">
-            <Link className="button buttonPrimary" href="/request">Open request</Link>
-            <Link className="button buttonLight" href="/">Open The Plug</Link>
-          </div>
-        </section>
-      </div>
-    </main>
-  );
-}
+export default function OfflinePage(){return <main className="af-site"><header className="af-header"><Link href="/" className="af-brand"><span className="af-brand-mark">A</span><span><strong>AFRICHIKO</strong><small>WELDING · FABRICATION</small></span></Link></header><section className="af-page-intro af-compact"><p className="af-eyebrow">OFFLINE MODE</p><h1>Still here.<br/><em>Not yet sent.</em></h1><p>Cached public pages may remain available on this device. Service details and prices may be out of date. Enquiries, account changes and reference uploads are not sent until the site confirms a successful save.</p><Link className="af-button" href="/">Return to Africhiko ↗</Link></section></main>}
