@@ -28,4 +28,4 @@ Copy `.env.example` to an ignored local `.env.local` and supply the dedicated Af
 Website use does not require installation. The app retains a native `beforeinstallprompt` path where supported, a browser handoff for embedded browsers, platform guidance when no native prompt is available, and a distinct Africhiko service-worker/cache namespace. The offline page explicitly states that enquiries are not sent offline. Real-device install/offline behavior remains to be tested.
 
 ## Media
-The three workshop tiles currently use CSS concept illustrations. Replace them with approved Africhiko photographs/videos when supplied; no placeholder image is represented as a real client project.
+The three viewport-aware media slots are wired to the supplied `/videos/gear.mp4`, `/videos/outside.mp4` and `/videos/enter.mp4` assets. They fall back to CSS illustrations if a video is unavailable, respect reduced-motion preferences, and can be paused. Verify the media content and approvals before public launch.
