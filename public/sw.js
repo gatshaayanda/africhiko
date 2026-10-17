@@ -1,6 +1,6 @@
-const SHELL_CACHE = "africhiko-shell-v1";
-const MEDIA_CACHE = "africhiko-media-v1";
-const APP_SHELL = ["/", "/services", "/offline", "/africhiko-mark.svg", "/manifest.webmanifest"];
+const SHELL_CACHE = "africhiko-shell-v2";
+const MEDIA_CACHE = "africhiko-media-v2";
+const APP_SHELL = ["/", "/services", "/offline", "/africhiko-mark.svg", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/apple-touch-icon.png"];
 const SHELL_LIMIT = 100;
 self.addEventListener("install", event => event.waitUntil(precacheShell()));
 async function precacheShell(){
