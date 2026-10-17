@@ -1,1 +1,0 @@
-This route hosts the Africhiko project basket page.
