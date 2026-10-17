@@ -32,6 +32,8 @@ function walk(dir){
 }
 
 const failures=[];
+const identityFiles=["src/app/layout.tsx","src/app/manifest.ts","public/manifest.webmanifest","public/sw.js","src/app/offline/page.tsx"];
+for(const rel of identityFiles){const text=fs.readFileSync(path.join(root,rel),"utf8");if(/The Plug|the-plug|theplug|plug-icon|Sneakers & Apparel|Frank/i.test(text))failures.push(rel+": inherited customer-facing identity remains");}
 if(!fs.existsSync(path.join(root,"src/components/AfrichikoPortal.tsx"))) failures.push("Africhiko customer/admin portal missing");
 for(const file of walk(root)){
   const rel=path.relative(root,file).replaceAll(path.sep,"/");
