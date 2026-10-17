@@ -52,7 +52,7 @@ if(manifest.theme_color!=="#6d28d9") failures.push("public/manifest.webmanifest:
 if(!manifest.icons?.some(icon=>icon.src==="/africhiko-mark.svg")) failures.push("public/manifest.webmanifest: canonical Africhiko icon missing");
 if(!fs.existsSync(path.join(root,"public/africhiko-mark.svg"))) failures.push("public/africhiko-mark.svg: missing");
 const sw=fs.readFileSync(path.join(root,"public/sw.js"),"utf8");
-if(!/theplug-shell-v\d+/.test(sw)) failures.push("public/sw.js: missing The Plug cache namespace");
+if(!/africhiko-shell-v\d+/.test(sw)) failures.push("public/sw.js: missing Africhiko cache namespace");
 if(!sw.includes("/africhiko-mark.svg")) failures.push("public/sw.js: canonical icon missing from app shell");
 if(failures.length){
   console.error("IDENTITY VERIFICATION FAILED");
