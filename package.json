@@ -7,7 +7,8 @@
     "build": "npm run verify:identity && next build",
     "start": "next start",
     "lint": "eslint .",
-    "verify:identity": "node scripts/verify-identity.mjs"
+    "verify:identity": "node scripts/verify-identity.mjs",
+    "prebuild": "node scripts/generate-pwa-icons.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
