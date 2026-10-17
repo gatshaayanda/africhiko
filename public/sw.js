@@ -66,7 +66,7 @@ self.addEventListener("fetch", event => {
         return response;
       } catch {
         const cache = await caches.open(SHELL_CACHE);
-        return (await cache.match(url.pathname)) || (await cache.match("/offline")) || (await cache.match("/"));
+        return (await cache.match(url.pathname)) || (await cache.match("/offline")) || (await cache.match("/")) || Response.error();
       }
     })());
     return;
