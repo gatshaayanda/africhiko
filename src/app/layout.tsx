@@ -17,10 +17,7 @@ export default async function RootLayout({children}:{children:React.ReactNode}){
 (function () {
   window.addEventListener("beforeinstallprompt", function (event) {
     var standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-    if (standalone) return;
-    // Always retain the event, even if React is mounting. The component listener
-    // may not have attached yet; skipping capture during that window loses the
-    // only native prompt event for this page session.
+    if (standalone || window.__africhikoPwaListenerReady === true) return;
     event.preventDefault();
     window.__africhikoInstallPrompt = event;
   });
