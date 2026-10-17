@@ -3,3 +3,8 @@
 /* Persistent installation entry point, matching the working Odi PWA pattern. */
 .plugPwaInstallButton{position:fixed;left:16px;right:16px;bottom:16px;z-index:999;max-width:720px;margin:0 auto;border:1px solid #0866FF;border-radius:14px;padding:14px 17px;background:#0866FF;color:#fff;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(8,102,255,.24)}
 @media(min-width:700px){.plugPwaInstallButton{left:auto;right:18px;bottom:18px;width:auto}}
+
+/* Africhiko brand styling for the preserved native install CTA. */
+.plugPwaInstallButton{background:#6d28d9;border-color:#6d28d9;box-shadow:0 8px 24px rgba(59,23,109,.26)}
+.plugPwaInstallButton:hover{background:#3b176d;border-color:#3b176d}
+.plugPwaInstallButton:focus-visible{outline:3px solid #8be9f3;outline-offset:3px}
