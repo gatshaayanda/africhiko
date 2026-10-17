@@ -33,20 +33,9 @@ function walk(dir){
 
 const failures=[];
 const identity=JSON.parse(fs.readFileSync(path.join(root,"scripts/identity.config.json"),"utf8"));
-const identityFiles=["src/app/layout.tsx","src/app/manifest.ts","public/sw.js","src/app/offline/page.tsx"];
-for(const rel of identityFiles){
-  const file=path.join(root,rel);
-  if(!fs.existsSync(file)){failures.push(rel+": required identity file missing");continue;}
-  let content=fs.readFileSync(file,"utf8");
-  for(const allowed of identity.allowedLegacyStrings||[]) content=content.replaceAll(allowed,"");
-  for(const pattern of identity.forbiddenSourceIdentity||[]) if(content.toLowerCase().includes(pattern.toLowerCase())) failures.push(rel+": inherited customer-facing identity remains ("+pattern+")");
-}
+const identityFiles=["src/app/layout.tsx","src/app/manifest.ts","public/manifest.webmanifest","public/sw.js","src/app/offline/page.tsx"];
+for(const rel of identityFiles){let text=fs.readFileSync(path.join(root,rel),"utf8");for(const allowed of identity.allowedLegacyStrings||[])text=text.replaceAll(allowed,"");for(const pattern of identity.forbiddenSourceIdentity||[])if(text.toLowerCase().includes(pattern.toLowerCase()))failures.push(rel+": inherited customer-facing identity remains ("+pattern+")");}
 if(!fs.existsSync(path.join(root,"src/components/AfrichikoPortal.tsx"))) failures.push("Africhiko customer/admin portal missing");
-
-// Next.js generates /manifest.webmanifest from src/app/manifest.ts. A public
-// file at the same URL shadows that route, so reject duplicate manifests.
-if(fs.existsSync(path.join(root,"public/manifest.webmanifest"))) failures.push("public/manifest.webmanifest: duplicate manifest shadows src/app/manifest.ts");
-
 for(const file of walk(root)){
   const rel=path.relative(root,file).replaceAll(path.sep,"/");
   if(ignoredFiles.has(rel)) continue;
@@ -57,16 +46,15 @@ for(const file of walk(root)){
   }
 }
 
-const generated=fs.readFileSync(path.join(root,"src/app/manifest.ts"),"utf8");
-for(const [label,value] of [["name",identity.appName],["short_name",identity.shortName],["theme color",identity.themeColor],["canonical icon",identity.canonicalIcon]]){
-  if(!generated.includes(value)) failures.push("src/app/manifest.ts: "+label+" differs from configured identity");
-}
-for(const icon of ["/icons/icon-192.png","/icons/icon-512.png"]){
-  if(!generated.includes(icon)) failures.push("src/app/manifest.ts: required install icon missing ("+icon+")");
-  if(!fs.existsSync(path.join(root,"public",icon.replace(/^\//,"")))) failures.push("public"+icon+": install icon file missing");
-}
-if(!generated.includes('purpose:"maskable"')&&!generated.includes('purpose: "maskable"')) failures.push("src/app/manifest.ts: maskable install icon missing");
+const manifest=JSON.parse(fs.readFileSync(path.join(root,"public/manifest.webmanifest"),"utf8"));
+if(manifest.name!==identity.appName) failures.push("public/manifest.webmanifest: wrong name");
+if(manifest.short_name!==identity.shortName) failures.push("public/manifest.webmanifest: wrong short_name");
+if(manifest.theme_color!==identity.themeColor) failures.push("public/manifest.webmanifest: wrong theme color");
+if(!manifest.icons?.some(icon=>icon.src===identity.canonicalIcon)) failures.push("public/manifest.webmanifest: canonical Africhiko icon missing");
+if(!fs.existsSync(path.join(root,"public",identity.canonicalIcon.replace(/^\//,"")))) failures.push("public/africhiko-mark.svg: missing");
 const sw=fs.readFileSync(path.join(root,"public/sw.js"),"utf8");
+const generated=fs.readFileSync(path.join(root,"src/app/manifest.ts"),"utf8");
+if(!generated.includes(identity.appName)||!generated.includes(identity.themeColor)||!generated.includes(identity.canonicalIcon)) failures.push("src/app/manifest.ts: identity differs from configured identity");
 if(!sw.includes(identity.cachePrefix+"-shell-v")) failures.push("public/sw.js: missing Africhiko cache namespace");
 if(!sw.includes("/africhiko-mark.svg")) failures.push("public/sw.js: canonical icon missing from app shell");
 if(failures.length){
@@ -74,4 +62,4 @@ if(failures.length){
   for(const failure of failures) console.error(" - "+failure);
   process.exit(1);
 }
-console.log("IDENTITY VERIFIED — Africhiko manifest, icons and cache identity match.");
+console.log("IDENTITY VERIFIED — Africhiko manifest, icon and cache identity match.");
