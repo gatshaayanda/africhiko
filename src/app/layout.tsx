@@ -8,7 +8,7 @@ import "./globals.css"; import "./pwa.css";
 const siteUrl=process.env.NEXT_PUBLIC_BASE_URL||"https://africhiko.vercel.app";
 const EMBEDDED_BROWSER_PATTERN=/WhatsApp|Instagram|FBAN|FBAV|Messenger|Line[/]|Twitter|TikTok|Snapchat/i;
 export const metadata:Metadata={metadataBase:new URL(siteUrl),title:{default:"Africhiko | Welding & Steel Fabrication",template:"%s | Africhiko"},description:"Install Africhiko for one-tap access to welding and steel fabrication in Botswana.",applicationName:"Africhiko",keywords:["Africhiko","welding","steel fabrication","Botswana","custom metalwork"],alternates:{canonical:"/"},openGraph:{type:"website",url:siteUrl,siteName:"Africhiko",title:"Africhiko | Welding & Steel Fabrication",description:"Built for strength. Made for your project."},twitter:{card:"summary",title:"Africhiko | Welding & Steel Fabrication",description:"Built for strength. Made for your project."},icons:{icon:"/africhiko-icon.svg",apple:"/africhiko-icon.svg"},manifest:"/manifest.webmanifest",appleWebApp:{capable:true,title:"Africhiko",statusBarStyle:"default"}};
-export const viewport:Viewport={themeColor:"#0866FF",colorScheme:"light"};
+export const viewport:Viewport={themeColor:"#6D28D9",colorScheme:"light"};
 export default async function RootLayout({children}:{children:React.ReactNode}){
  const requestHeaders=await headers();
  const userAgent=requestHeaders.get("user-agent")||"";
@@ -19,7 +19,7 @@ export default async function RootLayout({children}:{children:React.ReactNode}){
    || (/Android/i.test(userAgent)&&/\bwv\b/i.test(userAgent))
    || /^(com\.whatsapp|com\.instagram\.android|com\.facebook\.katana|com\.facebook\.lite|com\.facebook\.orca)$/i.test(requestedWith);
  const android=/Android/i.test(userAgent);
- return <html lang="en"><body style={embedded?{overflow:"hidden"}:undefined}><Script id="theafrichiko-early-install-capture" strategy="beforeInteractive">{`
+ return <html lang="en"><body style={embedded?{overflow:"hidden"}:undefined}><Script id="africhiko-early-install-capture" strategy="beforeInteractive">{`
 (function () {
   window.addEventListener("beforeinstallprompt", function (event) {
     var standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
