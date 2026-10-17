@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "verify:identity": "node scripts/verify-identity.mjs",
-    "prebuild": "node scripts/generate-pwa-icons.mjs"
+    "prebuild": "node ./scripts/generate-pwa-icons.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
