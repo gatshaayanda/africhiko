@@ -32,8 +32,9 @@ function walk(dir){
 }
 
 const failures=[];
+const identity=JSON.parse(fs.readFileSync(path.join(root,"scripts/identity.config.json"),"utf8"));
 const identityFiles=["src/app/layout.tsx","src/app/manifest.ts","public/manifest.webmanifest","public/sw.js","src/app/offline/page.tsx"];
-for(const rel of identityFiles){let text=fs.readFileSync(path.join(root,rel),"utf8");if(rel==="public/sw.js")text=text.replaceAll('name.startsWith("theplug-")','name.startsWith("legacy-cache-")');if(/The Plug|the-plug|theplug|plug-icon|Sneakers & Apparel|Frank/i.test(text))failures.push(rel+": inherited customer-facing identity remains");}
+for(const rel of identityFiles){let text=fs.readFileSync(path.join(root,rel),"utf8");for(const allowed of identity.allowedLegacyStrings||[])text=text.replaceAll(allowed,"");for(const pattern of identity.forbiddenSourceIdentity||[])if(text.toLowerCase().includes(pattern.toLowerCase()))failures.push(rel+": inherited customer-facing identity remains ("+pattern+")");}
 if(!fs.existsSync(path.join(root,"src/components/AfrichikoPortal.tsx"))) failures.push("Africhiko customer/admin portal missing");
 for(const file of walk(root)){
   const rel=path.relative(root,file).replaceAll(path.sep,"/");
@@ -45,7 +46,6 @@ for(const file of walk(root)){
   }
 }
 
-const identity=JSON.parse(fs.readFileSync(path.join(root,"scripts/identity.config.json"),"utf8"));
 const manifest=JSON.parse(fs.readFileSync(path.join(root,"public/manifest.webmanifest"),"utf8"));
 if(manifest.name!==identity.appName) failures.push("public/manifest.webmanifest: wrong name");
 if(manifest.short_name!==identity.shortName) failures.push("public/manifest.webmanifest: wrong short_name");
