@@ -21,6 +21,7 @@ This map describes the target application after the initial The Plug foundation 
 - `src/components/AfrichikoPortal.tsx`: starter service taxonomy is derived from supplied company offerings and carries no invented prices. The public fallback is for configuration-free local preview; with configured Firebase, the active Firestore catalogue is authoritative.
 
 ## C — Data and security
+- `middleware.ts`: allowlists the new Africhiko routes, returns 404 for inherited `/api/*` endpoints, and blocks stale Plug raster icons.
 - `src/lib/firebase/client.ts`: Firebase client initialization from `NEXT_PUBLIC_FIREBASE_*`; build placeholders do not count as a configured live project.
 - `firestore.rules`: default-deny; active services are public-readable, service writes require `admins/{uid}` role owner/staff, enquiry creation requires an authenticated owner session, enquiry reads are owner/admin scoped, and only admins can change status/delete.
 - `storage.rules`: project reference uploads are scoped to the owner UID and admins, limited to image/PDF under 4 MB; all other paths denied.
