@@ -18,3 +18,5 @@
 .af-media-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
 
 .af-review-field{display:flex;flex-direction:column;gap:5px;padding:14px 0;border-bottom:1px solid var(--line)}.af-review-field>span{color:var(--muted);font-size:.68rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.af-review-field>strong{font-size:.88rem;line-height:1.45}.af-review-field>small{color:var(--muted);font-size:.75rem;line-height:1.5}.af-review-field>a{align-self:flex-start;margin-top:3px;color:var(--violet-dark);font-size:.72rem;font-weight:900}
+
+.af-admin-enquiry textarea{display:block;width:100%;margin-top:7px;padding:10px;border:1px solid #c9c3d2;border-radius:6px;background:#fff;color:var(--ink);font:inherit;font-weight:400;resize:vertical}
