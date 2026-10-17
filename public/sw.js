@@ -17,8 +17,8 @@ try {
       const title = payload.data?.title || "Africhiko update";
       const options = {
         body: payload.data?.body || "Open Africhiko to check your latest account information.",
-        icon: "/africhiko-icon.svg",
-        badge: "/africhiko-icon.svg",
+        icon: "/africhiko-icon-192.png",
+        badge: "/africhiko-icon-192.png",
         data: { link: payload.data?.link || "/account" },
       };
       self.registration.showNotification(title, options);
@@ -45,12 +45,12 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "africhiko-shell-v15";
+const CACHE_VERSION = "africhiko-shell-v16";
 const MEDIA_CACHE = "africhiko-media-v1";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
 const PUBLIC_PAGE_LIMIT = 12;
-const APP_SHELL = ["/", "/request", "/offline", "/africhiko-icon.svg", "/manifest.webmanifest"];
+const APP_SHELL = ["/", "/request", "/offline", "/africhiko-icon-180.png", "/africhiko-icon-192.png", "/africhiko-icon-512.png", "/africhiko-icon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {

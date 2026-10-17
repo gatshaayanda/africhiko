@@ -16,9 +16,20 @@ const firebaseConfigRoute = fs.readFileSync(path.join(root, "src/app/api/firebas
 if (JSON.stringify(publicManifest.name) !== JSON.stringify(expectedName)) failures.push("public manifest has the wrong app name");
 if (publicManifest.short_name !== "Africhiko") failures.push("public manifest has the wrong short name");
 if (publicManifest.theme_color !== "#6D28D9") failures.push("public manifest has the wrong theme color");
-if (!publicManifest.icons?.some(icon => icon.src === "/africhiko-icon.svg" && icon.type === "image/svg+xml")) failures.push("public manifest must declare the real SVG icon with the correct MIME type");
+for (const [src, size] of [["/africhiko-icon-192.png", 192], ["/africhiko-icon-512.png", 512]]) {
+  const icon = publicManifest.icons?.find(item => item.src === src && item.type === "image/png" && item.sizes === size + "x" + size);
+  const iconPath = path.join(root, "public", src.slice(1));
+  if (!icon) failures.push("public manifest must declare the " + size + "px PNG icon");
+  if (!fs.existsSync(iconPath)) failures.push("generated PWA icon is missing: " + src);
+  else {
+    const bytes = fs.readFileSync(iconPath);
+    if (bytes.toString("hex", 0, 8) !== "89504e470d0a1a0a" || bytes.readUInt32BE(16) !== size || bytes.readUInt32BE(20) !== size) failures.push("PWA icon is not a valid " + size + "x" + size + " PNG: " + src);
+  }
+}
+if (!publicManifest.icons?.some(icon => icon.src === "/africhiko-icon.svg" && icon.type === "image/svg+xml")) failures.push("public manifest must retain the SVG fallback with the correct MIME type");
 if (!appManifest.includes(expectedName) || !appManifest.includes('short_name: "Africhiko"') || !appManifest.includes('theme_color: "#6D28D9"')) failures.push("Next.js manifest identity does not match Africhiko");
-if (!fs.existsSync(path.join(root, "public/africhiko-icon.svg"))) failures.push("Africhiko icon asset is missing");
+if (!fs.existsSync(path.join(root, "public/africhiko-icon.svg"))) failures.push("Africhiko SVG fallback icon asset is missing");
+if (!fs.existsSync(path.join(root, "public/africhiko-icon-180.png"))) failures.push("Apple touch icon is missing");
 if (!/africhiko-shell-v\d+/.test(shell) || !shell.includes("/africhiko-icon.svg")) failures.push("service-worker cache or icon identity is incorrect");
 if (/\bThe Plug\b|the-plug\.vercel\.app|__THE_PLUG_FIREBASE_CONFIG__/i.test([layout, home, requestPage, firebaseConfigRoute, shell].join("\n"))) failures.push("active customer/PWA runtime still contains source-app identity");
 if (!home.includes("Project category") || !home.includes("Review my enquiry") || !home.includes("wa.me/")) failures.push("customer project enquiry and WhatsApp handoff are missing");
