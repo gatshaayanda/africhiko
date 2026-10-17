@@ -1,8 +1,13 @@
 import type {MetadataRoute} from "next";
 
-const icon = { src: "/africhiko-mark.svg", sizes: "any", type: "image/svg+xml", purpose: "any" as const };
+const icons = [
+  { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" as const },
+  { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" as const },
+  { src: "/africhiko-mark.svg", sizes: "any", type: "image/svg+xml", purpose: "any" as const },
+];
 
 export default function manifest(): MetadataRoute.Manifest {
+  const shortcutIcon = [icons[0]];
   return {
     id: "/",
     name: "Africhiko | Welding & Steel Fabrication",
@@ -17,11 +22,11 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "en",
     categories: ["business", "shopping"],
     prefer_related_applications: false,
-    icons: [icon],
+    icons,
     shortcuts: [
-      { name: "Browse services", short_name: "Services", description: "Browse Africhiko fabrication services", url: "/services", icons: [icon] },
-      { name: "Project enquiry", short_name: "Enquiry", description: "Describe a fabrication project", url: "/enquiry", icons: [icon] },
-      { name: "Project basket", short_name: "Basket", description: "Review selected fabrication services", url: "/basket", icons: [icon] },
+      { name: "Browse services", short_name: "Services", description: "Browse Africhiko fabrication services", url: "/services", icons: shortcutIcon },
+      { name: "Project enquiry", short_name: "Enquiry", description: "Describe a fabrication project", url: "/enquiry", icons: shortcutIcon },
+      { name: "Project basket", short_name: "Basket", description: "Review selected fabrication services", url: "/basket", icons: shortcutIcon },
     ],
   };
 }
