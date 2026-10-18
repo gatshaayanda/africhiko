@@ -52,3 +52,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log("IDENTITY VERIFIED — active Africhiko customer/PWA shell, manifest, cache namespace and enquiry entry are aligned.");
+
+// Keep this identity gate visible as part of the release and customer-QA checkpoint.
