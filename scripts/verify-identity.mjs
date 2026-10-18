@@ -10,6 +10,7 @@ const appManifest = fs.readFileSync(path.join(root, "src/app/manifest.ts"), "utf
 const shell = fs.readFileSync(path.join(root, "public/sw.js"), "utf8");
 const layout = fs.readFileSync(path.join(root, "src/app/layout.tsx"), "utf8");
 const home = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
+const portal = fs.readFileSync(path.join(root, "src/components/AfrichikoPortal.tsx"), "utf8");
 const requestPage = fs.readFileSync(path.join(root, "src/app/request/page.tsx"), "utf8");
 const firebaseConfigRoute = fs.readFileSync(path.join(root, "src/app/api/firebase/messaging-sw-config/route.ts"), "utf8");
 
@@ -32,7 +33,7 @@ if (!fs.existsSync(path.join(root, "public/africhiko-icon.svg"))) failures.push(
 if (!fs.existsSync(path.join(root, "public/africhiko-icon-180.png"))) failures.push("Apple touch icon is missing");
 if (!/africhiko-shell-v\d+/.test(shell) || !shell.includes("/africhiko-icon.svg")) failures.push("service-worker cache or icon identity is incorrect");
 if (/\bThe Plug\b|the-plug\.vercel\.app|__THE_PLUG_FIREBASE_CONFIG__/i.test([layout, home, requestPage, firebaseConfigRoute, shell].join("\n"))) failures.push("active customer/PWA runtime still contains source-app identity");
-if (!home.includes("Project category") || !home.includes("Review my enquiry") || !home.includes("wa.me/")) failures.push("customer project enquiry and WhatsApp handoff are missing");
+if (!portal.includes("PROJECT ENQUIRY") || !portal.includes("Submit enquiry for review") || !portal.includes("Project brief") || portal.includes("wa.me/")) failures.push("Africhiko project enquiry flow is missing or contains an external WhatsApp handoff");
 if (!requestPage.includes('redirect("/#enquire")')) failures.push("quotation shortcut does not lead to the Africhiko enquiry form");
 if (failures.length) {
   console.error("IDENTITY VERIFICATION FAILED");
