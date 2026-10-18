@@ -201,7 +201,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       // generic Chrome-menu instructions when the native prompt fails.
     } finally {
       installPromptRef.current = null;
-      setCanInstall(false);
       setInstallHelpOpen(false);
       setInstallState("hidden");
     }
