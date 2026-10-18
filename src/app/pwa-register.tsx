@@ -159,7 +159,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     const previousOverflow = document.body.style.overflow;
     if (isEmbeddedGate) document.body.style.overflow = "hidden";
     if (installState === "embedded") embeddedActionRef.current?.focus();
-    else document.querySelector<HTMLButtonElement>(".plugInstallPrimary")?.focus();
+    else document.querySelector<HTMLButtonElement>(".afInstallPrimary")?.focus();
 
     const keepDialogFocused = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -242,25 +242,25 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const embeddedInstallStyle: CSSProperties = { position: "fixed", inset: 0, zIndex: 2147483647, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, background: "rgba(0,0,0,.82)", backdropFilter: "blur(4px)", overscrollBehavior: "contain" };
   const installCard = installState === "native" ? (
     <div style={installShellStyle} role="presentation">
-      <section className="plugInstallModal" role="dialog" aria-modal="false" aria-labelledby="plug-install-title" aria-describedby="plug-install-message">
-        <div className="plugInstallTop"><span className="plugInstallMark">A</span><span className="plugInstallTag">AFRICHIKO · BOTSWANA</span><button type="button" className="plugInstallClose" aria-label="Close install prompt" onClick={dismissInstall}>×</button></div>
-        <div className="plugInstallKicker">WELDING & STEEL FABRICATION</div>
+      <section className="afInstallModal" role="dialog" aria-modal="false" aria-labelledby="plug-install-title" aria-describedby="plug-install-message">
+        <div className="afInstallTop"><span className="afInstallMark">A</span><span className="afInstallTag">AFRICHIKO · BOTSWANA</span><button type="button" className="afInstallClose" aria-label="Close install prompt" onClick={dismissInstall}>×</button></div>
+        <div className="afInstallKicker">WELDING & STEEL FABRICATION</div>
         <h2 id="plug-install-title">Africhiko.<br/><em>One tap away.</em></h2>
         <p id="plug-install-message">If your browser provides a native install prompt, this button opens it directly. Installation is optional; Africhiko also works as a website.</p>
         {installHelpOpen ? (
-          <div className="plugInstallSteps" role="status" aria-live="polite">
+          <div className="afInstallSteps" role="status" aria-live="polite">
             <strong>Native install prompt unavailable</strong>
             <p>Your browser has not offered its install prompt in this session. Africhiko still works here as a website. You can try installation again later in a supported browser.</p>
-            <button type="button" className="plugInstallPrimary" onClick={dismissInstall}>Continue on the website</button>
+            <button type="button" className="afInstallPrimary" onClick={dismissInstall}>Continue on the website</button>
           </div>
         ) : (
           <>
-            <div className="plugInstallModalBenefits"><span><b>01</b><strong>Quick access</strong><small>Open Africhiko from your home screen.</small></span><span><b>02</b><strong>Your requests</strong><small>Return to your sourcing journey and account.</small></span><span><b>03</b><strong>Private by account</strong><small>Keep your project information close.</small></span></div>
-            <button type="button" className="plugInstallPrimary" onClick={() => void install()}>Install Africhiko →</button>
-            <button type="button" className="plugInstallSecondary" onClick={dismissInstall}>Not now</button>
+            <div className="afInstallModalBenefits"><span><b>01</b><strong>Quick access</strong><small>Open Africhiko from your home screen.</small></span><span><b>02</b><strong>Your requests</strong><small>Return to your sourcing journey and account.</small></span><span><b>03</b><strong>Private by account</strong><small>Keep your project information close.</small></span></div>
+            <button type="button" className="afInstallPrimary" onClick={() => void install()}>Install Africhiko →</button>
+            <button type="button" className="afInstallSecondary" onClick={dismissInstall}>Not now</button>
           </>
         )}
-        <p className="plugInstallFootnote">No app-store search needed. Your browser will guide the installation.</p>
+        <p className="afInstallFootnote">No app-store search needed. Your browser will guide the installation.</p>
       </section>
     </div>
   ) : installState === "embedded" ? (
@@ -278,12 +278,12 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   ) : null;
 
   return <>
-    {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Saved public finds may still be available on this device. Requests and account changes need a connection.</div>}
-    {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is syncing and checking for the latest information.</div>}
+    {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Previously viewed service information may still be available on this device. Project enquiries need a connection.</div>}
+    {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is checking for the latest service information.</div>}
     {!environment().standalone && installState !== "embedded" && (
       <button
         type="button"
-        className="plugPwaInstallButton"
+        className="afPwaInstallButton"
         onClick={() => void install()}
       >
         Install Africhiko ↓
