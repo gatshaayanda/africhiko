@@ -1,2 +1,5 @@
 import { redirect } from "next/navigation";
-export default function BookPage(){redirect("/order")}
+
+export default function LegacyBookingPage() {
+  redirect("/enquiry");
+}
