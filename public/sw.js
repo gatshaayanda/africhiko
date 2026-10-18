@@ -45,7 +45,7 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "africhiko-shell-v18";
+const CACHE_VERSION = "africhiko-shell-v19";
 const MEDIA_CACHE = "africhiko-media-v1";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
@@ -91,7 +91,7 @@ self.addEventListener("message", event => {
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => (key.startsWith("africhiko-shell-") && key !== SHELL_CACHE) || (key.startsWith("africhiko-media-") && key !== MEDIA_CACHE)).map(key => caches.delete(key)));
+    await Promise.all(keys.filter(key => (key.startsWith("africhiko-shell-") && key !== SHELL_CACHE) || (key.startsWith("africhiko-media-") && key !== MEDIA_CACHE) || key.startsWith("theplug-shell-") || key.startsWith("theplug-media-")).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
