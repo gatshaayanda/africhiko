@@ -45,7 +45,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const [updateReady, setUpdateReady] = useState<ServiceWorker | null>(null);
   const [embeddedAndroid, setEmbeddedAndroid] = useState(initialEmbedded && initialAndroid);
   const [installHelpOpen, setInstallHelpOpen] = useState(false);
-  const [canInstall, setCanInstall] = useState(false);
   const embeddedActionRef = useRef<HTMLButtonElement | null>(null);
   const reloadForUpdate = useRef(false);
 
@@ -73,7 +72,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       event.preventDefault();
       const prompt = event as InstallPromptEvent;
       installPromptRef.current = prompt;
-      setCanInstall(true);
       // Retain the one-shot native event for the user's explicit Install click.
       // Do not interrupt page load with a second, custom install screen.
     };
@@ -105,11 +103,15 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         setInstallState("embedded");
         return;
       }
-      if (installPromptRef.current) void install();
+      if (installPromptRef.current) {
+        void install();
+        return;
+      }
+      setInstallHelpOpen(true);
+      setInstallState("native");
     };
     const appInstalled = () => {
       installPromptRef.current = null;
-      setCanInstall(false);
       setInstallHelpOpen(false);
       setInstallState("hidden");
       clearDismissal();
@@ -183,7 +185,13 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
 
   async function install() {
     const prompt = installPromptRef.current;
-    if (!prompt) return;
+    if (!prompt) {
+      // Keep the install action visible, but never pretend the browser supplied
+      // a native prompt when it did not. Do not substitute browser-menu steps.
+      setInstallHelpOpen(true);
+      setInstallState("native");
+      return;
+    }
     try {
       await prompt.prompt();
       const choice = await prompt.userChoice;
@@ -273,7 +281,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   return <>
     {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Saved public finds may still be available on this device. Requests and account changes need a connection.</div>}
     {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is syncing and checking for the latest information.</div>}
-    {canInstall && !environment().standalone && installState !== "embedded" && (
+    {!environment().standalone && installState !== "embedded" && (
       <button
         type="button"
         className="plugPwaInstallButton"
