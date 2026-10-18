@@ -45,7 +45,7 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "africhiko-shell-v17";
+const CACHE_VERSION = "africhiko-shell-v18";
 const MEDIA_CACHE = "africhiko-media-v1";
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
