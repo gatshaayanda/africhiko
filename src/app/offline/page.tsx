@@ -2,23 +2,23 @@ import Link from "next/link";
 
 export default function OfflinePage() {
   return (
-    <main className="orderPage">
-      <div className="orderWrap">
-        <div className="orderHeader">
-          <Link href="/" className="logo"><span className="logoMark">P</span><span>Africhiko</span></Link>
+    <main className="af-site">
+      <header className="af-header">
+        <Link href="/" className="af-brand">
+          <span className="af-brand-mark">A<span>✦</span></span>
+          <span><strong>AFRICHIKO</strong><small>WELDING · FABRICATION</small></span>
+        </Link>
+      </header>
+      <section className="af-page-intro af-compact">
+        <p className="af-eyebrow">CONNECTION INTERRUPTED</p>
+        <h1>Your project.<br/><em>Still in reach.</em></h1>
+        <p>You are offline. Previously viewed service information may remain available on this device, but it may be out of date.</p>
+        <p>Project enquiries are not submitted until Africhiko confirms the request has been saved. Reconnect before sending or updating a project brief.</p>
+        <div className="af-hero-actions">
+          <Link className="af-button" href="/enquiry">Return to project enquiry</Link>
+          <Link className="af-button af-button-ghost" href="/">Open Africhiko home</Link>
         </div>
-        <section className="orderCard confirm">
-          <div className="confirmIcon">📶</div>
-          <span className="kicker">Offline mode</span>
-          <h1>Africhiko is still here.</h1>
-          <p>The app shell and public finds you have already loaded may remain available on this device. Saved information can be out of date.</p>
-          <p>Prices, stock and offers can change while you are offline. Project enquiries and contact messages are not sent until a connection is available and Africhiko confirms the action.</p>
-          <div className="actions centered">
-            <Link className="button buttonPrimary" href="/request">Start an enquiry</Link>
-            <Link className="button buttonLight" href="/">Open Africhiko</Link>
-          </div>
-        </section>
-      </div>
+      </section>
     </main>
   );
 }
