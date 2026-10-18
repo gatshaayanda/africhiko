@@ -45,20 +45,36 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "africhiko-shell-v19";
-const MEDIA_CACHE = "africhiko-media-v1";
+const CACHE_VERSION = "africhiko-shell-v20";
+const MEDIA_CACHE = "africhiko-media-v2";
+// Keep workshop clips available offline so service cards retain their visual behaviour.
+const MEDIA_ASSETS = ["/videos/enter.mp4", "/videos/gear.mp4", "/videos/outside.mp4"];
 const SHELL_CACHE = CACHE_VERSION;
 const STATIC_LIMIT = 100;
 const PUBLIC_PAGE_LIMIT = 12;
-const APP_SHELL = ["/", "/request", "/offline", "/africhiko-icon-180.png", "/africhiko-icon-192.png", "/africhiko-icon-512.png", "/africhiko-icon.svg", "/manifest.webmanifest"];
+const APP_SHELL = ["/", "/services", "/basket", "/enquiry", "/request", "/offline", "/africhiko-icon-180.png", "/africhiko-icon-192.png", "/africhiko-icon-512.png", "/africhiko-icon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
     await precacheShell();
+    await precacheMedia();
     // Install the new routing/cache policy immediately; the page is not force-reloaded.
     await self.skipWaiting();
   })());
 });
+
+async function precacheMedia() {
+  const cache = await caches.open(MEDIA_CACHE);
+  await Promise.all(MEDIA_ASSETS.map(async path => {
+    try {
+      const request = new Request(path, { cache: "reload" });
+      const response = await fetch(request);
+      if (response.ok && response.status === 200 && !response.headers.has("content-range")) await cache.put(request, response.clone());
+    } catch {
+      // A flaky connection must not prevent the app shell from installing.
+    }
+  }));
+}
 
 async function precacheShell() {
   const shell = await caches.open(SHELL_CACHE);
@@ -102,6 +118,11 @@ self.addEventListener("fetch", event => {
   const url = new URL(request.url);
   if (url.pathname.startsWith("/api/")) return;
 
+  if (MEDIA_ASSETS.includes(url.pathname)) {
+    event.respondWith(mediaResponse(request));
+    return;
+  }
+
   const isNavigation = request.mode === "navigate" || request.headers.get("accept")?.includes("text/html");
   const isPrivate = /^\/(?:account|requests|orders|admin|invite)(?:\/|$)/.test(url.pathname);
 
@@ -130,6 +151,54 @@ self.addEventListener("fetch", event => {
     }));
   }
 });
+
+async function mediaResponse(request) {
+  const cache = await caches.open(MEDIA_CACHE);
+  const cacheKey = new Request(new URL(request.url).pathname, { method: "GET" });
+  let complete = await cache.match(cacheKey);
+  if (!complete) {
+    try {
+      const response = await fetch(cacheKey);
+      if (response.ok && response.status === 200 && !response.headers.has("content-range")) {
+        try { await cache.put(cacheKey, response.clone()); } catch {}
+        complete = response;
+      } else if (request.headers.has("range")) {
+        return await fetch(request);
+      } else {
+        return response;
+      }
+    } catch {
+      return Response.error();
+    }
+  }
+  const range = request.headers.get("range");
+  if (!range) return complete;
+  const bytes = await complete.arrayBuffer();
+  const size = bytes.byteLength;
+  const match = /^bytes=(\d*)-(\d*)$/.exec(range.trim());
+  if (!match || (!match[1] && !match[2])) {
+    return new Response(null, { status: 416, headers: { "Content-Range": "bytes */" + size, "Accept-Ranges": "bytes" } });
+  }
+  let start;
+  let end;
+  if (!match[1]) {
+    const suffix = Number(match[2]);
+    start = Math.max(0, size - suffix);
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    end = match[2] ? Math.min(Number(match[2]), size - 1) : size - 1;
+  }
+  if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || start >= size || end < start) {
+    return new Response(null, { status: 416, headers: { "Content-Range": "bytes */" + size, "Accept-Ranges": "bytes" } });
+  }
+  const headers = new Headers();
+  headers.set("Content-Type", complete.headers.get("content-type") || "video/mp4");
+  headers.set("Content-Length", String(end - start + 1));
+  headers.set("Content-Range", "bytes " + start + "-" + end + "/" + size);
+  headers.set("Accept-Ranges", "bytes");
+  return new Response(bytes.slice(start, end + 1), { status: 206, statusText: "Partial Content", headers });
+}
 
 async function cacheFirst(request) {
   const cache = await caches.open(SHELL_CACHE);

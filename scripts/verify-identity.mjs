@@ -45,6 +45,9 @@ if (!appManifest.includes(expectedName) || !appManifest.includes('short_name: "A
 if (!fs.existsSync(path.join(root, "public/africhiko-icon.svg"))) failures.push("Africhiko SVG fallback icon asset is missing");
 if (!fs.existsSync(path.join(root, "public/africhiko-icon-180.png"))) failures.push("Apple touch icon is missing");
 if (!/africhiko-shell-v\d+/.test(shell) || !shell.includes("/africhiko-icon.svg")) failures.push("service-worker cache or icon identity is incorrect");
+if (!/const MEDIA_CACHE = "africhiko-media-v\d+"/.test(shell) || !shell.includes("async function precacheMedia()") || !shell.includes("async function mediaResponse(request)") || !shell.includes("Content-Range")) failures.push("offline workshop video caching and byte-range playback are missing");
+for (const video of ["/videos/enter.mp4", "/videos/gear.mp4", "/videos/outside.mp4"]) if (!shell.includes(video)) failures.push("service worker does not preserve offline video: " + video);
+for (const route of ["/services", "/basket", "/enquiry"]) if (!shell.includes(`"${route}"`)) failures.push("service-worker shell does not include the customer route: " + route);
 if (/\bThe Plug\b|the-plug\.vercel\.app|__THE_PLUG_FIREBASE_CONFIG__/i.test([layout, home, requestPage, firebaseConfigRoute, shell, portal, pwaRegister, accountRoute, adminRoute, offlinePage, savedRoute, orderRoute, requestTrackingRoute, productRoute, inviteRoute, storefrontAdminRoute, communityAdminRoute].join("\n"))) failures.push("active customer/PWA runtime still contains source-app identity");
 if (failures.length) {
   console.error("IDENTITY VERIFICATION FAILED");
