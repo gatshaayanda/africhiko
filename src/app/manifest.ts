@@ -16,9 +16,9 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["business", "productivity"],
     prefer_related_applications: false,
     icons: [
-      { src: "/africhiko-icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/africhiko-icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/africhiko-icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }
+      { src: "/africhiko-icon-192.png?v=3", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/africhiko-icon-512.png?v=3", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/africhiko-icon.svg?v=3", sizes: "any", type: "image/svg+xml", purpose: "any" }
     ],
     shortcuts: [
       {
@@ -26,7 +26,7 @@ export default function manifest(): MetadataRoute.Manifest {
         short_name: "Request",
         description: "Describe your welding or fabrication project",
         url: "/#enquire",
-        icons: [{ src: "/africhiko-icon-192.png", sizes: "192x192", type: "image/png" }]
+        icons: [{ src: "/africhiko-icon-192.png?v=3", sizes: "192x192", type: "image/png" }]
       }
     ]
   };
