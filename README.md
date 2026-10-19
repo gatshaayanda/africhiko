@@ -22,13 +22,12 @@ npm run dev
 Configure a dedicated Africhiko Firebase project and environment variables before enabling authenticated enquiries, uploads or administration. Never reuse The Plug's production credentials, customer data or infrastructure.
 
 ## PWA
-Africhiko must remain usable as a website without installation. Android/Chromium native installation depends on the browser's `beforeinstallprompt` event. iOS installation uses the platform's Add to Home Screen flow. Installed-state, offline behavior and real-device installation must be verified separately.
+Africhiko must remain usable as a website without installation. Android/Chromium shows its install action only when the browser provides `beforeinstallprompt`, and the action invokes that native prompt directly. iOS installation uses the platform's Add to Home Screen flow. Installed-state, offline behavior and real-device installation must be verified separately.
 
 ## Business details supplied by the owner
 - Plot 17879, Gaborone West Phase 1, Gaborone
 - P.O. Box 2115, Bontleng, Gaborone
-- +267 73373085 / +267 74300085
-- +267 3931412
+- +267 73373085
 - chiknowledge773@gmail.com
 
 These details are owner-supplied and are not represented as independently verified.
