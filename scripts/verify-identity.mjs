@@ -31,7 +31,7 @@ if (JSON.stringify(publicManifest.name) !== JSON.stringify(expectedName)) failur
 if (publicManifest.short_name !== "Africhiko") failures.push("public manifest has the wrong short name");
 if (publicManifest.theme_color !== "#6D28D9") failures.push("public manifest has the wrong theme color");
 for (const [src, size] of [["/africhiko-icon-192.png", 192], ["/africhiko-icon-512.png", 512]]) {
-  const icon = publicManifest.icons?.find(item => item.src === src && item.type === "image/png" && item.sizes === size + "x" + size);
+  const icon = publicManifest.icons?.find(item => item.src?.split("?")[0] === src && item.type === "image/png" && item.sizes === size + "x" + size);
   const iconPath = path.join(root, "public", src.slice(1));
   if (!icon) failures.push("public manifest must declare the " + size + "px PNG icon");
   if (!fs.existsSync(iconPath)) failures.push("generated PWA icon is missing: " + src);
@@ -40,7 +40,7 @@ for (const [src, size] of [["/africhiko-icon-192.png", 192], ["/africhiko-icon-5
     if (bytes.toString("hex", 0, 8) !== "89504e470d0a1a0a" || bytes.readUInt32BE(16) !== size || bytes.readUInt32BE(20) !== size) failures.push("PWA icon is not a valid " + size + "x" + size + " PNG: " + src);
   }
 }
-if (!publicManifest.icons?.some(icon => icon.src === "/africhiko-icon.svg" && icon.type === "image/svg+xml")) failures.push("public manifest must retain the SVG fallback with the correct MIME type");
+if (!publicManifest.icons?.some(icon => icon.src?.split("?")[0] === "/africhiko-icon.svg" && icon.type === "image/svg+xml")) failures.push("public manifest must retain the SVG fallback with the correct MIME type");
 if (!appManifest.includes(expectedName) || !appManifest.includes('short_name: "Africhiko"') || !appManifest.includes('theme_color: "#6D28D9"')) failures.push("Next.js manifest identity does not match Africhiko");
 if (!fs.existsSync(path.join(root, "public/africhiko-icon.svg"))) failures.push("Africhiko SVG fallback icon asset is missing");
 if (!fs.existsSync(path.join(root, "public/africhiko-icon-180.png"))) failures.push("Apple touch icon is missing");
