@@ -45,12 +45,17 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const [updateReady, setUpdateReady] = useState<ServiceWorker | null>(null);
   const [embeddedAndroid, setEmbeddedAndroid] = useState(initialEmbedded && initialAndroid);
   const [installHelpOpen, setInstallHelpOpen] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
   const embeddedActionRef = useRef<HTMLButtonElement | null>(null);
   const reloadForUpdate = useRef(false);
 
   useEffect(() => {
     setOffline(!navigator.onLine);
     const env = environment();
+    setIsStandalone(env.standalone);
+    setIsIOS(env.ios);
     const embedded = initialEmbedded || env.embedded;
     setEmbeddedAndroid((initialEmbedded && initialAndroid) || (env.embedded && env.android));
 
@@ -72,6 +77,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       event.preventDefault();
       const prompt = event as InstallPromptEvent;
       installPromptRef.current = prompt;
+      setCanInstall(true);
       // Retain the one-shot native event for the user's explicit Install click.
       // Do not interrupt page load with a second, custom install screen.
     };
@@ -107,17 +113,34 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         void install();
         return;
       }
-      setInstallHelpOpen(true);
-      setInstallState("native");
+      if (current.ios) {
+        setInstallHelpOpen(true);
+        setInstallState("native");
+      }
+    };
+    const syncInstalledState = () => {
+      const current = environment();
+      setIsStandalone(current.standalone);
+      setIsIOS(current.ios);
+      if (current.standalone) {
+        installPromptRef.current = null;
+        setCanInstall(false);
+        setInstallHelpOpen(false);
+        setInstallState("hidden");
+      }
     };
     const appInstalled = () => {
       installPromptRef.current = null;
+      setCanInstall(false);
+      setIsStandalone(true);
       setInstallHelpOpen(false);
       setInstallState("hidden");
       clearDismissal();
     };
     window.addEventListener("africhiko-open-install", requestInstall);
     window.addEventListener("appinstalled", appInstalled);
+    window.addEventListener("pageshow", syncInstalledState);
+    document.addEventListener("visibilitychange", syncInstalledState);
 
     let registration: ServiceWorkerRegistration | null = null;
     const inspect = () => {
@@ -145,6 +168,8 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     return () => {
       window.removeEventListener("africhiko-open-install", requestInstall);
       window.removeEventListener("appinstalled", appInstalled);
+      window.removeEventListener("pageshow", syncInstalledState);
+      document.removeEventListener("visibilitychange", syncInstalledState);
       window.removeEventListener("online", online);
       window.removeEventListener("offline", off);
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
@@ -186,10 +211,10 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   async function install() {
     const prompt = installPromptRef.current;
     if (!prompt) {
-      // Keep the install action visible, but never pretend the browser supplied
-      // a native prompt when it did not. Do not substitute browser-menu steps.
-      setInstallHelpOpen(true);
-      setInstallState("native");
+      if (environment().ios) {
+        setInstallHelpOpen(true);
+        setInstallState("native");
+      }
       return;
     }
     try {
@@ -201,6 +226,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       // generic Chrome-menu instructions when the native prompt fails.
     } finally {
       installPromptRef.current = null;
+      setCanInstall(false);
       setInstallHelpOpen(false);
       setInstallState("hidden");
     }
@@ -249,8 +275,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         <p id="plug-install-message">If your browser provides a native install prompt, this button opens it directly. Installation is optional; Africhiko also works as a website.</p>
         {installHelpOpen ? (
           <div className="afInstallSteps" role="status" aria-live="polite">
-            <strong>Native install prompt unavailable</strong>
-            <p>Your browser has not offered its install prompt in this session. Africhiko still works here as a website. You can try installation again later in a supported browser.</p>
+            {isIOS ? <><strong>Add Africhiko to your Home Screen</strong><p>In Safari, tap Share, then choose Add to Home Screen and confirm. Open Africhiko from the new Home Screen icon to use the installed app.</p></> : <><strong>Native install prompt unavailable</strong><p>Your browser has not offered its install prompt in this session. Africhiko still works here as a website. Try again in a supported browser when Chrome offers installation.</p></>}
             <button type="button" className="afInstallPrimary" onClick={dismissInstall}>Continue on the website</button>
           </div>
         ) : (
@@ -280,11 +305,14 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   return <>
     {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Previously viewed service information may still be available on this device. Project enquiries need a connection.</div>}
     {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is checking for the latest service information.</div>}
-    {!environment().standalone && installState !== "embedded" && (
+    {!isStandalone && installState !== "embedded" && (isIOS || canInstall) && (
       <button
         type="button"
-        className="afPwaInstallButton"
-        onClick={() => void install()}
+        className="afPwaInstallButton" aria-label={isIOS ? "Add Africhiko to Home Screen" : "Install Africhiko"}
+        onClick={() => {
+          if (installPromptRef.current) void install();
+          else if (isIOS) { setInstallHelpOpen(true); setInstallState("native"); }
+        }}
       >
         Install Africhiko ↓
       </button>
