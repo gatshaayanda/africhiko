@@ -49,6 +49,11 @@ if (!/const MEDIA_CACHE = "africhiko-media-v\d+"/.test(shell) || !shell.includes
 for (const video of ["/videos/enter.mp4", "/videos/gear.mp4", "/videos/outside.mp4"]) if (!shell.includes(video)) failures.push("service worker does not preserve offline video: " + video);
 for (const route of ["/services", "/basket", "/enquiry"]) if (!shell.includes(`"${route}"`)) failures.push("service-worker shell does not include the customer route: " + route);
 if (/\bThe Plug\b|the-plug\.vercel\.app|__THE_PLUG_FIREBASE_CONFIG__/i.test([layout, home, requestPage, firebaseConfigRoute, shell, portal, pwaRegister, accountRoute, adminRoute, offlinePage, savedRoute, orderRoute, requestTrackingRoute, productRoute, inviteRoute, storefrontAdminRoute, communityAdminRoute].join("\n"))) failures.push("active customer/PWA runtime still contains source-app identity");
+if (!layout.includes("__africhikoInstallPrompt") || !layout.includes("beforeinstallprompt")) failures.push("PWA layout: early native install-prompt capture is missing");
+if (!pwaRegister.includes("await prompt.prompt()") || !pwaRegister.includes("setCanInstall(true)")) failures.push("PWA install: retained native prompt is not connected to the branded install action");
+if (!pwaRegister.includes("(canInstall || canShowManualInstall)") || !pwaRegister.includes("isIosSafari()")) failures.push("PWA install: CTA must appear only for a captured native prompt or the iOS Safari guide");
+if (/If your browser provides a native install prompt|Chrome install option|In Chrome, open the .* menu and choose Install app or Add to Home screen/i.test(pwaRegister)) failures.push("PWA install: generic desktop/Android explainer fallback must not replace the native browser prompt");
+
 if (failures.length) {
   console.error("IDENTITY VERIFICATION FAILED");
   for (const failure of failures) console.error(" - " + failure);
