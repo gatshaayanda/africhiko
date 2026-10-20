@@ -34,7 +34,7 @@ assert(layout.includes("beforeinstallprompt") && layout.includes("event.preventD
 assert(pwa.includes("syncPrompt()") && pwa.includes("window.__africhikoPwaListenerReady=true"), "PWA controller: early event handoff is missing");
 assert(pwa.includes("await p.prompt()"), "PWA controller: native prompt must be invoked from the branded click");
 assert(pwa.includes("(promptReady||canShowManualInstall)") && pwa.includes("isIosSafari()"), "PWA controller: CTA only appears for native prompt or iOS Safari guidance");
-assert(pwa.includes("className=\"af-install-card-primary\"") && pwa.includes("onClick={()=>void install()}"), "PWA controller: install card action must invoke the captured native prompt");
+assert(pwa.includes('className="af-install-button"') && pwa.includes("onClick={()=>void install()}"), "PWA controller: branded CTA directly invokes native prompt");
 assert(!pwa.includes("af-install-card") && !pwa.includes("Chrome has not provided its native install prompt."), "PWA controller: no custom desktop/Android install fallback");
 assert(pwa.includes('className="af-install-button"') && pwa.includes("!installed&&"), "PWA controller: always-available baseline install action is missing");
 assert(pwa.includes("setPromptReady(true)") && pwa.includes("promptRef.current=event as InstallPromptEvent"), "PWA controller: captured native prompt must be retained for the branded click");
