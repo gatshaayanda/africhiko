@@ -34,7 +34,9 @@ assert(layout.includes("beforeinstallprompt") && layout.includes("event.preventD
 assert(pwa.includes("promptWindow.__africhikoPwaListenerReady = true") && pwa.includes("delete promptWindow.__africhikoInstallPrompt"), "PWA controller: early event handoff is missing");
 assert(pwa.includes("await prompt.prompt()"), "PWA controller: native prompt must be invoked from the branded click");
 assert(pwa.includes("updateReady && !canInstall && !installInProgress"), "PWA controller: refresh UI must not interrupt an available or active native install prompt");
-assert(pwa.includes("(canInstall || canShowManualInstall)"), "PWA controller: desktop/Android CTA must not be rendered without a native event");
+assert(pwa.includes("canInstall || canShowManualInstall"), "PWA controller: install card eligibility must use native prompt or iOS guidance");
+assert(pwa.includes("afInstallPrompt") && pwa.includes("Dismiss install prompt"), "PWA controller: install prompt must be small and dismissible");
+assert(pwa.includes("setCanShowManualInstall(env.ios && !dismissed)"), "PWA controller: iPhone/iPad browsers must receive manual Add to Home Screen guidance");
 assert(worker.includes('const CACHE_VERSION = "africhiko-shell-v25"'), "service worker: shell cache must be versioned for the resilience fix");
 assert(worker.indexOf("try {") < worker.indexOf("importScripts(") && worker.indexOf("importScripts(") < worker.indexOf("} catch (error)"), "service worker: optional Firebase imports must be guarded");
 
