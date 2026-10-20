@@ -33,6 +33,9 @@ for (const [name, value] of [["public manifest", manifest], ["Next.js manifest s
 assert(layout.includes("beforeinstallprompt") && layout.includes("event.preventDefault()") && layout.includes("__africhikoInstallPrompt"), "layout: early native prompt capture is missing");
 assert(pwa.includes("syncPrompt()") && pwa.includes("window.__africhikoPwaListenerReady=true"), "PWA controller: early event handoff is missing");
 assert(pwa.includes("await p.prompt()"), "PWA controller: native prompt must be invoked from the branded click");
+assert(pwa.includes("setInstallCardOpen(true)") && pwa.includes("setInstallCardOpen(false)"), "PWA controller: install card must open when Chrome offers installation and be dismissible/reopenable");
+assert(pwa.includes("className=\"af-install-card-primary\"") && pwa.includes("onClick={()=>void install()}"), "PWA controller: install card action must invoke the captured native prompt");
+assert(!pwa.includes("Chrome has not provided its native install prompt."), "PWA controller: do not show the misleading unsupported-browser fallback in Chrome");
 assert(pwa.includes('className="af-install-button"') && pwa.includes("!installed&&"), "PWA controller: always-available baseline install action is missing");
 assert(pwa.includes("setPromptReady(true)") && pwa.includes("promptRef.current=event as InstallPromptEvent"), "PWA controller: captured native prompt must be retained for the branded click");
 assert(pwa.includes("function dismissHelp()") && pwa.includes('aria-label="Close install help"'), "PWA controller: install help must be dismissible");
