@@ -1,4 +1,5 @@
 "use client";
+// Restored installation baseline: keep the branded action visible and invoke the captured browser prompt directly.
 import {useEffect,useRef,useState} from "react";
 type InstallPromptEvent=Event&{prompt:()=>Promise<void>;userChoice:Promise<{outcome:"accepted"|"dismissed";platform:string}>};
 declare global{interface Window{__africhikoInstallPrompt?:InstallPromptEvent;__africhikoPwaListenerReady?:boolean}}
