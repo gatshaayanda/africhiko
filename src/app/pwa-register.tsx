@@ -14,6 +14,14 @@ type InstallState = "hidden" | "native" | "embedded";
 const INSTALL_DISMISSED_KEY = "africhiko:install:dismissed-at";
 const INSTALL_DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
 
+function isIosSafari() {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  const iosDevice = /iPad|iPhone|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const safari = /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo/i.test(ua);
+  return iosDevice && safari;
+}
+
 function isInstallDismissedRecently() {
   try {
     const dismissedAt = window.localStorage.getItem(INSTALL_DISMISSED_KEY);
@@ -72,7 +80,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     setIsIOS(env.ios);
     const dismissed = isInstallDismissedRecently();
     setInstallDismissed(dismissed);
-    setCanShowManualInstall(env.ios);
+    setCanShowManualInstall(env.ios && isIosSafari());
     const embedded = initialEmbedded || env.embedded;
     setEmbeddedAndroid((initialEmbedded && initialAndroid) || (env.embedded && env.android));
 
@@ -132,7 +140,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       }
       // The browser owns the native install prompt. Only iOS needs a manual
       // installation path because Safari does not expose beforeinstallprompt.
-      if (current.ios && !isInstallDismissedRecently()) {
+      if (current.ios && isIosSafari() && !isInstallDismissedRecently()) {
         setInstallHelpOpen(true);
         setCanShowManualInstall(true);
       }
@@ -266,7 +274,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     // Keep the captured native event available while the card is merely hidden.
     // The event is consumed only when the user explicitly chooses Install.
     setCanInstall(Boolean(installPromptRef.current));
-    setCanShowManualInstall(isIOS);
+    setCanShowManualInstall(isIOS && isIosSafari());
     setInstallDismissed(true);
     setInstallHelpOpen(false);
     setInstallState("hidden");
