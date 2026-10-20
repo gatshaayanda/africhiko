@@ -54,6 +54,24 @@ if (!pwaRegister.includes("await prompt.prompt()") || !pwaRegister.includes("set
 if (!pwaRegister.includes("(canInstall || canShowManualInstall)") || !pwaRegister.includes("isIosSafari()")) failures.push("PWA install: CTA must appear only for a captured native prompt or the iOS Safari guide");
 if (/If your browser provides a native install prompt|Chrome install option|In Chrome, open the .* menu and choose Install app or Add to Home screen/i.test(pwaRegister)) failures.push("PWA install: generic desktop/Android explainer fallback must not replace the native browser prompt");
 
+// Scan the whole active UI source tree: generic browser-menu copy must never return
+// as a second install flow during ordinary product/visual work.
+function walkUiSource(dir) {
+  const files = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) files.push(...walkUiSource(full));
+    else if (/\\.(?:ts|tsx|js|jsx)$/.test(entry.name)) files.push(full);
+  }
+  return files;
+}
+const forbiddenInstallCopy = /If your browser provides a native install prompt|Chrome install option|If neither option appears, Chrome has not marked this site installable|In Chrome, open the .*menu and choose Install app or Add to Home screen|open the Chrome menu and choose Install app|Continue on the website.{0,80}(?:Chrome|browser menu)/i;
+for (const file of walkUiSource(path.join(root, "src"))) {
+  if (forbiddenInstallCopy.test(fs.readFileSync(file, "utf8"))) {
+    failures.push(path.relative(root, file).replaceAll(path.sep, "/") + ": forbidden generic desktop/Android install fallback copy returned");
+  }
+}
+
 if (failures.length) {
   console.error("IDENTITY VERIFICATION FAILED");
   for (const failure of failures) console.error(" - " + failure);
