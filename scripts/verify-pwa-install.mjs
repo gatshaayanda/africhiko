@@ -38,7 +38,7 @@ assert(pwa.includes("className=\"af-install-card-primary\"") && pwa.includes("on
 assert(!pwa.includes("Chrome has not provided its native install prompt."), "PWA controller: do not show the misleading unsupported-browser fallback in Chrome");
 assert(pwa.includes('className="af-install-button"') && pwa.includes("!installed&&"), "PWA controller: always-available baseline install action is missing");
 assert(pwa.includes("setPromptReady(true)") && pwa.includes("promptRef.current=event as InstallPromptEvent"), "PWA controller: captured native prompt must be retained for the branded click");
-assert(pwa.includes("function dismissHelp()") && pwa.includes('aria-label="Close install help"'), "PWA controller: install help must be dismissible");
+assert(pwa.includes("function closeInstallCard()") && pwa.includes('aria-label="Close install prompt"'), "PWA controller: native install card must be dismissible");
 assert(worker.includes('const CACHE_VERSION = "africhiko-shell-v25"'), "service worker: shell cache must be versioned for the resilience fix");
 assert(worker.indexOf("try {") < worker.indexOf("importScripts(") && worker.indexOf("importScripts(") < worker.indexOf("} catch (error)"), "service worker: optional Firebase imports must be guarded");
 
