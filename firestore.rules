@@ -111,6 +111,58 @@ service cloud.firestore {
       && request.resource.data.updatedAt is string;
     }
 
+    match /services/{serviceId} {
+      function validService() {
+        return request.resource.data.keys().hasOnly([
+          'name', 'category', 'description', 'price', 'unit', 'active',
+          'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 2000
+        && (request.resource.data.price == null
+          || (request.resource.data.price is number && request.resource.data.price >= 0))
+        && request.resource.data.unit is string
+        && request.resource.data.active is bool;
+      }
+
+      // Customers can browse published services; only authorized staff can manage the catalogue.
+      allow read: if resource.data.active == true || isAdmin();
+      allow create, update: if isAdmin() && validService();
+      allow delete: if isAdmin();
+    }
+
+    match /enquiries/{enquiryId} {
+      function validEnquiry() {
+        return request.resource.data.customerId == request.auth.uid
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 120
+          && request.resource.data.phone is string
+          && request.resource.data.phone.size() >= 7
+          && request.resource.data.location is string
+          && request.resource.data.location.size() > 0
+          && request.resource.data.intendedUse is string
+          && request.resource.data.intendedUse.size() > 0
+          && request.resource.data.quantity is number
+          && request.resource.data.quantity >= 1
+          && request.resource.data.services is list
+          && request.resource.data.services.size() <= 30
+          && request.resource.data.status == 'New';
+      }
+
+      // Enquiries belong to their submitting Firebase Auth session; staff can review and update them.
+      allow create: if signedIn() && validEnquiry();
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.customerId == request.auth.uid);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
     match /admins/{uid} {
       allow read: if isOwner(uid);
       allow create, update, delete: if false;
