@@ -36,7 +36,7 @@ assert(pwa.includes("await prompt.prompt()"), "PWA controller: native prompt mus
 assert(pwa.includes("updateReady && !canInstall && !installInProgress"), "PWA controller: refresh UI must not interrupt an available or active native install prompt");
 assert(pwa.includes("canInstall || canShowManualInstall"), "PWA controller: install card eligibility must use native prompt or iOS guidance");
 assert(pwa.includes("afInstallPrompt") && pwa.includes("Dismiss install prompt"), "PWA controller: install prompt must be small and dismissible");
-assert(pwa.includes("setCanShowManualInstall(env.ios)"), "PWA controller: iPhone/iPad browsers must receive manual Add to Home Screen guidance even after the card is dismissed");
+assert(pwa.includes("setCanShowManualInstall(env.ios && isIosSafari())"), "PWA controller: manual Add to Home Screen guidance must be limited to iOS Safari");
 assert(pwa.includes("showInstallReopen") && pwa.includes("Reopen Africhiko install prompt"), "PWA controller: dismissed install card must have a compact reopen control");
 assert(pwa.includes("setCanInstall(true)") && pwa.includes("Keep the captured native event available while the card is merely hidden"), "PWA controller: dismissing the card must not discard the native install event");
 assert(pwa.includes("clearDismissal(); setInstallDismissed(false)"), "PWA controller: reopen control must restore the install card");
