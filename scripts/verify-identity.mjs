@@ -51,7 +51,7 @@ for (const route of ["/services", "/basket", "/enquiry"]) if (!shell.includes(`"
 if (/\bThe Plug\b|the-plug\.vercel\.app|__THE_PLUG_FIREBASE_CONFIG__/i.test([layout, home, requestPage, firebaseConfigRoute, shell, portal, pwaRegister, accountRoute, adminRoute, offlinePage, savedRoute, orderRoute, requestTrackingRoute, productRoute, inviteRoute, storefrontAdminRoute, communityAdminRoute].join("\n"))) failures.push("active customer/PWA runtime still contains source-app identity");
 if (!layout.includes("__africhikoInstallPrompt") || !layout.includes("beforeinstallprompt")) failures.push("PWA layout: early native install-prompt capture is missing");
 if (!pwaRegister.includes("await p.prompt()") || !pwaRegister.includes("setPromptReady(true)")) failures.push("PWA install: baseline native prompt is not connected to the branded install action");
-if (!pwaRegister.includes('className="af-install-button"') || !pwaRegister.includes("!installed&&")) failures.push("PWA install: baseline always-available install action is missing");
+if (!pwaRegister.includes('className="af-install-button"') || !pwaRegister.includes("(promptReady||canShowManualInstall)") || !pwaRegister.includes("onClick={()=>void install()}")) failures.push("PWA install: branded CTA must appear only when a native prompt is available (or iOS Safari guidance applies) and invoke the native prompt directly");
 
 
 if (failures.length) {
