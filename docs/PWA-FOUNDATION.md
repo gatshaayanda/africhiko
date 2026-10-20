@@ -16,6 +16,8 @@ Preserve proven PWA behavior deliberately; do not blindly copy the source app's 
 
 ## PWA behavior baseline
 
+For Africhiko, the mandatory project-specific supplement is [PWA-INSTALLATION-LOCK.md](./PWA-INSTALLATION-LOCK.md). Read it before any install changes and preserve its automated regression guard.
+
 - The landing page communicates the product and shows one obvious, branded install CTA with a short value proposition. The website remains usable without installing.
 - Never automatically cover a first-time visitor, account screen, form or other task route with a blocking install modal. Open the branded install journey after an explicit install action.
 - Embedded-browser escape gates are a separate product decision, not a default install prompt. If required, use one accessible branded gate with one clear OPEN IN BROWSER action; do not stack dialogs or trap customers.
