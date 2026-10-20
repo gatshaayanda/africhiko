@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: { type: "website", url: siteUrl, siteName: "Africhiko", title: "Africhiko | Welding & Steel Fabrication", description: "Welding and steel fabrication in Botswana. Tell us about your project and request a quotation." },
   twitter: { card: "summary", title: "Africhiko | Welding & Steel Fabrication", description: "Welding and steel fabrication in Botswana. Tell us about your project and request a quotation." },
-  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+  icons: { icon: "/africhiko-icon.svg", apple: "/africhiko-icon.svg" },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Africhiko", statusBarStyle: "default" },
 };
