@@ -5,23 +5,23 @@ import PwaRegister from "@/app/pwa-register";
 import "./globals.css";
 import "./pwa.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://namane-tyres.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://africhiko.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "Namane Tyres | Gaborone", template: "%s | Namane Tyres" },
-  description: "Namane Tyres — tyre fitting, puncture repair, pressure checks, tyre sales, light wash and roadside assistance in Gaborone.",
-  applicationName: "Namane Tyres",
-  keywords: ["Namane Tyres", "Gaborone tyres", "tyre fitting", "puncture repair", "roadside assistance"],
+  title: { default: "Africhiko | Welding & Steel Fabrication", template: "%s | Africhiko" },
+  description: "Africhiko — welding and steel fabrication in Botswana. Browse services and submit a project brief for review and quotation.",
+  applicationName: "Africhiko",
+  keywords: ["Africhiko", "Botswana steel fabrication", "welding", "gates", "steel structures"],
   alternates: { canonical: "/" },
-  openGraph: { type: "website", url: siteUrl, siteName: "Namane Tyres", title: "Namane Tyres | Gaborone", description: "Tyre fitting, repairs, sales and roadside assistance in Gaborone." },
-  twitter: { card: "summary", title: "Namane Tyres | Gaborone", description: "Tyre fitting, repairs, sales and roadside assistance in Gaborone." },
+  openGraph: { type: "website", url: siteUrl, siteName: "Africhiko", title: "Africhiko | Welding & Steel Fabrication", description: "Welding and steel fabrication in Botswana. Tell us about your project and request a quotation." },
+  twitter: { card: "summary", title: "Africhiko | Welding & Steel Fabrication", description: "Welding and steel fabrication in Botswana. Tell us about your project and request a quotation." },
   icons: { icon: "/icon.svg", apple: "/icon.svg" },
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, title: "Namane Tyres", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "Africhiko", statusBarStyle: "default" },
 };
 
-export const viewport: Viewport = { themeColor: "#111827", colorScheme: "light" };
+export const viewport: Viewport = { themeColor: "#6d28d9", colorScheme: "light" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="en"><body><PwaRegister />{children}<Analytics /><SpeedInsights /></body></html>;
