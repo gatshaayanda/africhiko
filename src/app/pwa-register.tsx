@@ -113,10 +113,10 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         void install();
         return;
       }
-      if (current.ios) {
-        setInstallHelpOpen(true);
-        setInstallState("native");
-      }
+      // Keep the install action useful even when the browser has not offered
+      // its one-shot native prompt in this session.
+      setInstallHelpOpen(true);
+      setInstallState("native");
     };
     const syncInstalledState = () => {
       const current = environment();
@@ -211,10 +211,8 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   async function install() {
     const prompt = installPromptRef.current;
     if (!prompt) {
-      if (environment().ios) {
-        setInstallHelpOpen(true);
-        setInstallState("native");
-      }
+      setInstallHelpOpen(true);
+      setInstallState("native");
       return;
     }
     try {
@@ -275,7 +273,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         <p id="plug-install-message">If your browser provides a native install prompt, this button opens it directly. Installation is optional; Africhiko also works as a website.</p>
         {installHelpOpen ? (
           <div className="afInstallSteps" role="status" aria-live="polite">
-            {isIOS ? <><strong>Add Africhiko to your Home Screen</strong><p>In Safari, tap Share, then choose Add to Home Screen and confirm. Open Africhiko from the new Home Screen icon to use the installed app.</p></> : <><strong>Native install prompt unavailable</strong><p>Your browser has not offered its install prompt in this session. Africhiko still works here as a website. Try again in a supported browser when Chrome offers installation.</p></>}
+            {isIOS ? <><strong>Add Africhiko to your Home Screen</strong><p>In Safari, tap Share, then choose Add to Home Screen and confirm. Open Africhiko from the new Home Screen icon to use the installed app.</p></> : <><strong>Chrome install option</strong><p>In Chrome, open the ⋮ menu and choose Install app or Add to Home screen. If neither option appears, Chrome has not marked this site installable in this session. Africhiko still works as a website.</p></>}
             <button type="button" className="afInstallPrimary" onClick={dismissInstall}>Continue on the website</button>
           </div>
         ) : (
@@ -305,13 +303,13 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   return <>
     {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Previously viewed service information may still be available on this device. Project enquiries need a connection.</div>}
     {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is checking for the latest service information.</div>}
-    {!isStandalone && installState !== "embedded" && (isIOS || canInstall) && (
+    {!isStandalone && installState !== "embedded" && (
       <button
         type="button"
         className="afPwaInstallButton" aria-label={isIOS ? "Add Africhiko to Home Screen" : "Install Africhiko"}
         onClick={() => {
           if (installPromptRef.current) void install();
-          else if (isIOS) { setInstallHelpOpen(true); setInstallState("native"); }
+          else { setInstallHelpOpen(true); setInstallState("native"); }
         }}
       >
         Install Africhiko ↓
