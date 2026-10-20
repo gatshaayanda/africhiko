@@ -1,10 +1,6 @@
-const CACHE_NAME = "namane-tyres-shell-v4";
-const APP_SHELL = ["/", "/book", "/offline", "/icon.svg"];
-const PUBLIC_MEDIA = [
-  "/namane-assets/work-location.jpg",
-  "/namane-assets/passing-car.jpg",
-  "/namane-assets/zoom-in-work-on-tyres.mp4",
-];
+const CACHE_NAME = "africhiko-shell-v1";
+const APP_SHELL = ["/", "/services", "/enquiry", "/basket", "/account", "/offline", "/africhiko-icon.svg"];
+const PUBLIC_MEDIA = ["/videos/enter.mp4", "/videos/gear.mp4", "/videos/outside.mp4"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -55,7 +51,7 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  const publicAsset = ["/namane-assets/", "/images/", "/fonts/"].some(prefix => url.pathname.startsWith(prefix))
+  const publicAsset = ["/videos/", "/images/", "/fonts/"].some(prefix => url.pathname.startsWith(prefix))
     || /\.(?:css|woff2?|ttf|otf|png|jpe?g|webp|svg|ico|avif|mp4|webm)$/i.test(url.pathname);
 
   if (publicAsset) {
