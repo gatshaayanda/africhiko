@@ -4,10 +4,10 @@ Installation is protected infrastructure. Branding and feature work must not rep
 
 ## Protected behavior
 - Capture Chromium's `beforeinstallprompt` early, retain the event, and call its native `prompt()` directly from the explicit branded Install click.
-- Desktop/Android install UI appears only when the retained native prompt exists. No generic install explainer, fake prompt, browser-menu instructions, or dead install button.
+- Desktop/Android install UI appears only when the retained native prompt exists and calls the native prompt directly. The install card is small, dismissible, and non-blocking. No fake native prompt or dead install button.
 - While the native prompt is available or being invoked, hide the service-worker Refresh banner so it cannot reload the page and interrupt the one-shot install event.
-- iPhone/iPad Safari alone receives Share → Add to Home Screen guidance. Do not show this guidance on desktop or Android.
-- Never auto-open installation guidance or block normal browsing with an install promotion. Keep embedded-browser handoff separate and preserve the current URL.
+- iPhone/iPad browsers receive a small, dismissible install card; its optional instructions explain Share → Add to Home Screen. Do not show these instructions on desktop or Android.
+- Never auto-open the detailed installation instructions or block normal browsing with an install promotion. Dismissal is remembered for seven days. Keep embedded-browser handoff separate and preserve the current URL.
 - Keep one authoritative controller in `src/app/pwa-register.tsx`; do not add a second controller or install modal elsewhere.
 - When investigating a stale install screen, inspect the deployed Git commit and service-worker cache first. Keep Africhiko's cache namespace unique and increment its version when shell/runtime assets change.
 
