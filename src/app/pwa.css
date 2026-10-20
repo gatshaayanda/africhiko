@@ -8,3 +8,17 @@
 .afPwaInstallButton{background:#6d28d9;border-color:#6d28d9;box-shadow:0 8px 24px rgba(59,23,109,.26)}
 .afPwaInstallButton:hover{background:#3b176d;border-color:#3b176d}
 .afPwaInstallButton:focus-visible{outline:3px solid #8be9f3;outline-offset:3px}
+
+
+/* Small, dismissible install card: visible without blocking the customer journey. */
+.afInstallPrompt{position:fixed;left:16px;right:16px;bottom:16px;z-index:999;max-width:380px;margin-left:auto;padding:14px;background:#fff;color:#17121f;border:1px solid rgba(109,40,217,.24);border-radius:16px;box-shadow:0 12px 36px rgba(24,12,38,.18);display:grid;gap:10px}
+.afInstallPromptHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.afInstallPromptHeader>div{display:grid;gap:3px}
+.afInstallPromptHeader strong{font-size:.92rem;line-height:1.25;color:#17121f}
+.afInstallPromptHeader p,.afInstallPromptHelp{font-size:.78rem;line-height:1.45;color:#5d5666}
+.afInstallPromptClose{flex:0 0 32px;width:32px;height:32px;display:grid;place-items:center;border:1px solid #e4dce9;border-radius:999px;background:#fff;color:#2a2032;font-size:1.25rem;line-height:1;cursor:pointer}
+.afInstallPromptAction{min-height:42px;width:100%;padding:10px 14px;border:0;border-radius:10px;background:#6d28d9;color:#fff;font:inherit;font-size:.86rem;font-weight:800;cursor:pointer}
+.afInstallPromptAction:hover{background:#3b176d}
+.afInstallPromptHelp{padding-top:2px}
+.afInstallPrompt button:focus-visible{outline:3px solid #0891b2;outline-offset:3px}
+@media(min-width:700px){.afInstallPrompt{left:18px;right:auto;bottom:18px;width:min(360px,calc(100vw - 36px));margin:0}}
