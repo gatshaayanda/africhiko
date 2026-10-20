@@ -61,7 +61,7 @@ function walkUiSource(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) files.push(...walkUiSource(full));
-    else if (/\\.(?:ts|tsx|js|jsx)$/.test(entry.name)) files.push(full);
+    else if (/\.(?:tsx|ts|jsx|js)$/.test(entry.name)) files.push(full);
   }
   return files;
 }
