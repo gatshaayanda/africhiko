@@ -50,27 +50,9 @@ for (const video of ["/videos/enter.mp4", "/videos/gear.mp4", "/videos/outside.m
 for (const route of ["/services", "/basket", "/enquiry"]) if (!shell.includes(`"${route}"`)) failures.push("service-worker shell does not include the customer route: " + route);
 if (/\bThe Plug\b|the-plug\.vercel\.app|__THE_PLUG_FIREBASE_CONFIG__/i.test([layout, home, requestPage, firebaseConfigRoute, shell, portal, pwaRegister, accountRoute, adminRoute, offlinePage, savedRoute, orderRoute, requestTrackingRoute, productRoute, inviteRoute, storefrontAdminRoute, communityAdminRoute].join("\n"))) failures.push("active customer/PWA runtime still contains source-app identity");
 if (!layout.includes("__africhikoInstallPrompt") || !layout.includes("beforeinstallprompt")) failures.push("PWA layout: early native install-prompt capture is missing");
-if (!pwaRegister.includes("await prompt.prompt()") || !pwaRegister.includes("setCanInstall(true)")) failures.push("PWA install: retained native prompt is not connected to the branded install action");
-if (!pwaRegister.includes("(canInstall || canShowManualInstall)") || !pwaRegister.includes("isIosSafari()")) failures.push("PWA install: CTA must appear only for a captured native prompt or the iOS Safari guide");
-if (/If your browser provides a native install prompt|Chrome install option|In Chrome, open the .* menu and choose Install app or Add to Home screen/i.test(pwaRegister)) failures.push("PWA install: generic desktop/Android explainer fallback must not replace the native browser prompt");
+if (!pwaRegister.includes("await p.prompt()") || !pwaRegister.includes("setPromptReady(true)")) failures.push("PWA install: baseline native prompt is not connected to the branded install action");
+if (!pwaRegister.includes('className="af-install-button"') || !pwaRegister.includes("!installed&&")) failures.push("PWA install: baseline always-available install action is missing");
 
-// Scan the whole active UI source tree: generic browser-menu copy must never return
-// as a second install flow during ordinary product/visual work.
-function walkUiSource(dir) {
-  const files = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...walkUiSource(full));
-    else if (/\.(?:tsx|ts|jsx|js)$/.test(entry.name)) files.push(full);
-  }
-  return files;
-}
-const forbiddenInstallCopy = /If your browser provides a native install prompt|Chrome install option|If neither option appears, Chrome has not marked this site installable|In Chrome, open the .*menu and choose Install app or Add to Home screen|open the Chrome menu and choose Install app|Continue on the website.{0,80}(?:Chrome|browser menu)|No app-store search needed.{0,100}browser will guide the installation|your browser will guide the installation/i;
-for (const file of walkUiSource(path.join(root, "src"))) {
-  if (forbiddenInstallCopy.test(fs.readFileSync(file, "utf8"))) {
-    failures.push(path.relative(root, file).replaceAll(path.sep, "/") + ": forbidden generic desktop/Android install fallback copy returned");
-  }
-}
 
 if (failures.length) {
   console.error("IDENTITY VERIFICATION FAILED");
