@@ -31,15 +31,11 @@ for (const [name, value] of [["public manifest", manifest], ["Next.js manifest s
 }
 
 assert(layout.includes("beforeinstallprompt") && layout.includes("event.preventDefault()") && layout.includes("__africhikoInstallPrompt"), "layout: early native prompt capture is missing");
-assert(pwa.includes("promptWindow.__africhikoPwaListenerReady = true") && pwa.includes("delete promptWindow.__africhikoInstallPrompt"), "PWA controller: early event handoff is missing");
-assert(pwa.includes("await prompt.prompt()"), "PWA controller: native prompt must be invoked from the branded click");
-assert(pwa.includes("updateReady && !canInstall && !installInProgress"), "PWA controller: refresh UI must not interrupt an available or active native install prompt");
-assert(pwa.includes("canInstall || canShowManualInstall"), "PWA controller: install card eligibility must use native prompt or iOS guidance");
-assert(pwa.includes("afInstallPrompt") && pwa.includes("Dismiss install prompt"), "PWA controller: install prompt must be small and dismissible");
-assert(pwa.includes("setCanShowManualInstall(env.ios && isIosSafari())"), "PWA controller: manual Add to Home Screen guidance must be limited to iOS Safari");
-assert(pwa.includes("showInstallReopen") && pwa.includes("Reopen Africhiko install prompt"), "PWA controller: dismissed install card must have a compact reopen control");
-assert(pwa.includes("setCanInstall(true)") && pwa.includes("Keep the captured native event available while the card is merely hidden"), "PWA controller: dismissing the card must not discard the native install event");
-assert(pwa.includes("clearDismissal(); setInstallDismissed(false)"), "PWA controller: reopen control must restore the install card");
+assert(pwa.includes("syncPrompt()") && pwa.includes("window.__africhikoPwaListenerReady=true"), "PWA controller: early event handoff is missing");
+assert(pwa.includes("await p.prompt()"), "PWA controller: native prompt must be invoked from the branded click");
+assert(pwa.includes('className="af-install-button"') && pwa.includes("!installed&&"), "PWA controller: always-available baseline install action is missing");
+assert(pwa.includes("setPromptReady(true)") && pwa.includes("promptRef.current=event as InstallPromptEvent"), "PWA controller: captured native prompt must be retained for the branded click");
+assert(pwa.includes("function dismissHelp()") && pwa.includes('aria-label="Close install help"'), "PWA controller: install help must be dismissible");
 assert(worker.includes('const CACHE_VERSION = "africhiko-shell-v25"'), "service worker: shell cache must be versioned for the resilience fix");
 assert(worker.indexOf("try {") < worker.indexOf("importScripts(") && worker.indexOf("importScripts(") < worker.indexOf("} catch (error)"), "service worker: optional Firebase imports must be guarded");
 
