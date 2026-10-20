@@ -45,7 +45,7 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "africhiko-shell-v21";
+const CACHE_VERSION = "africhiko-shell-v22";
 const MEDIA_CACHE = "africhiko-media-v2";
 // Keep workshop clips available offline so service cards retain their visual behaviour.
 const MEDIA_ASSETS = ["/videos/enter.mp4", "/videos/gear.mp4", "/videos/outside.mp4"];
