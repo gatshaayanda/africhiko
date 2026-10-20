@@ -1,0 +1,23 @@
+# PWA Installation Lock — Africhiko
+
+Installation is protected infrastructure. Branding and feature work must not replace or rewrite the native browser installation flow.
+
+## Protected behavior
+- Capture Chromium's `beforeinstallprompt` early, retain the event, and call its native `prompt()` directly from the explicit branded Install click.
+- Desktop/Android install UI appears only when the retained native prompt exists. No generic install explainer, fake prompt, browser-menu instructions, or dead install button.
+- iPhone/iPad Safari alone receives Share → Add to Home Screen guidance. Do not show this guidance on desktop or Android.
+- Never auto-open installation guidance or block normal browsing with an install promotion. Keep embedded-browser handoff separate and preserve the current URL.
+- Keep one authoritative controller in `src/app/pwa-register.tsx`; do not add a second controller or install modal elsewhere.
+- When investigating a stale install screen, inspect the deployed Git commit and service-worker cache first. Keep Africhiko's cache namespace unique and increment its version when shell/runtime assets change.
+
+## Release blockers
+The following must fail `npm run verify:identity` if they reappear anywhere in active UI source:
+- “If your browser provides a native install prompt”
+- “Chrome install option”
+- “If neither option appears, Chrome has not marked this site installable”
+- generic Chrome/Edge menu directions as a replacement for a native prompt
+- “No app-store search needed. Your browser will guide the installation.”
+- custom desktop/Android installation explainer screens or buttons that do not invoke the native prompt
+
+## Required checks
+Run `npm run verify:identity`, `npx tsc --noEmit`, lint and build. Then test desktop Chromium with prompt available/unavailable, Android Chrome and iPhone/iPad Safari separately. A clean build does not prove device installation; report that QA separately.
