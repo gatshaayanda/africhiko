@@ -1,4 +1,4 @@
-name: The Plug quality
+name: Africhiko quality
 on:
   push:
     branches: [main]
