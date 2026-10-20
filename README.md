@@ -1,82 +1,42 @@
-# Namane Tyres
+# Africhiko
 
-Namane Tyres is the customer-facing digital front door and lightweight operations surface for Thapelo Namane Tyre Fitting Business in Gaborone, Botswana.
+Africhiko is a customer-first steel fabrication and welding enquiry PWA for Botswana.
 
-## Business
+## Customer journey
 
-- Plot 16739, Gaborone West Phase 1, Gaborone, Botswana
-- Roadside, opposite Padre Pio Medical Centre
-- Tyre fitting
-- Puncture repair
-- Pressure checks
-- Tyre sales
-- Light wash services
-- Roadside assistance
+1. Browse the service catalogue and indicative starting prices.
+2. Add services to a single project request, or describe a custom project.
+3. Submit contact details, project location, dimensions, materials and notes for review.
+4. After submission, create a customer account to keep enquiries associated with the same Firebase identity, or continue as a guest.
 
-## Customer flow
+An enquiry is not a confirmed quotation or job. Africhiko reviews the details before discussing a quote.
 
-Customer → Request Assistance → Owner → Job → Complete
+## Customer account
 
-Customers do not need an account to request help. The request form accepts name, phone, vehicle, problem, optional landmark/notes and optional device location.
-
-## Offline-first behaviour
-
-The app is an installable PWA with a service worker and Firestore persistent local cache.
-
-Customer-facing states are intentionally truthful:
-
-- Online request: **Sent to Namane Tyres.**
-- Offline request: **Saved on this phone — waiting to send.**
-- Failed save: the app does not claim that Namane Tyres received it.
-
-Firestore synchronizes queued writes when connectivity returns.
+The account page supports email/password sign-in and account creation. When a guest creates an account during the enquiry journey, the existing anonymous Firebase user is linked to the new credential so the customer identity and associated enquiries are preserved.
 
 ## Operations
 
-`/admin` is protected by Firebase Authentication plus an `admins/{uid}` role document with `owner` or `staff`.
-
-Operations currently covers:
-
-- incoming assistance requests
-- request status: New, Accepted, In Progress, Ready / Awaiting Customer, Complete, Cancelled
-- phone and WhatsApp contact actions
-- tyre inventory: size, brand, condition, quantity, price, availability and notes
-
-## Media
-
-Stable business-owned media lives under `public/namane-assets/`.
-
-The public site uses real Namane Tyres imagery rather than inherited template media. Large videos are deliberately excluded from the service-worker app shell cache.
+The `/admin` route is the staff surface for reviewing enquiries and managing fabrication services. It depends on the Africhiko Firebase project configuration and the project's configured staff authorization.
 
 ## Stack
 
 - Next.js 15 / React 19 / TypeScript
-- Firebase Authentication
-- Cloud Firestore with persistent local cache
-- Firebase Storage rules ready for future owner-managed media
-- Installable PWA + service worker
-- Vercel Analytics + Speed Insights
+- Firebase Authentication and Cloud Firestore
+- Firebase Storage for project reference uploads and service media
+- Progressive Web App support
+- Vercel Analytics and Speed Insights
 - Vercel deployment from GitHub `main`
 
 ## Development
 
-Node version is pinned in `.nvmrc`.
-
-Run:
+Install dependencies and run the local development server:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Quality gates:
-
-```bash
-npx tsc --noEmit
-npm run lint
-npm run build
-```
+Before QA, configure the `NEXT_PUBLIC_FIREBASE_*` environment variables for the Africhiko Firebase project and verify the relevant Firestore and Storage rules. Run lint, type checks and a production build before considering the branch release-ready.
 
 Never commit `.env.local`, service-account credentials or other private secrets.
-
-See [AGENTS.md](AGENTS.md) for the product and implementation contract.
