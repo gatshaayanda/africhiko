@@ -113,10 +113,12 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         void install();
         return;
       }
-      // Keep the install action useful even when the browser has not offered
-      // its one-shot native prompt in this session.
-      setInstallHelpOpen(true);
-      setInstallState("native");
+      // The browser owns the native install prompt. Only iOS needs a manual
+      // installation path because Safari does not expose beforeinstallprompt.
+      if (current.ios) {
+        setInstallHelpOpen(true);
+        setInstallState("native");
+      }
     };
     const syncInstalledState = () => {
       const current = environment();
@@ -211,8 +213,11 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   async function install() {
     const prompt = installPromptRef.current;
     if (!prompt) {
-      setInstallHelpOpen(true);
-      setInstallState("native");
+      const current = environment();
+      if (current.ios) {
+        setInstallHelpOpen(true);
+        setInstallState("native");
+      }
       return;
     }
     try {
@@ -273,7 +278,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         <p id="plug-install-message">If your browser provides a native install prompt, this button opens it directly. Installation is optional; Africhiko also works as a website.</p>
         {installHelpOpen ? (
           <div className="afInstallSteps" role="status" aria-live="polite">
-            {isIOS ? <><strong>Add Africhiko to your Home Screen</strong><p>In Safari, tap Share, then choose Add to Home Screen and confirm. Open Africhiko from the new Home Screen icon to use the installed app.</p></> : <><strong>Chrome install option</strong><p>In Chrome, open the ⋮ menu and choose Install app or Add to Home screen. If neither option appears, Chrome has not marked this site installable in this session. Africhiko still works as a website.</p></>}
+            <><strong>Add Africhiko to your Home Screen</strong><p>In Safari, tap Share, then choose Add to Home Screen and confirm. Open Africhiko from the new Home Screen icon to use the installed app.</p></>
             <button type="button" className="afInstallPrimary" onClick={dismissInstall}>Continue on the website</button>
           </div>
         ) : (
@@ -309,7 +314,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         className="afPwaInstallButton" aria-label={isIOS ? "Add Africhiko to Home Screen" : "Install Africhiko"}
         onClick={() => {
           if (installPromptRef.current) void install();
-          else { setInstallHelpOpen(true); setInstallState("native"); }
+          else if (isIOS) { setInstallHelpOpen(true); setInstallState("native"); }
         }}
       >
         Install Africhiko ↓
