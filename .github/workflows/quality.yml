@@ -1,3 +1,4 @@
+# Africhiko's repository quality checks; keep this workflow scoped to this project.
 name: Africhiko quality
 on:
   push:
