@@ -72,7 +72,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     setIsIOS(env.ios);
     const dismissed = isInstallDismissedRecently();
     setInstallDismissed(dismissed);
-    setCanShowManualInstall(env.ios && !dismissed);
+    setCanShowManualInstall(env.ios);
     const embedded = initialEmbedded || env.embedded;
     setEmbeddedAndroid((initialEmbedded && initialAndroid) || (env.embedded && env.android));
 
@@ -94,7 +94,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       event.preventDefault();
       const prompt = event as InstallPromptEvent;
       installPromptRef.current = prompt;
-      setCanInstall(!isInstallDismissedRecently());
+      setCanInstall(true);
       // Retain the one-shot native event for the user's explicit Install click.
       // Do not interrupt page load with a second, custom install screen.
     };
@@ -263,9 +263,10 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
 
   function dismissInstall() {
     rememberDismissal();
-    installPromptRef.current = null;
-    setCanInstall(false);
-    setCanShowManualInstall(false);
+    // Keep the captured native event available while the card is merely hidden.
+    // The event is consumed only when the user explicitly chooses Install.
+    setCanInstall(Boolean(installPromptRef.current));
+    setCanShowManualInstall(isIOS);
     setInstallDismissed(true);
     setInstallHelpOpen(false);
     setInstallState("hidden");
@@ -299,6 +300,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
 
   const embeddedInstallStyle: CSSProperties = { position: "fixed", inset: 0, zIndex: 2147483647, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, background: "rgba(0,0,0,.82)", backdropFilter: "blur(4px)", overscrollBehavior: "contain" };
   const showInstallPrompt = !isStandalone && installState !== "embedded" && !installDismissed && (canInstall || canShowManualInstall);
+  const showInstallReopen = !isStandalone && installState !== "embedded" && installDismissed && (canInstall || canShowManualInstall);
   const installCard = installState === "embedded" ? (
     <div style={embeddedInstallStyle} role="alertdialog" aria-modal="true" aria-labelledby="plug-embedded-title" aria-describedby="plug-embedded-message">
       <div className="pwaInstallInfo" style={{position: "relative", left: "auto", right: "auto", bottom: "auto", width: "100%", maxWidth: 520, margin: 0}}>
@@ -316,6 +318,11 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   return <>
     {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Previously viewed service information may still be available on this device. Project enquiries need a connection.</div>}
     {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is checking for the latest service information.</div>}
+    {showInstallReopen && (
+      <button type="button" className="afInstallReopen" aria-label="Reopen Africhiko install prompt" onClick={() => { clearDismissal(); setInstallDismissed(false); }}>
+        Install Africhiko
+      </button>
+    )}
     {showInstallPrompt && (
       <aside className="afInstallPrompt" role="region" aria-label="Install Africhiko">
         <div className="afInstallPromptHeader">
