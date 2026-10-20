@@ -33,12 +33,12 @@ for (const [name, value] of [["public manifest", manifest], ["Next.js manifest s
 assert(layout.includes("beforeinstallprompt") && layout.includes("event.preventDefault()") && layout.includes("__africhikoInstallPrompt"), "layout: early native prompt capture is missing");
 assert(pwa.includes("syncPrompt()") && pwa.includes("window.__africhikoPwaListenerReady=true"), "PWA controller: early event handoff is missing");
 assert(pwa.includes("await p.prompt()"), "PWA controller: native prompt must be invoked from the branded click");
-assert(pwa.includes("setInstallCardOpen(true)") && pwa.includes("setInstallCardOpen(false)"), "PWA controller: install card must open when Chrome offers installation and be dismissible/reopenable");
+assert(pwa.includes("(promptReady||canShowManualInstall)") && pwa.includes("isIosSafari()"), "PWA controller: CTA only appears for native prompt or iOS Safari guidance");
 assert(pwa.includes("className=\"af-install-card-primary\"") && pwa.includes("onClick={()=>void install()}"), "PWA controller: install card action must invoke the captured native prompt");
-assert(!pwa.includes("Chrome has not provided its native install prompt."), "PWA controller: do not show the misleading unsupported-browser fallback in Chrome");
+assert(!pwa.includes("af-install-card") && !pwa.includes("Chrome has not provided its native install prompt."), "PWA controller: no custom desktop/Android install fallback");
 assert(pwa.includes('className="af-install-button"') && pwa.includes("!installed&&"), "PWA controller: always-available baseline install action is missing");
 assert(pwa.includes("setPromptReady(true)") && pwa.includes("promptRef.current=event as InstallPromptEvent"), "PWA controller: captured native prompt must be retained for the branded click");
-assert(pwa.includes("function closeInstallCard()") && pwa.includes('aria-label="Close install prompt"'), "PWA controller: native install card must be dismissible");
+assert(pwa.includes("await p.prompt()"), "PWA controller: native prompt must be invoked from the branded click");
 assert(worker.includes('const CACHE_VERSION = "africhiko-shell-v25"'), "service worker: shell cache must be versioned for the resilience fix");
 assert(worker.indexOf("try {") < worker.indexOf("importScripts(") && worker.indexOf("importScripts(") < worker.indexOf("} catch (error)"), "service worker: optional Firebase imports must be guarded");
 
