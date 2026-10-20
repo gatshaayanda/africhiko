@@ -1,11 +1,12 @@
-importScripts(
-  "https://www.gstatic.com/firebasejs/11.9.0/firebase-app-compat.js",
-  "https://www.gstatic.com/firebasejs/11.9.0/firebase-messaging-compat.js",
-  "/api/firebase/messaging-sw-config"
-);
-
 let africhikoMessaging = null;
 try {
+  // Push messaging is optional. A CDN or config-route failure must never abort
+  // this script before the core PWA install/offline handlers are registered.
+  importScripts(
+    "https://www.gstatic.com/firebasejs/11.9.0/firebase-app-compat.js",
+    "https://www.gstatic.com/firebasejs/11.9.0/firebase-messaging-compat.js",
+    "/api/firebase/messaging-sw-config"
+  );
   const config = self.__AFRICHIKO_FIREBASE_CONFIG__;
   if (config && config.apiKey && config.projectId && config.messagingSenderId && config.appId) {
     firebase.initializeApp(config);
@@ -45,7 +46,7 @@ self.addEventListener("notificationclick", (event) => {
   }));
 });
 
-const CACHE_VERSION = "africhiko-shell-v24";
+const CACHE_VERSION = "africhiko-shell-v25";
 const MEDIA_CACHE = "africhiko-media-v2";
 // Keep workshop clips available offline so service cards retain their visual behaviour.
 const MEDIA_ASSETS = ["/videos/enter.mp4", "/videos/gear.mp4", "/videos/outside.mp4"];

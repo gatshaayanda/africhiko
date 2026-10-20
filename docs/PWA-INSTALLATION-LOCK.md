@@ -10,6 +10,12 @@ Installation is protected infrastructure. Branding and feature work must not rep
 - Keep one authoritative controller in `src/app/pwa-register.tsx`; do not add a second controller or install modal elsewhere.
 - When investigating a stale install screen, inspect the deployed Git commit and service-worker cache first. Keep Africhiko's cache namespace unique and increment its version when shell/runtime assets change.
 
+## Service-worker resilience (release-blocking)
+
+Firebase background messaging is optional to installation and offline navigation. Its CDN scripts and configuration route must be loaded inside a guarded `try/catch`; a failed `importScripts()` must not abort the service-worker file before the core `install`, `activate`, `fetch` and `message` handlers register. When changing the shell/runtime worker, increment the Africhiko cache version so clients activate the repaired worker and retire stale shell caches through the normal activation path.
+
+`npm run verify:identity` also runs `scripts/verify-pwa-install.mjs`. That test executes the worker with a simulated Firebase import failure and asserts that the core PWA lifecycle handlers still register. Browser-native installation still depends on Chrome's own eligibility checks; source tests do not replace Android/iOS device QA.
+
 ## Release blockers
 The following must fail `npm run verify:identity` if they reappear anywhere in active UI source:
 - “If your browser provides a native install prompt”

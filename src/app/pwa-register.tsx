@@ -171,7 +171,9 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
         });
         await registration.update();
         inspect();
-      } catch {}
+      } catch (error) {
+        console.error("[Africhiko PWA] Service worker registration/update failed.", error);
+      }
     };
 
     void register();
@@ -235,9 +237,10 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       await prompt.prompt();
       const choice = await prompt.userChoice;
       if (choice.outcome === "dismissed") rememberDismissal();
-    } catch {
-      // The event is one-shot and browser-controlled. Do not replace it with
-      // generic Chrome-menu instructions when the native prompt fails.
+    } catch (error) {
+      // The event is one-shot and browser-controlled. Record failures for
+      // diagnosis; never replace the native prompt with a fake install screen.
+      console.error("[Africhiko PWA] Native install prompt failed.", error);
     } finally {
       installPromptRef.current = null;
       setCanInstall(false);
