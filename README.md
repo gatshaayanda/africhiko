@@ -1,35 +1,82 @@
-# Africhiko
+# Namane Tyres
 
-Africhiko Proprietary Limited is a Botswana welding and steel fabrication business.
+Namane Tyres is the customer-facing digital front door and lightweight operations surface for Thapelo Namane Tyre Fitting Business in Gaborone, Botswana.
 
-## Customer journey
-Discover fabrication services → describe a project → review the enquiry → submit a quotation request → receive an acknowledgement → follow up with Africhiko.
+## Business
 
-Services include trailers, sliding gates, burglar bars and security products, carports and sheds, double-decker bunk beds, laser-cut metal elements and custom fabrication. Prices, availability and delivery dates are confirmed through a quotation; submitting an enquiry is not an accepted quote or confirmed job.
+- Plot 16739, Gaborone West Phase 1, Gaborone, Botswana
+- Roadside, opposite Padre Pio Medical Centre
+- Tyre fitting
+- Puncture repair
+- Pressure checks
+- Tyre sales
+- Light wash services
+- Roadside assistance
+
+## Customer flow
+
+Customer → Request Assistance → Owner → Job → Complete
+
+Customers do not need an account to request help. The request form accepts name, phone, vehicle, problem, optional landmark/notes and optional device location.
+
+## Offline-first behaviour
+
+The app is an installable PWA with a service worker and Firestore persistent local cache.
+
+Customer-facing states are intentionally truthful:
+
+- Online request: **Sent to Namane Tyres.**
+- Offline request: **Saved on this phone — waiting to send.**
+- Failed save: the app does not claim that Namane Tyres received it.
+
+Firestore synchronizes queued writes when connectivity returns.
+
+## Operations
+
+`/admin` is protected by Firebase Authentication plus an `admins/{uid}` role document with `owner` or `staff`.
+
+Operations currently covers:
+
+- incoming assistance requests
+- request status: New, Accepted, In Progress, Ready / Awaiting Customer, Complete, Cancelled
+- phone and WhatsApp contact actions
+- tyre inventory: size, brand, condition, quantity, price, availability and notes
+
+## Media
+
+Stable business-owned media lives under `public/namane-assets/`.
+
+The public site uses real Namane Tyres imagery rather than inherited template media. Large videos are deliberately excluded from the service-worker app shell cache.
+
+## Stack
+
+- Next.js 15 / React 19 / TypeScript
+- Firebase Authentication
+- Cloud Firestore with persistent local cache
+- Firebase Storage rules ready for future owner-managed media
+- Installable PWA + service worker
+- Vercel Analytics + Speed Insights
+- Vercel deployment from GitHub `main`
 
 ## Development
-Use Node.js 22 and npm.
+
+Node version is pinned in `.nvmrc`.
+
+Run:
 
 ```bash
-npm ci
-npm run verify:identity
-npx tsc --noEmit
-npm run lint
-npm run build
+npm install
 npm run dev
 ```
 
-Configure a dedicated Africhiko Firebase project and environment variables before enabling authenticated enquiries, uploads or administration. Never reuse The Plug's production credentials, customer data or infrastructure.
+Quality gates:
 
-## PWA
-Africhiko must remain usable as a website without installation. Android/Chromium shows its install action only when the browser provides `beforeinstallprompt`, and the action invokes that native prompt directly. iOS installation uses the platform's Add to Home Screen flow. Installed-state, offline behavior and real-device installation must be verified separately.
+```bash
+npx tsc --noEmit
+npm run lint
+npm run build
+```
 
-## Business details supplied by the owner
-- Plot 17879, Gaborone West Phase 1, Gaborone
-- P.O. Box 2115, Bontleng, Gaborone
-- +267 73373085
-- chiknowledge773@gmail.com
+Never commit `.env.local`, service-account credentials or other private secrets.
 
-These details are owner-supplied and are not represented as independently verified.
-
-<!-- Deployment retry checkpoint: no application behavior changed. -->
+See [AGENTS.md](AGENTS.md) for the product and implementation contract.

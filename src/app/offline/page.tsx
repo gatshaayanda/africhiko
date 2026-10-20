@@ -1,24 +1,5 @@
 import Link from "next/link";
 
 export default function OfflinePage() {
-  return (
-    <main className="af-site">
-      <header className="af-header">
-        <Link href="/" className="af-brand">
-          <span className="af-brand-mark">A<span>✦</span></span>
-          <span><strong>AFRICHIKO</strong><small>WELDING · FABRICATION</small></span>
-        </Link>
-      </header>
-      <section className="af-page-intro af-compact">
-        <p className="af-eyebrow">CONNECTION INTERRUPTED</p>
-        <h1>Your project.<br/><em>Still in reach.</em></h1>
-        <p>You are offline. Previously viewed service information may remain available on this device, but it may be out of date.</p>
-        <p>Project enquiries are not submitted until Africhiko confirms the request has been saved. Reconnect before sending or updating a project brief.</p>
-        <div className="af-hero-actions">
-          <Link className="af-button" href="/enquiry">Return to project enquiry</Link>
-          <Link className="af-button af-button-ghost" href="/">Open Africhiko home</Link>
-        </div>
-      </section>
-    </main>
-  );
+  return <main className="bookPage"><nav className="nav"><div className="container navInner"><Link href="/" className="logo"><span className="logoMark">NT</span><span>Namane Tyres</span></Link></div></nav><div className="formWrap"><div className="formCard confirm"><div className="confirmIcon">📶</div><span className="kicker">Offline mode</span><h1>Still usable.</h1><p>Previously loaded Namane Tyres pages and public assets can remain available on this device.</p><p>You can open Request Help and queue a request through Firestore supported offline persistence. It is not considered received by the business until synchronization completes.</p><div className="actions centered"><Link className="button buttonPrimary" href="/book">Request Help</Link><Link className="button buttonLight" href="/">Open Namane Tyres</Link></div></div></div></main>;
 }

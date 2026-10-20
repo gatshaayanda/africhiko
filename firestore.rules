@@ -2,102 +2,57 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() {
+
+    function isSignedIn() {
       return request.auth != null;
     }
 
     function isAdmin() {
-      return signedIn()
+      return isSignedIn()
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role
-          in ['owner', 'staff', 'Owner', 'Staff'];
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role in ['owner', 'staff'];
     }
 
-    function validService() {
+    function validRequestCreate() {
       return request.resource.data.keys().hasOnly([
-          'name', 'category', 'description', 'price', 'unit', 'active',
-          'createdAt', 'updatedAt'
-        ])
-        && request.resource.data.keys().hasAll([
-          'name', 'category', 'description', 'price', 'unit', 'active'
-        ])
-        && request.resource.data.name is string
-        && request.resource.data.name.size() > 0
-        && request.resource.data.name.size() <= 120
-        && request.resource.data.category is string
-        && request.resource.data.category.size() > 0
-        && request.resource.data.category.size() <= 80
-        && request.resource.data.description is string
-        && request.resource.data.description.size() <= 2000
-        && (request.resource.data.price == null
-          || (request.resource.data.price is number && request.resource.data.price >= 0))
-        && request.resource.data.unit is string
-        && request.resource.data.unit.size() <= 80
-        && request.resource.data.active is bool;
-    }
-
-    function validEnquiry() {
-      return request.resource.data.keys().hasOnly([
-          'customerId', 'name', 'phone', 'email', 'location', 'intendedUse',
-          'dimensions', 'materials', 'notes', 'quantity', 'services',
-          'attachmentUrl', 'status', 'createdAt', 'createdAtServer'
-        ])
-        && request.resource.data.keys().hasAll([
-          'customerId', 'name', 'phone', 'email', 'location', 'intendedUse',
-          'dimensions', 'materials', 'notes', 'quantity', 'services',
-          'attachmentUrl', 'status', 'createdAt', 'createdAtServer'
-        ])
-        && request.resource.data.customerId == request.auth.uid
-        && request.resource.data.name is string
-        && request.resource.data.name.size() > 0
-        && request.resource.data.name.size() <= 120
-        && request.resource.data.phone is string
-        && request.resource.data.phone.size() >= 7
-        && request.resource.data.phone.size() <= 40
-        && request.resource.data.email is string
-        && request.resource.data.location is string
-        && request.resource.data.location.size() > 0
-        && request.resource.data.location.size() <= 300
-        && request.resource.data.intendedUse is string
-        && request.resource.data.intendedUse.size() > 0
-        && request.resource.data.intendedUse.size() <= 2000
-        && request.resource.data.dimensions is string
-        && request.resource.data.materials is string
-        && request.resource.data.notes is string
-        && request.resource.data.quantity is number
-        && request.resource.data.quantity >= 1
-        && request.resource.data.quantity <= 999
-        && request.resource.data.services is list
-        && request.resource.data.services.size() <= 30
-        && request.resource.data.attachmentUrl is string
-        && request.resource.data.status == 'New'
-        && request.resource.data.createdAt is string;
+        'createdAt', 'name', 'phone', 'vehicle', 'problem', 'notes',
+        'locationText', 'latitude', 'longitude', 'locationAccuracy', 'status'
+      ])
+      && request.resource.data.keys().hasAll([
+        'createdAt', 'name', 'phone', 'vehicle', 'problem', 'notes',
+        'locationText', 'status'
+      ])
+      && request.resource.data.createdAt is string
+      && request.resource.data.name is string
+      && request.resource.data.phone is string
+      && request.resource.data.vehicle is string
+      && request.resource.data.problem is string
+      && request.resource.data.notes is string
+      && request.resource.data.locationText is string
+      && request.resource.data.status == 'New'
+      && (!request.resource.data.keys().hasAny(['latitude']) || request.resource.data.latitude is number)
+      && (!request.resource.data.keys().hasAny(['longitude']) || request.resource.data.longitude is number)
+      && (!request.resource.data.keys().hasAny(['locationAccuracy']) || request.resource.data.locationAccuracy is number);
     }
 
     match /admins/{uid} {
-      // Staff roles are provisioned out-of-band by the project owner.
-      allow read: if signedIn() && request.auth.uid == uid;
+      allow read: if isSignedIn() && request.auth.uid == uid;
       allow create, update, delete: if false;
     }
 
-    match /services/{serviceId} {
-      // Catalogue records are public; customer views filter out inactive services.
-      allow read: if true;
-      allow create, update: if isAdmin() && validService();
-      allow delete: if isAdmin();
+    match /assistanceRequests/{requestId} {
+      allow create: if validRequestCreate();
+      allow read, update, delete: if isAdmin();
     }
 
-    match /enquiries/{enquiryId} {
-      allow create: if signedIn() && validEnquiry();
-      allow read: if isAdmin()
-        || (signedIn() && resource.data.customerId == request.auth.uid);
-      allow update: if isAdmin()
-        && request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['status', 'staffNotes', 'followUpAt', 'updatedAt']);
-      allow delete: if isAdmin();
+    match /contacts/{contactId} {
+      allow read, create, update, delete: if isAdmin();
     }
 
-    // Deny access to every collection not explicitly part of Africhiko.
+    match /tyreInventory/{itemId} {
+      allow read, write: if isAdmin();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

@@ -1,32 +1,28 @@
-import type {Metadata,Viewport} from "next";
-import {headers} from "next/headers";
-import {Analytics} from "@vercel/analytics/next";
-import {SpeedInsights} from "@vercel/speed-insights/next";
+import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import PwaRegister from "@/app/pwa-register";
-import Script from "next/script";
-import "./globals.css"; import "./pwa.css";
-const siteUrl=process.env.NEXT_PUBLIC_BASE_URL||"https://africhiko.vercel.app";
-const EMBEDDED_BROWSER_PATTERN=/WhatsApp|Instagram|FBAN|FBAV|Messenger|Line[/]|Twitter|TikTok|Snapchat/i;
-export const metadata:Metadata={metadataBase:new URL(siteUrl),title:{default:"Africhiko | Welding & Steel Fabrication",template:"%s | Africhiko"},description:"Install Africhiko for one-tap access to welding and steel fabrication in Botswana.",applicationName:"Africhiko",keywords:["Africhiko","welding","steel fabrication","Botswana","custom metalwork"],alternates:{canonical:"/"},openGraph:{type:"website",url:siteUrl,siteName:"Africhiko",title:"Africhiko | Welding & Steel Fabrication",description:"Built for strength. Made for your project."},twitter:{card:"summary",title:"Africhiko | Welding & Steel Fabrication",description:"Built for strength. Made for your project."},icons:{icon:[{url:"/africhiko-icon-192.png?v=3",sizes:"192x192",type:"image/png"},{url:"/africhiko-icon-512.png?v=3",sizes:"512x512",type:"image/png"},{url:"/africhiko-icon.svg?v=3",type:"image/svg+xml"}],apple:{url:"/africhiko-icon-180.png?v=3",sizes:"180x180",type:"image/png"}},manifest:"/manifest.webmanifest",appleWebApp:{capable:true,title:"Africhiko",statusBarStyle:"default"}};
-export const viewport:Viewport={themeColor:"#6D28D9",colorScheme:"light"};
-export default async function RootLayout({children}:{children:React.ReactNode}){
- const requestHeaders=await headers();
- const userAgent=requestHeaders.get("user-agent")||"";
- const requestedWith=requestHeaders.get("x-requested-with")||"";
- // A social referrer does not prove this browser is embedded: Chrome opened from WhatsApp
- // must not be trapped in the in-app-browser install gate.
- const embedded=EMBEDDED_BROWSER_PATTERN.test(userAgent)
-   || (/Android/i.test(userAgent)&&/\bwv\b/i.test(userAgent))
-   || /^(com\.whatsapp|com\.instagram\.android|com\.facebook\.katana|com\.facebook\.lite|com\.facebook\.orca)$/i.test(requestedWith);
- const android=/Android/i.test(userAgent);
- return <html lang="en"><body style={embedded?{overflow:"hidden"}:undefined}><Script id="africhiko-early-install-capture" strategy="beforeInteractive">{`
-(function () {
-  window.addEventListener("beforeinstallprompt", function (event) {
-    var standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-    if (standalone || window.__africhikoPwaListenerReady === true) return;
-    event.preventDefault();
-    window.__africhikoInstallPrompt = event;
-  });
-})();
-`}</Script><PwaRegister initialEmbedded={embedded} initialAndroid={android}/>{children}<Analytics/><SpeedInsights/></body></html>
+import "./globals.css";
+import "./pwa.css";
+
+const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://namane-tyres.vercel.app";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: { default: "Namane Tyres | Gaborone", template: "%s | Namane Tyres" },
+  description: "Namane Tyres — tyre fitting, puncture repair, pressure checks, tyre sales, light wash and roadside assistance in Gaborone.",
+  applicationName: "Namane Tyres",
+  keywords: ["Namane Tyres", "Gaborone tyres", "tyre fitting", "puncture repair", "roadside assistance"],
+  alternates: { canonical: "/" },
+  openGraph: { type: "website", url: siteUrl, siteName: "Namane Tyres", title: "Namane Tyres | Gaborone", description: "Tyre fitting, repairs, sales and roadside assistance in Gaborone." },
+  twitter: { card: "summary", title: "Namane Tyres | Gaborone", description: "Tyre fitting, repairs, sales and roadside assistance in Gaborone." },
+  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "Namane Tyres", statusBarStyle: "default" },
+};
+
+export const viewport: Viewport = { themeColor: "#111827", colorScheme: "light" };
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <html lang="en"><body><PwaRegister />{children}<Analytics /><SpeedInsights /></body></html>;
 }
