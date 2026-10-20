@@ -56,6 +56,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const [isStandalone, setIsStandalone] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [canInstall, setCanInstall] = useState(false);
+  const [installInProgress, setInstallInProgress] = useState(false);
   const [canShowManualInstall, setCanShowManualInstall] = useState(false);
   const embeddedActionRef = useRef<HTMLButtonElement | null>(null);
   const reloadForUpdate = useRef(false);
@@ -233,6 +234,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       }
       return;
     }
+    setInstallInProgress(true);
     try {
       await prompt.prompt();
       const choice = await prompt.userChoice;
@@ -242,6 +244,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       // diagnosis; never replace the native prompt with a fake install screen.
       console.error("[Africhiko PWA] Native install prompt failed.", error);
     } finally {
+      setInstallInProgress(false);
       installPromptRef.current = null;
       setCanInstall(false);
       setInstallHelpOpen(false);
@@ -323,6 +326,6 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       </button>
     )}
     {installCard}
-    {updateReady && <div className="pwaUpdate" role="status" aria-live="polite"><div><strong>Africhiko update is ready</strong><span>Refresh when you are ready.</span></div><button type="button" className="button buttonPrimary" onClick={applyUpdate}>Refresh</button></div>}
+    {updateReady && !canInstall && !installInProgress && <div className="pwaUpdate" role="status" aria-live="polite"><div><strong>Africhiko update is ready</strong><span>Refresh when you are ready.</span></div><button type="button" className="button buttonPrimary" onClick={applyUpdate}>Refresh</button></div>}
   </>;
 }
