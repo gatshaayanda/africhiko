@@ -11,7 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#6d28d9",
     orientation: "portrait-primary",
     lang: "en",
-    categories: ["business", "business", "construction"],
+    categories: ["business", "construction"],
     icons: [
       { src: "/africhiko-icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
       { src: "/africhiko-icon.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" }
