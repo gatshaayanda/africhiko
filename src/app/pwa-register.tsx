@@ -14,12 +14,15 @@ type InstallState = "hidden" | "native" | "embedded";
 const INSTALL_DISMISSED_KEY = "africhiko:install:dismissed-at";
 const INSTALL_DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
 
-function isIosSafari() {
-  if (typeof window === "undefined") return false;
-  const nav = window.navigator;
-  const ios = /iPad|iPhone|iPod/i.test(nav.userAgent) ||
-    (nav.platform === "MacIntel" && nav.maxTouchPoints > 1);
-  return ios && /Safari/i.test(nav.userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo/i.test(nav.userAgent);
+function isInstallDismissedRecently() {
+  try {
+    const dismissedAt = window.localStorage.getItem(INSTALL_DISMISSED_KEY);
+    if (!dismissedAt) return false;
+    const timestamp = Date.parse(dismissedAt);
+    return Number.isFinite(timestamp) && Date.now() - timestamp < INSTALL_DISMISS_MS;
+  } catch {
+    return false;
+  }
 }
 
 function environment() {
@@ -58,6 +61,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   const [canInstall, setCanInstall] = useState(false);
   const [installInProgress, setInstallInProgress] = useState(false);
   const [canShowManualInstall, setCanShowManualInstall] = useState(false);
+  const [installDismissed, setInstallDismissed] = useState(false);
   const embeddedActionRef = useRef<HTMLButtonElement | null>(null);
   const reloadForUpdate = useRef(false);
 
@@ -66,7 +70,9 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     const env = environment();
     setIsStandalone(env.standalone);
     setIsIOS(env.ios);
-    setCanShowManualInstall(isIosSafari());
+    const dismissed = isInstallDismissedRecently();
+    setInstallDismissed(dismissed);
+    setCanShowManualInstall(env.ios && !dismissed);
     const embedded = initialEmbedded || env.embedded;
     setEmbeddedAndroid((initialEmbedded && initialAndroid) || (env.embedded && env.android));
 
@@ -88,7 +94,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       event.preventDefault();
       const prompt = event as InstallPromptEvent;
       installPromptRef.current = prompt;
-      setCanInstall(true);
+      setCanInstall(!isInstallDismissedRecently());
       // Retain the one-shot native event for the user's explicit Install click.
       // Do not interrupt page load with a second, custom install screen.
     };
@@ -126,9 +132,9 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       }
       // The browser owns the native install prompt. Only iOS needs a manual
       // installation path because Safari does not expose beforeinstallprompt.
-      if (current.ios && isIosSafari()) {
+      if (current.ios && !isInstallDismissedRecently()) {
         setInstallHelpOpen(true);
-        setInstallState("native");
+        setCanShowManualInstall(true);
       }
     };
     const syncInstalledState = () => {
@@ -146,6 +152,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       installPromptRef.current = null;
       setCanInstall(false);
       setCanShowManualInstall(false);
+      setInstallDismissed(true);
       setIsStandalone(true);
       setInstallHelpOpen(false);
       setInstallState("hidden");
@@ -194,7 +201,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   }, [initialEmbedded, initialAndroid]);
 
   useEffect(() => {
-    if (installState !== "embedded" && installState !== "native") return;
+    if (installState !== "embedded") return;
 
     const isEmbeddedGate = installState === "embedded";
     const previousOverflow = document.body.style.overflow;
@@ -228,9 +235,9 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     const prompt = installPromptRef.current;
     if (!prompt) {
       const current = environment();
-      if (current.ios && isIosSafari()) {
+      if (current.ios) {
         setInstallHelpOpen(true);
-        setInstallState("native");
+        setCanShowManualInstall(true);
       }
       return;
     }
@@ -238,7 +245,7 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     try {
       await prompt.prompt();
       const choice = await prompt.userChoice;
-      if (choice.outcome === "dismissed") rememberDismissal();
+      if (choice.outcome === "dismissed") { rememberDismissal(); setInstallDismissed(true); }
     } catch (error) {
       // The event is one-shot and browser-controlled. Record failures for
       // diagnosis; never replace the native prompt with a fake install screen.
@@ -247,13 +254,19 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
       setInstallInProgress(false);
       installPromptRef.current = null;
       setCanInstall(false);
+      setCanShowManualInstall(false);
       setInstallHelpOpen(false);
+      setInstallDismissed(true);
       setInstallState("hidden");
     }
   }
 
   function dismissInstall() {
     rememberDismissal();
+    installPromptRef.current = null;
+    setCanInstall(false);
+    setCanShowManualInstall(false);
+    setInstallDismissed(true);
     setInstallHelpOpen(false);
     setInstallState("hidden");
   }
@@ -284,21 +297,11 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
     }, 1800);
   }
 
-  const installShellStyle: CSSProperties = { position: "fixed", left: 16, right: 16, bottom: 16, zIndex: 1000, maxWidth: 720, margin: "0 auto", padding: 16, borderRadius: 18, background: "#FFFFFF", color: "#111318", boxShadow: "0 12px 40px rgba(0,0,0,.18)", border: "1px solid rgba(17,19,24,.12)" };
   const embeddedInstallStyle: CSSProperties = { position: "fixed", inset: 0, zIndex: 2147483647, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, background: "rgba(0,0,0,.82)", backdropFilter: "blur(4px)", overscrollBehavior: "contain" };
-  const installCard = installState === "native" && installHelpOpen && isIosSafari() ? (
-    <div style={installShellStyle} role="presentation">
-      <section className="afInstallModal" role="dialog" aria-modal="false" aria-labelledby="plug-install-title" aria-describedby="plug-install-message">
-        <div className="afInstallTop"><span className="afInstallMark">A</span><span className="afInstallTag">AFRICHIKO · BOTSWANA</span><button type="button" className="afInstallClose" aria-label="Close install guidance" onClick={dismissInstall}>×</button></div>
-        <div className="afInstallKicker">IPHONE & IPAD</div>
-        <h2 id="plug-install-title">Add Africhiko to Home Screen.</h2>
-        <p id="plug-install-message">In Safari, tap <b>Share</b>, choose <b>Add to Home Screen</b>, then tap <b>Add</b>. Open the new Home Screen icon to launch Africhiko.</p>
-        <button type="button" className="afInstallPrimary" onClick={dismissInstall}>Continue on the website</button>
-      </section>
-    </div>
-) : installState === "embedded" ? (
+  const showInstallPrompt = !isStandalone && installState !== "embedded" && !installDismissed && (canInstall || canShowManualInstall);
+  const installCard = installState === "embedded" ? (
     <div style={embeddedInstallStyle} role="alertdialog" aria-modal="true" aria-labelledby="plug-embedded-title" aria-describedby="plug-embedded-message">
-      <div className="pwaInstallInfo" style={{...installShellStyle, position: "relative", left: "auto", right: "auto", bottom: "auto", width: "100%", maxWidth: 520, margin: 0}}>
+      <div className="pwaInstallInfo" style={{position: "relative", left: "auto", right: "auto", bottom: "auto", width: "100%", maxWidth: 520, margin: 0}}>
         <div>
           <strong id="plug-embedded-title"><span aria-hidden="true">🌐 </span>OPEN AFRICHIKO IN YOUR BROWSER</strong>
           <span id="plug-embedded-message">{embeddedAndroid ? <>Tap below to open Africhiko in Chrome. Then open the <b>⋮ menu</b> and choose <b>Install app</b>.</> : <>Africhiko opened inside another app. Use that app’s menu to open this page in your browser, then look for <b>Install app</b> in the browser menu.</>}</span>
@@ -313,17 +316,26 @@ export default function PwaRegister({ initialEmbedded = false, initialAndroid = 
   return <>
     {offline && <div className="offlineBanner" role="status" aria-live="polite"><span aria-hidden="true">⚡</span> Offline · Previously viewed service information may still be available on this device. Project enquiries need a connection.</div>}
     {!offline && reconnecting && <div className="offlineBanner reconnectingBanner" role="status" aria-live="polite"><span aria-hidden="true">↻</span> Reconnected · Africhiko is checking for the latest service information.</div>}
-    {!isStandalone && installState !== "embedded" && (canInstall || canShowManualInstall) && (
-      <button
-        type="button"
-        className="afPwaInstallButton" aria-label={isIOS ? "Add Africhiko to Home Screen" : "Install Africhiko"}
-        onClick={() => {
-          if (installPromptRef.current) void install();
-          else if (isIosSafari()) { setInstallHelpOpen(true); setInstallState("native"); }
-        }}
-      >
-        {canInstall ? "Install Africhiko ↓" : "Add to Home Screen ↓"}
-      </button>
+    {showInstallPrompt && (
+      <aside className="afInstallPrompt" role="region" aria-label="Install Africhiko">
+        <div className="afInstallPromptHeader">
+          <div>
+            <strong>{canInstall ? "Install Africhiko" : "Add Africhiko to your Home Screen"}</strong>
+            <p>{canInstall ? "Keep Africhiko one tap away." : "Quick access to your fabrication enquiries."}</p>
+          </div>
+          <button type="button" className="afInstallPromptClose" aria-label="Dismiss install prompt" onClick={dismissInstall}>×</button>
+        </div>
+        {canInstall ? (
+          <button type="button" className="afInstallPromptAction" onClick={() => { void install(); }}>Install Africhiko</button>
+        ) : (
+          <button type="button" className="afInstallPromptAction" aria-expanded={installHelpOpen} onClick={() => setInstallHelpOpen(value => !value)}>
+            {installHelpOpen ? "Hide instructions" : "How to install"}
+          </button>
+        )}
+        {installHelpOpen && isIOS && !canInstall && (
+          <p className="afInstallPromptHelp">Tap your browser’s <strong>Share</strong> button, choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</p>
+        )}
+      </aside>
     )}
     {installCard}
     {updateReady && !canInstall && !installInProgress && <div className="pwaUpdate" role="status" aria-live="polite"><div><strong>Africhiko update is ready</strong><span>Refresh when you are ready.</span></div><button type="button" className="button buttonPrimary" onClick={applyUpdate}>Refresh</button></div>}
