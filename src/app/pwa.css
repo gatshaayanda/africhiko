@@ -22,3 +22,9 @@
 .afInstallPromptHelp{padding-top:2px}
 .afInstallPrompt button:focus-visible{outline:3px solid #0891b2;outline-offset:3px}
 @media(min-width:700px){.afInstallPrompt{left:18px;right:auto;bottom:18px;width:min(360px,calc(100vw - 36px));margin:0}}
+
+/* After dismissal, leave a small, non-blocking way to reopen the install card. */
+.afInstallReopen{position:fixed;left:16px;bottom:16px;z-index:998;border:1px solid rgba(109,40,217,.28);border-radius:999px;padding:9px 13px;background:#fff;color:#6d28d9;font:inherit;font-size:.78rem;font-weight:800;box-shadow:0 5px 18px rgba(24,12,38,.12);cursor:pointer}
+.afInstallReopen:hover{background:#f7f1ff}
+.afInstallReopen:focus-visible{outline:3px solid #0891b2;outline-offset:3px}
+@media(min-width:700px){.afInstallReopen{left:18px;bottom:18px}}
