@@ -31,3 +31,5 @@ Africhiko must remain usable as a website without installation. Android/Chromium
 - chiknowledge773@gmail.com
 
 These details are owner-supplied and are not represented as independently verified.
+
+<!-- Deployment retry checkpoint: no application behavior changed. -->
