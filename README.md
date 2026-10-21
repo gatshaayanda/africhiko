@@ -15,6 +15,12 @@ An enquiry is not a confirmed quotation or job. Africhiko reviews the details be
 
 The account page supports email/password sign-in and account creation. When a guest creates an account during the enquiry journey, the existing anonymous Firebase user is linked to the new credential so the customer identity and associated enquiries are preserved.
 
+## Progressive web app
+
+- The install card is dismissible and calls the browser's native install prompt when the browser provides one.
+- On iPhone and iPad, installation is handled through Safari's Share menu and **Add to Home Screen**; Chromium's `beforeinstallprompt` event is not a universal iOS installation mechanism.
+- The service worker uses an Africhiko-specific cache namespace to keep this app's cached shell separate from other projects.
+
 ## Operations
 
 The `/admin` route is the staff surface for reviewing enquiries and managing fabrication services. It depends on the Africhiko Firebase project configuration and the project's configured staff authorization.
