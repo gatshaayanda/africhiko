@@ -102,3 +102,23 @@
 .af-spark-section{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(0,1.28fr);gap:clamp(20px,4vw,52px);align-items:center;padding:clamp(26px,5vw,58px) clamp(20px,6vw,88px);background:#21182c;color:#fff5d6;border-bottom:3px solid var(--cyan)}
 .af-spark-copy{max-width:390px}.af-spark-copy h2{font-size:clamp(2rem,4vw,3.35rem);line-height:1.02;letter-spacing:-.045em;margin:8px 0 14px}.af-spark-copy h2 em{color:#ffc94b;font-family:Georgia,serif;font-weight:500}.af-spark-copy>p:not(.af-eyebrow){color:#d3c8dc;line-height:1.6}.af-spark-stats{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}.af-spark-stats span{display:flex;gap:6px;align-items:center;padding:7px 9px;border:1px solid #594a64;border-radius:7px;color:#ddd2e5;font-size:10px;letter-spacing:.06em}.af-spark-stats b{color:#ffc94b}.af-spark-tip{font-size:12px}.af-spark-game-wrap{position:relative;overflow:hidden;min-width:0;border:1px solid #594a64;border-radius:13px;background:#21182c;box-shadow:0 18px 44px #09070d40}.af-spark-game{width:100%;height:clamp(230px,34vw,340px);touch-action:pan-y;cursor:crosshair}.af-spark-game canvas{display:block;width:100%!important;height:100%!important;touch-action:pan-y}.af-spark-loading{position:absolute;inset:0;display:grid;place-items:center;margin:0;background:#21182c;color:#fff5d6;font-size:13px;pointer-events:none}.af-spark-game-wrap:has(canvas) .af-spark-loading{display:none}
 @media(max-width:760px){.af-spark-section{grid-template-columns:1fr;gap:18px;padding:26px 18px}.af-spark-copy{max-width:none}.af-spark-copy h2{font-size:2.35rem}.af-spark-stats{margin:14px 0}.af-spark-game{height:280px}}
+
+
+/* Africhiko home: one clear project action, one account route, real workshop footage, then the optional game. */
+.af-home-hero{min-height:min(720px,calc(100svh - 112px));gap:clamp(28px,4.5vw,64px);padding-top:clamp(38px,5.5vw,76px);padding-bottom:clamp(38px,5.5vw,76px)}
+.af-home-copy{max-width:620px}
+.af-home-hero .af-hero-intro{max-width:510px}
+.af-home-hero .af-hero-visual{min-height:clamp(340px,43vw,560px);border-radius:14px}
+.af-home-hero .af-hero-video{display:block}
+.af-home-hero .af-hero-actions{margin-top:24px}
+.af-home-hero .af-hero-actions .af-button-outline{background:#fff;color:var(--violet-dark)}
+.af-game-jump{display:inline-flex;margin-top:25px;color:#51465f;font-size:.78rem;font-weight:750;text-decoration:underline;text-decoration-color:#b7a2d8;text-underline-offset:4px}
+.af-game-jump:hover{color:var(--violet-dark)}
+#game{scroll-margin-top:16px}
+@media(max-width:620px){
+  .af-home-hero{min-height:0;gap:28px;padding-top:36px;padding-bottom:32px}
+  .af-home-hero .af-hero-visual{min-height:300px}
+  .af-home-hero .af-hero-actions{gap:9px}
+  .af-home-hero .af-hero-actions .af-button{flex:1;justify-content:center;padding:12px 10px;font-size:.8rem}
+  .af-game-jump{margin-top:20px;font-size:.74rem}
+}
