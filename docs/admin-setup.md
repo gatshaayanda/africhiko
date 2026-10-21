@@ -1,45 +1,27 @@
-# Namane Tyres admin setup
+# Africhiko admin setup
 
-V1 admin access uses Firebase Email/Password authentication. Google sign-in is intentionally deferred.
+Africhiko uses Firebase Authentication and Cloud Firestore. Customer account creation is optional: an enquiry can be submitted as a guest, and the guest's anonymous Firebase identity can later be linked to an email/password credential.
 
-## One-time owner setup
+## One-time owner/staff setup
 
-1. In the dedicated Firebase project namane-tyres, open Authentication → Sign-in method.
-2. Enable Email/Password.
-3. Create the owner's Firebase Authentication user with the owner's email and password.
-4. Copy that user's Firebase Auth UID.
-5. In Firestore, create:
-   - Collection: admins
-   - Document ID: the owner's Auth UID
-   - Field: role = owner
-6. Open /admin and sign in with that email/password.
+1. Open the Africhiko Firebase project.
+2. In Authentication → Sign-in method, enable Anonymous and Email/Password. Enable Google or Phone only if those providers are deliberately introduced into this app.
+3. Create the owner's or staff member's Firebase Authentication user.
+4. Copy that user's Auth UID.
+5. In Firestore, create admins/{uid} where {uid} is that exact Auth UID, with a string field role set to owner or staff.
+6. Open /admin and sign in with the authorized email/password account.
 
-Do not create an admin document for an arbitrary UID. The Firestore rules only allow users whose authenticated UID has an admins/{uid} document with role owner or staff.
+Admin documents must be provisioned by a trusted project owner, not by the public app. The Firestore rules do not allow clients to create or modify admin roles.
 
-## Import the existing WhatsApp contacts
+## Firestore access model
 
-The admin directory has an Import VCF action.
+- services: publicly readable catalogue; only an authorized owner/staff member may create, edit or remove catalogue records.
+- enquiries: a signed-in guest or customer may create an enquiry only for their own Auth UID. Customers can read only their own enquiries. Owner/staff can read the inbox and update operational status, staff notes and follow-up date.
+- admins: a user can read their own role document; clients cannot write role documents.
+- Other collections are denied unless an explicit rule is added for a real implemented feature.
 
-The current WhatsApp export was inspected locally and contains:
-- 112 vCards
-- 112 valid Botswana phone numbers
-- 95 unique phone numbers
-- 16 duplicate phone-number groups
-- WhatsApp Business metadata on some records
+Deploy Firestore rules separately with firebase deploy --only firestore:rules after confirming the Firebase CLI is targeting the Africhiko project. Do not deploy Storage rules as part of this task.
 
-The importer:
-- parses the VCF in the browser
-- normalizes Botswana numbers to +267...
-- deduplicates by phone number
-- preserves WhatsApp Business name/description when present
-- ignores contact photos
-- writes contacts only after the authorized admin is signed in
-- updates an existing phone-keyed record instead of creating a duplicate
+## Customer account flow
 
-The original VCF remains local and is ignored by Git.
-
-## Adding new contacts
-
-Use Add contact in the Customer contacts tab. New records can be added at any time without creating a Firebase Auth account.
-
-A contact is not automatically an app user. Customer request history is matched to the contact by normalized phone number.
+Customers may submit their first enquiry without creating an account. After successful submission, the app offers account creation. Linking the anonymous user to an email/password credential preserves the same Auth UID, allowing the enquiry to remain associated with the customer's account. If the browser session is lost before linking, the anonymous enquiry is not automatically merged into a different account.
