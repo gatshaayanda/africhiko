@@ -122,3 +122,6 @@
   .af-home-hero .af-hero-actions .af-button{flex:1;justify-content:center;padding:12px 10px;font-size:.8rem}
   .af-game-jump{margin-top:20px;font-size:.74rem}
 }
+
+/* My Africhiko is deliberately the final customer action on the home page. */
+.af-account-bottom{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:clamp(44px,6vw,76px) max(22px,calc((100% - 1240px)/2));background:#fff;border-top:1px solid var(--line)}.af-account-bottom h2{margin:0;font-size:clamp(2.3rem,4.5vw,4rem);line-height:.96;letter-spacing:-.06em}.af-account-bottom h2 em{color:var(--violet);font-style:normal}.af-account-bottom p:not(.af-eyebrow){max-width:600px;color:var(--muted);line-height:1.65}.af-account-bottom>.af-button{flex-shrink:0}@media(max-width:680px){.af-account-bottom{align-items:stretch;flex-direction:column;gap:18px}.af-account-bottom>.af-button{width:100%}}
