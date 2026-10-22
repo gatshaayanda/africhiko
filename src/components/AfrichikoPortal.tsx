@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import SparkCatcher from "@/components/SparkCatcher";
+import SparkCatcher from "./SparkCatcher";
 import {useEffect,useRef,useState} from "react";
 import {useSearchParams} from "next/navigation";
 import {onAuthStateChanged,signInAnonymously,signInWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,linkWithPopup,signOut,type User} from "firebase/auth";
