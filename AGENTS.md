@@ -40,3 +40,10 @@ The approved installation experience in Africhiko is a permanent reference for a
 
 ## Project identity
 Use Africhiko naming and the dedicated Africhiko project configuration in app-facing text, docs, environment examples and Firebase CLI configuration. Search for and correct inherited identity leaks rather than copying another project's details.
+
+
+## Admin access and work feed
+- The admin page uses one access-word field. The word is verified only on the server using `AFRICHIKO_ADMIN_WORD`; never hardcode it into client code or expose it in a `NEXT_PUBLIC_*` variable.
+- The server route also requires `FIREBASE_ADMIN_KEY` service-account JSON to provision the verified admin role. Configure both as server-only Vercel environment variables before expecting one-word access to work.
+- Work-feed items live in `workFeed`; only published items are public. Interest signals are deduplicated per Firebase UID in `workInterests`, and customer identities must never be displayed publicly.
+- Preserve the approved PWA installation mechanism and UX during unrelated work.
