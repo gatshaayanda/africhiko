@@ -13,6 +13,19 @@ service firebase.storage {
       allow write: if isAdmin() && request.resource.size < 12 * 1024 * 1024
         && (request.resource.contentType.matches('image/.*') || request.resource.contentType.matches('video/.*'));
     }
+    // Customer enquiry references are private to the anonymous/signed-in UID that uploaded them.
+    // The enquiry form accepts images and PDFs up to 4 MiB; do not expose these files publicly.
+    match /projectReferences/{customerUid}/{fileName} {
+      allow read: if (request.auth != null
+        && (request.auth.uid == customerUid || isAdmin()));
+      allow create, update: if request.auth != null
+        && request.auth.uid == customerUid
+        && request.resource.size <= 4 * 1024 * 1024
+        && (request.resource.contentType.matches('image/.*')
+          || request.resource.contentType == 'application/pdf');
+      allow delete: if false;
+    }
+
     match /{allPaths=**} { allow read, write: if false; }
   }
 }
