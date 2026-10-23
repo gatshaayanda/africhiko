@@ -127,6 +127,14 @@
 .af-account-bottom{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:clamp(44px,6vw,76px) max(22px,calc((100% - 1240px)/2));background:#fff;border-top:1px solid var(--line)}.af-account-bottom h2{margin:0;font-size:clamp(2.3rem,4.5vw,4rem);line-height:.96;letter-spacing:-.06em}.af-account-bottom h2 em{color:var(--violet);font-style:normal}.af-account-bottom p:not(.af-eyebrow){max-width:600px;color:var(--muted);line-height:1.65}.af-account-bottom>.af-button{flex-shrink:0}@media(max-width:680px){.af-account-bottom{align-items:stretch;flex-direction:column;gap:18px}.af-account-bottom>.af-button{width:100%}}
 
 
+.af-announcements{padding:18px max(22px,calc((100% - 1240px)/2));background:#f0eafd;border-bottom:1px solid #ded1ef}
+.af-announcements-inner{max-width:1240px;margin:0 auto}
+.af-announcements-inner>.af-eyebrow{margin:0 0 10px;color:var(--violet-dark)}
+.af-announcement{display:grid;grid-template-columns:minmax(150px,.35fr) minmax(0,1fr);gap:20px;align-items:start;padding:10px 0;border-top:1px solid #d8c9e9}
+.af-announcement h2{margin:0;font-size:1rem;line-height:1.35}
+.af-announcement p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.55;white-space:pre-wrap}
+@media(max-width:680px){.af-announcement{grid-template-columns:1fr;gap:5px;padding:12px 0}.af-announcement p{font-size:.84rem}}
+
 /* Homepage order: project entry, workshop inspiration, compact catalogue, optional game, account. */
 .af-home-work{padding:clamp(42px,6vw,78px) max(22px,calc((100% - 1240px)/2));background:#fff;border-bottom:1px solid var(--line)}
 .af-home-work .af-section-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px}
