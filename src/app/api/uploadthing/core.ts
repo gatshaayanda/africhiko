@@ -18,3 +18,5 @@ export const ourFileRouter = {
     });
   }),
 } satisfies FileRouter;
+
+export type OurFileRouter = typeof ourFileRouter;
