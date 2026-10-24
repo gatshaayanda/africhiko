@@ -5,7 +5,7 @@ const f = createUploadthing();
 export const ourFileRouter = {
   fileUploader: f({
     image: { maxFileSize: "4MB", maxFileCount: 1 },
-    video: { maxFileSize: "64MB", maxFileCount: 1 },
+    video: { maxFileSize: "6MB", maxFileCount: 1 },
     pdf: { maxFileSize: "4MB", maxFileCount: 1 },
   }).onUploadComplete(async ({ file }) => {
     console.info("[Africhiko] project reference uploaded", {
