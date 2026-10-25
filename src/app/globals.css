@@ -184,3 +184,11 @@
 @media(max-width:900px){.af-home-work-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.af-home-work-card:last-child{grid-column:1/-1}.af-home-work-card:last-child .af-home-work-media{height:220px}}
 @media(max-width:620px){.af-home-work{padding-left:17px;padding-right:17px}.af-home-work .af-section-heading{align-items:start;flex-direction:column;gap:10px}.af-home-work-grid{grid-template-columns:1fr}.af-home-work-card:last-child{grid-column:auto}.af-home-work-media{height:205px}.af-home-work-card>div:last-child>p:not(.af-eyebrow){min-height:0}.af-home-catalogue-link{align-items:start;flex-direction:column}.af-home-project{padding-top:34px;padding-bottom:34px}}
 @media(prefers-reduced-motion:reduce){.af-home-work-media video{display:none}}
+
+
+/* Published workshop videos autoplay silently; this control gives customers a clear sound toggle without covering native playback controls. */
+.af-home-work-media{isolation:isolate}
+.af-home-work-media .af-video-sound{position:absolute;z-index:3;top:10px;right:10px;display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border:1px solid #ffffff8c;border-radius:999px;background:#17151dcc;color:#fff;font:800 .62rem/1 inherit;letter-spacing:.06em;cursor:pointer;backdrop-filter:blur(6px)}
+.af-home-work-media .af-video-sound span{position:static;color:inherit;font-size:.8rem;letter-spacing:0;pointer-events:none}
+.af-home-work-media .af-video-sound:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.af-home-work-media .af-video-sound:hover{background:#17151df2}
