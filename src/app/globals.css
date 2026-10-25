@@ -146,7 +146,7 @@
 .af-home-work-media{position:relative;height:220px;overflow:hidden;background:#24202b}
 .af-home-work-media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,#17151ddd);pointer-events:none}
 .af-home-work-media video{width:100%;height:100%;object-fit:cover}
-.af-home-work-media span{position:absolute;z-index:1;left:15px;bottom:14px;color:#fff;font-size:.65rem;font-weight:900;letter-spacing:.12em}
+.af-home-work-media span{position:absolute;z-index:2;left:15px;top:14px;bottom:auto;pointer-events:none;color:#fff;font-size:.65rem;font-weight:900;letter-spacing:.12em}
 .af-home-work-card>div:last-child{padding:20px}
 .af-home-work-card h3{margin:0 0 10px;font-size:1.3rem;letter-spacing:-.03em}
 .af-home-work-card>div:last-child>p:not(.af-eyebrow){min-height:72px;color:var(--muted);font-size:.85rem;line-height:1.6}
