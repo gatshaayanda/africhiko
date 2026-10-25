@@ -192,3 +192,6 @@
 .af-home-work-media .af-video-sound span{position:static;color:inherit;font-size:.8rem;letter-spacing:0;pointer-events:none}
 .af-home-work-media .af-video-sound:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .af-home-work-media .af-video-sound:hover{background:#17151df2}
+
+/* Clear reassurance that a published project will be carried into the enquiry. */
+.af-work-reference-note{margin:8px 0 0;color:#625a6e;font-size:.8rem;line-height:1.5}
