@@ -50,7 +50,9 @@ Use Africhiko naming and the dedicated Africhiko project configuration in app-fa
 
 
 ## Admin access and work feed
-- The admin page uses one access-word field. The word is verified only on the server using `AFRICHIKO_ADMIN_WORD`; never hardcode it into client code or expose it in a `NEXT_PUBLIC_*` variable.
-- The server route also requires `FIREBASE_ADMIN_KEY` service-account JSON to provision the verified admin role. Configure both as server-only Vercel environment variables before expecting one-word access to work.
+- Africhiko admin access is restricted to `chikohoraknowledge4@gmail.com` and `gatshaayanda@gmail.com`. The admin UI uses Firebase email/password authentication; never use a shared access word or anonymous session to grant admin privileges.
+- The server route verifies the Firebase ID token and allowlisted email before provisioning the role. It requires server-only `FIREBASE_ADMIN_KEY` service-account JSON. Both allowlisted accounts must exist in Firebase Authentication with email/password enabled.
+- Firestore rules independently enforce the same email allowlist as well as the owner/staff role. Keep the allowlist synchronized across the admin access route, notification endpoints, client admin form and Firestore rules.
+- Push notifications are best-effort; a successful FCM send response is not proof of device display. Keep permission-denied recovery instructions explicit and preserve the approved service-worker install/cache behavior.
 - Work-feed items live in `workFeed`; only published items are public. Interest signals are deduplicated per Firebase UID in `workInterests`, and customer identities must never be displayed publicly.
 - Preserve the approved PWA installation mechanism and UX during unrelated work.
