@@ -37,4 +37,4 @@ Deploy Firestore rules separately with `firebase deploy --only firestore:rules` 
 
 ## Customer account flow
 
-Customers may submit their first enquiry without creating an account. After successful submission, the app offers account creation. Linking the anonymous user to an email/password credential preserves the same Auth UID, allowing the enquiry to remain associated with the customer's account. If the browser session is lost before linking, the anonymous enquiry is not automatically merged into a different account.
+Customers may submit their first enquiry without creating an account. After successful submission, the app offers Google account connection. Linking the anonymous user to a Google credential preserves the same Auth UID, allowing the enquiry to remain associated with the customer's account. If the browser session is lost before linking, the anonymous enquiry is not automatically merged into a different account.

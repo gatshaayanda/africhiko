@@ -20,7 +20,7 @@ Do not force account creation before an enquiry. Do not describe an enquiry as a
 - Enquiry creation must be authenticated (anonymous auth is allowed), validated, and bound to request.auth.uid via customerId.
 - Customers may read only enquiries whose customerId equals their Auth UID. Owner/staff can read the inbox and update only operational fields.
 - Never open all Firestore access to work around a permission error. Match rules to the exact collections and fields used by the code.
-- Guest-to-account linking must preserve the same anonymous Auth UID where supported. Do not claim automatic merging across unrelated accounts.
+- Guest-to-Google-account linking must preserve the same anonymous Auth UID where supported. Do not claim automatic merging across unrelated accounts.
 - Never commit .env.local, production credentials, service-account JSON or secrets.
 
 ## Media and integrations
