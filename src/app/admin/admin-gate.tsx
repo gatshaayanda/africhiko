@@ -42,13 +42,13 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
     return onAuthStateChanged(auth, async (nextUser) => {
       setUser(nextUser);
       setAuthorized(false);
-      setError("");
       if (!nextUser) {
         setChecking(false);
         return;
       }
 
       setChecking(true);
+      setError("");
       try {
         await verifyAdminAccess(nextUser);
         setAuthorized(true);
