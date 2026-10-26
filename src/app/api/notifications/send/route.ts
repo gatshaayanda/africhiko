@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       if (!isAdmin) return NextResponse.json({ error: "Only workshop staff can send enquiry status alerts." }, { status: 403 });
       title = "Africhiko enquiry update";
       message = "Your enquiry status is now: " + String(enquiry.status || "Updated") + ".";
-      eventKey = "status-" + body.enquiryId + "-" + String(enquiry.status || "updated");
+      eventKey = "status-" + body.enquiryId + "-" + String(enquiry.status || "updated") + "-" + String(enquiry.updatedAt || "");
     } else {
       if (typeof body.messageId !== "string" || !body.messageId) return NextResponse.json({ error: "The saved message reference is missing." }, { status: 400 });
       const messageSnap = await db.collection("enquiries").doc(body.enquiryId).collection("messages").doc(body.messageId).get();
