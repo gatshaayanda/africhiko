@@ -9,7 +9,7 @@ const ALLOWED_ADMIN_EMAILS = new Set(["chikohoraknowledge4@gmail.com", "gatshaay
 
 export async function POST(request: Request) {
   try {
-    const match = (request.headers.get("authorization") || "").match(/^Bearer\\s+(.+)$/i);
+    const match = (request.headers.get("authorization") || "").match(/^Bearer\s+(.+)$/i);
     if (!match) return NextResponse.json({ error: "Sign in before sending a notification." }, { status: 401 });
     const { auth, db, messaging } = notificationServices();
     const decoded = await auth.verifyIdToken(match[1]);
