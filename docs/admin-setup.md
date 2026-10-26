@@ -1,6 +1,6 @@
 # Africhiko admin setup
 
-Africhiko uses Firebase Authentication and Cloud Firestore. Customer account creation is optional: an enquiry can be submitted as a guest, and the guest's anonymous Firebase identity can later be linked to an email/password credential.
+Africhiko uses Firebase Authentication and Cloud Firestore. Customer account creation is optional: an enquiry can be submitted as a guest, and the guest's anonymous Firebase identity can later be linked to a Google credential where supported.
 
 ## Authorized workshop admins
 
@@ -12,7 +12,7 @@ Only these two email addresses are allowed to administer Africhiko:
 1. In the Africhiko Firebase project, open Authentication → Sign-in method and enable Google. Anonymous authentication may remain enabled for guest customer enquiries.
 2. Confirm both allowlisted Google accounts can sign in to the Africhiko Firebase project. The email returned by Google must exactly match one of the two allowlisted addresses.
 3. Configure the server-only `FIREBASE_ADMIN_KEY` environment variable with the Africhiko Firebase service-account JSON. Never expose it through a `NEXT_PUBLIC_*` variable or commit it to Git.
-4. Visit `/admin` and choose **Continue with Google**. The server verifies the Firebase ID token and allowlisted email before provisioning an owner role; the client also checks the resulting owner/staff role.
+4. Visit `/admin` and choose **Continue with Google**. The server verifies the Firebase ID token and allowlisted email before provisioning an owner role; the client also checks the resulting owner/staff role. Returning sessions are restored automatically after verification, without forcing Google's account chooser. The Operations UI expires the local admin session after 24 hours and checks the deadline again when reopened; server and Firestore authorization remain authoritative.
 5. Deploy `firestore.rules` to the Africhiko Firebase project. The rules independently require both an allowlisted authenticated email and an owner/staff role; a role document alone does not grant access.
 
 The old shared-word/anonymous promotion flow is no longer supported. Admin sign-in uses Google, not a typed password form. Do not manually add other accounts as admins; the allowlist is intentionally restricted to the two addresses above.
@@ -34,6 +34,11 @@ Deploy Firestore rules separately with `firebase deploy --only firestore:rules` 
 - FCM accepting a send request does not prove the device displayed the notification. Test with Africhiko in the background and check the notification tray.
 - Notification registration requires `NEXT_PUBLIC_FIREBASE_VAPID_KEY`, the public Firebase web configuration, the service worker and server-only `FIREBASE_ADMIN_KEY`. Verify live delivery separately from a successful API response.
 - Notification support may be added to `public/sw.js` only additively. Do not change PWA registration, install prompt lifecycle, cache namespace, offline routes, or existing fetch/cache behavior for notification work.
+
+## Weather and project guide
+
+- The Gaborone workshop weather card uses the server-only `OPEN_METEO_API_KEY` against Open-Meteo's commercial customer API. Keep this key server-side; do not use the free non-commercial endpoint for Africhiko's business site. If the key is missing or the provider is unavailable, the card reports that honestly and can be retried. Weather is for the Gaborone workshop area, not a customer's project site.
+- The contextual Africhiko guide is scripted navigation/help, not an AI assistant or a live chat. It links to existing enquiry, account and admin actions; it does not send messages, update enquiry status or claim that a request was submitted. Keep the guide dismissible and unobtrusive on mobile.
 
 ## Customer account flow
 

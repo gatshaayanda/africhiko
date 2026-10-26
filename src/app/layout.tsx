@@ -2,8 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import PwaRegister from "@/app/pwa-register";
+import AfrichikoGuide from "@/components/AfrichikoGuide";
 import "./globals.css";
 import "./pwa.css";
+import "./africhiko-experience.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://africhiko.vercel.app";
 
@@ -24,5 +26,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#6d28d9", colorScheme: "light" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><PwaRegister />{children}<Analytics /><SpeedInsights /></body></html>;
+  return <html lang="en"><body><PwaRegister />{children}<AfrichikoGuide /><Analytics /><SpeedInsights /></body></html>;
 }
