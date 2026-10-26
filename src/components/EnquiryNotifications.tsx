@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { getMessaging, getToken, isSupported } from "firebase/messaging";
 import { addDoc, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
 import type { User } from "firebase/auth";
@@ -109,7 +110,7 @@ export function EnquiryConversation({ enquiryId, user, role }: { enquiryId: stri
     }, () => setError("Messages could not be loaded. Check your enquiry access and connection."));
   }, [enquiryId, user?.uid]);
 
-  async function send(event: React.FormEvent) {
+  async function send(event: FormEvent) {
     event.preventDefault();
     const body = draft.trim();
     if (!user || !body || busy) return;
