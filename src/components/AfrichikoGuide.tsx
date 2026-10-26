@@ -8,10 +8,11 @@ import { ArrowRight, MessageCircle, Send, Sparkles, X } from "lucide-react";
 type View = "home" | "account" | "admin";
 type Message = { id: number; from: "guide" | "you"; text: string };
 
-export default function AfrichikoGuide() {
+type Props = { view?: View };
+
+export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
   const pathname = usePathname();
-  const view: View = pathname === "/account" ? "account" : pathname === "/admin" ? "admin" : "home";
-  if (view === "admin") return null;
+  const view: View = viewOverride || (pathname === "/account" ? "account" : pathname === "/admin" ? "admin" : "home");
   const [open, setOpen] = useState(false);
   const [teaser, setTeaser] = useState(false);
   const [input, setInput] = useState("");
@@ -45,6 +46,8 @@ export default function AfrichikoGuide() {
     window.addEventListener("keydown", onKeyDown);
     return () => { window.clearTimeout(focusTimer); window.removeEventListener("keydown", onKeyDown); };
   }, [open]);
+
+  if (view === "admin" && !viewOverride) return null;
 
   function say(text: string) {
     setMessages(current => [...current, { id: Date.now() + Math.random(), from: "guide", text }].slice(-6));
