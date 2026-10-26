@@ -5,6 +5,7 @@ import { notificationServices } from "@/lib/server/firebase-admin";
 export const runtime = "nodejs";
 
 const INVALID_TOKEN_CODES = new Set(["messaging/registration-token-not-registered", "messaging/invalid-registration-token"]);
+const ALLOWED_ADMIN_EMAILS = new Set(["chikohoraknowledge4@gmail.com", "gatshaayanda@gmail.com"]);
 
 export async function POST(request: Request) {
   try {
@@ -20,7 +21,8 @@ export async function POST(request: Request) {
     if (!enquirySnap.exists) return NextResponse.json({ error: "Enquiry not found." }, { status: 404 });
     const enquiry = enquirySnap.data()!;
     const roleSnap = await db.collection("admins").doc(decoded.uid).get();
-    const isAdmin = roleSnap.exists && ["owner", "staff"].includes(String(roleSnap.data()?.role || "").toLowerCase());
+    const email = String(decoded.email || "").trim().toLowerCase();
+    const isAdmin = ALLOWED_ADMIN_EMAILS.has(email) && roleSnap.exists && ["owner", "staff"].includes(String(roleSnap.data()?.role || "").toLowerCase());
     const kind = body.kind as "new-enquiry" | "status" | "message";
     let title = "";
     let message = "";
@@ -56,8 +58,12 @@ export async function POST(request: Request) {
     if (isAdmin) {
       if (typeof enquiry.customerId === "string") recipientUids = [enquiry.customerId];
     } else {
-      const admins = await db.collection("admins").get();
-      recipientUids = admins.docs.filter(item => ["owner", "staff"].includes(String(item.data().role || "").toLowerCase())).map(item => item.id);
+      const allowedUsers = await Promise.all([...ALLOWED_ADMIN_EMAILS].map(async adminEmail => {
+        try { return await auth.getUserByEmail(adminEmail); } catch { return null; }
+      }));
+      const validUsers = allowedUsers.filter((item): item is NonNullable<typeof item> => Boolean(item));
+      const roleDocs = await Promise.all(validUsers.map(item => db.collection("admins").doc(item.uid).get()));
+      recipientUids = roleDocs.filter((item, index) => item.exists && ["owner", "staff"].includes(String(item.data()?.role || "").toLowerCase()) && ALLOWED_ADMIN_EMAILS.has(String(validUsers[index].email || "").toLowerCase())).map(item => item.id);
     }
     if (!recipientUids.length) return NextResponse.json({ sent: false, reason: "no-recipients" });
 
