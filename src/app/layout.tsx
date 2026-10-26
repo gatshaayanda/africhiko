@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import PwaRegister from "@/app/pwa-register";
 import "./globals.css";
 import "./pwa.css";
+import "./africhiko-experience.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://africhiko.vercel.app";
 
