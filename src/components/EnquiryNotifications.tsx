@@ -108,7 +108,7 @@ export function EnquiryConversation({ enquiryId, user, role }: { enquiryId: stri
         return at - bt;
       }));
     }, () => setError("Messages could not be loaded. Check your enquiry access and connection."));
-  }, [enquiryId, user?.uid]);
+  }, [enquiryId, user]);
 
   async function send(event: FormEvent) {
     event.preventDefault();
