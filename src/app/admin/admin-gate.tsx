@@ -24,7 +24,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
       }
       try {
         const role = await getDoc(doc(db, "admins", nextUser.uid));
-        const allowed = role.exists() && ["owner", "staff"].includes(String(role.data().role));
+        const allowed = ["chikohoraknowledge4@gmail.com", "gatshaayanda@gmail.com"].includes(String(nextUser.email || "").trim().toLowerCase()) && role.exists() && ["owner", "staff"].includes(String(role.data().role));
         setAuthorized(allowed);
         if (!allowed) await signOut(auth);
       } catch {
@@ -43,9 +43,9 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
     try {
       const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
       const role = await getDoc(doc(db, "admins", credential.user.uid));
-      if (!role.exists() || !["owner", "staff"].includes(String(role.data().role))) {
+      if (!["chikohoraknowledge4@gmail.com", "gatshaayanda@gmail.com"].includes(String(credential.user.email || "").trim().toLowerCase()) || !role.exists() || !["owner", "staff"].includes(String(role.data().role))) {
         await signOut(auth);
-        throw new Error("This account is not enabled for Namane Tyres Operations.");
+        throw new Error("This account is not authorized for Africhiko workshop operations.");
       }
       setAuthorized(true);
     } catch (err) {
@@ -61,5 +61,5 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
     return <div className="adminAuthorized"><div className="adminAccountBar"><span>Signed in as {user.email ?? "authorized staff"}</span><button className="button buttonLight" type="button" onClick={() => void signOut(auth)}>Sign out</button></div>{children}</div>;
   }
 
-  return <main className="adminPage"><div className="adminShell"><section className="adminPanel" style={{ maxWidth: 520, margin: "80px auto" }}><span className="kicker">NAMANE TYRES · Operations</span><h1>Sign in to Operations</h1><p>Use an authorized owner or staff account to manage customer requests and tyre inventory.</p><form className="adminForm" onSubmit={signIn}><label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></label><label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /></label>{error && <p role="alert">{error}</p>}<button className="button buttonPrimary" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button></form></section></div></main>;
+  return <main className="adminPage"><div className="adminShell"><section className="adminPanel" style={{ maxWidth: 520, margin: "80px auto" }}><span className="kicker">AFRICHIKO · Operations</span><h1>Sign in to Operations</h1><p>Use one of the two authorized Africhiko accounts to manage fabrication enquiries and workshop content.</p><form className="adminForm" onSubmit={signIn}><label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></label><label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /></label>{error && <p role="alert">{error}</p>}<button className="button buttonPrimary" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button></form></section></div></main>;
 }
