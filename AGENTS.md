@@ -45,6 +45,13 @@ The approved installation experience in Africhiko is a permanent reference for a
 - Never force-push or rewrite history.
 - For each checkpoint report repository, branch, commit, changed files, verification, configuration still needed, exact QA steps and deployment status.
 
+## Contextual experience
+
+- Use a warm, restrained greeting: customer first name once where available, and a time-aware “Boss” greeting for authorized workshop admin. Do not overuse names or invent activity counts.
+- The contextual Africhiko guide is deterministic and honest about its limits. Reuse existing page links and actions; never claim a message was sent, a status changed, or a human/AI replied when no such operation occurred. Keep it keyboard-accessible, dismissible and clear of key mobile actions.
+- Current weather is for the Gaborone workshop area only. Use the server-only `OPEN_METEO_API_KEY` with Open-Meteo's commercial API, keep credentials off the client, show the update time and attribution, and provide an honest unavailable/retry state. Do not use the free non-commercial API endpoint for this business app.
+- Admin session UX expires after 24 hours and restores a valid existing session without forcing the Google account chooser. This client-side timeout is not a replacement for server token verification or Firestore rules.
+
 ## Project identity
 Use Africhiko naming and the dedicated Africhiko project configuration in app-facing text, docs, environment examples and Firebase CLI configuration. Search for and correct inherited identity leaks rather than copying another project's details.
 
