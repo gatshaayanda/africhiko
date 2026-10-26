@@ -1,13 +1,19 @@
-importScripts("https://www.gstatic.com/firebasejs/11.9.0/firebase-app-compat.js","https://www.gstatic.com/firebasejs/11.9.0/firebase-messaging-compat.js");
+importScripts(
+  "https://www.gstatic.com/firebasejs/11.9.0/firebase-app-compat.js",
+  "https://www.gstatic.com/firebasejs/11.9.0/firebase-messaging-compat.js",
+  "/api/firebase/messaging-sw-config"
+);
 
-// Push handling is additive: keep Africhiko's existing install, cache, update and
-// offline-fetch behaviour below unchanged. Firebase config is public web config.
-fetch("/api/notifications/config", { cache: "no-store" })
-  .then(response => { if (!response.ok) throw new Error("Firebase messaging config unavailable"); return response.json(); })
-  .then(config => {
+// Add FCM reception without changing Africhiko's existing install, cache, update,
+// or offline-fetch behaviour below.
+let africhikoMessaging = null;
+try {
+  const config = self.__AFRICHIKO_FIREBASE_CONFIG__;
+  if (config && config.apiKey && config.projectId && config.messagingSenderId && config.appId) {
     if (!firebase.apps.length) firebase.initializeApp(config);
-    const messaging = firebase.messaging();
-    messaging.onBackgroundMessage(payload => {
+    africhikoMessaging = firebase.messaging();
+    africhikoMessaging.onBackgroundMessage((payload) => {
+      if (payload.notification) return;
       const data = payload.data || {};
       return self.registration.showNotification(data.title || "Africhiko update", {
         body: data.body || "There is an update to your project enquiry.",
@@ -17,8 +23,12 @@ fetch("/api/notifications/config", { cache: "no-store" })
         data: { link: typeof data.link === "string" && data.link.startsWith("/") ? data.link : "/account" }
       });
     });
-  })
-  .catch(error => { console.warn("Africhiko background notifications are not configured yet.", error); });
+  } else {
+    console.warn("Africhiko Firebase Messaging web config is incomplete.");
+  }
+} catch (error) {
+  console.warn("Africhiko background notifications could not initialize.", error);
+}
 
 const CACHE_NAME = "africhiko-shell-v1";
 const APP_SHELL = ["/", "/services", "/enquiry", "/basket", "/account", "/offline", "/africhiko-icon.svg"];
