@@ -25,7 +25,7 @@ export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
     try {
       if (sessionStorage.getItem("africhiko-guide-teaser") === "dismissed" || sessionStorage.getItem("africhiko-guide-teaser") === "shown") return;
       const timer = window.setTimeout(() => {
-        if (document.visibilityState === "visible") {
+        if (document.visibilityState === "visible" && !document.querySelector(".af-install-card")) {
           setTeaser(true);
           sessionStorage.setItem("africhiko-guide-teaser", "shown");
         }
