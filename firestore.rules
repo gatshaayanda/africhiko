@@ -135,6 +135,27 @@ service cloud.firestore {
         || (signedIn() && resource.data.customerId == request.auth.uid);
       allow update: if isAdmin() && validEnquiryUpdate();
       allow delete: if false;
+
+      match /messages/{messageId} {
+        function canAccessEnquiry() {
+          return isAdmin() || (signedIn()
+            && get(/databases/$(database)/documents/enquiries/$(enquiryId)).data.customerId == request.auth.uid);
+        }
+        allow read: if canAccessEnquiry();
+        allow create: if signedIn()
+          && request.resource.data.keys().hasAll(['senderUid', 'senderRole', 'body', 'createdAt', 'createdAtServer'])
+          && request.resource.data.keys().hasOnly(['senderUid', 'senderRole', 'body', 'createdAt', 'createdAtServer'])
+          && request.resource.data.senderUid == request.auth.uid
+          && request.resource.data.body is string
+          && request.resource.data.body.size() > 0
+          && request.resource.data.body.size() <= 2000
+          && request.resource.data.createdAt is string
+          && request.resource.data.createdAtServer == request.time
+          && ((request.resource.data.senderRole == 'admin' && isAdmin())
+            || (request.resource.data.senderRole == 'customer' && signedIn()
+              && get(/databases/$(database)/documents/enquiries/$(enquiryId)).data.customerId == request.auth.uid));
+        allow update, delete: if false;
+      }
     }
 
     match /{document=**} {
