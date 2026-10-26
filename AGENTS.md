@@ -48,11 +48,10 @@ The approved installation experience in Africhiko is a permanent reference for a
 ## Project identity
 Use Africhiko naming and the dedicated Africhiko project configuration in app-facing text, docs, environment examples and Firebase CLI configuration. Search for and correct inherited identity leaks rather than copying another project's details.
 
-
 ## Admin access and work feed
-- Africhiko admin access is restricted to `chikohoraknowledge4@gmail.com` and `gatshaayanda@gmail.com`. The admin UI uses Firebase email/password authentication; never use a shared access word or anonymous session to grant admin privileges.
-- The server route verifies the Firebase ID token and allowlisted email before provisioning the role. It requires server-only `FIREBASE_ADMIN_KEY` service-account JSON. Both allowlisted accounts must exist in Firebase Authentication with email/password enabled.
-- Firestore rules independently enforce the same email allowlist as well as the owner/staff role. Keep the allowlist synchronized across the admin access route, notification endpoints, client admin form and Firestore rules.
+- Africhiko admin access is restricted to `chikohoraknowledge4@gmail.com` and `gatshaayanda@gmail.com`. The admin UI uses Firebase Google sign-in; never use a shared access word, typed admin password form, or anonymous session to grant admin privileges.
+- The server route verifies the Firebase ID token and allowlisted email before provisioning the role. It requires server-only `FIREBASE_ADMIN_KEY` service-account JSON. Google sign-in must be enabled in Firebase Authentication, and both allowlisted Google accounts must be able to authenticate with their exact allowlisted email addresses.
+- Firestore rules independently enforce the same email allowlist as well as the owner/staff role. Keep the allowlist synchronized across routes, notification endpoints, and rules.
 - Push notifications are best-effort; a successful FCM send response is not proof of device display. Keep permission-denied recovery instructions explicit and preserve the approved service-worker install/cache behavior.
-- Work-feed items live in `workFeed`; only published items are public. Interest signals are deduplicated per Firebase UID in `workInterests`, and customer identities must never be displayed publicly.
+- Work-feed items live in `workFeed`; only published items are public. Interest signals are deduplicated per UID in `workInterests`, and customer identities must never be displayed publicly.
 - Preserve the approved PWA installation mechanism and UX during unrelated work.
