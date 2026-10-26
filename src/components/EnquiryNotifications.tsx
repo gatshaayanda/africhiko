@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { getMessaging, getToken, isSupported } from "firebase/messaging";
+import { getMessaging, getToken, isSupported, onMessage } from "firebase/messaging";
 import { addDoc, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
 import type { User } from "firebase/auth";
 import { app, auth, db, hasFirebaseWebConfig } from "@/lib/firebase/client";
@@ -30,6 +30,25 @@ export function NotificationSettings({ user, role }: { user: User | null; role: 
   const [message, setMessage] = useState("");
   const [registeredToken, setRegisteredToken] = useState("");
   const [testBusy, setTestBusy] = useState(false);
+  useEffect(() => {
+    if (state !== "enabled" || !user || !hasFirebaseWebConfig || typeof window === "undefined" || !("Notification" in window) || Notification.permission !== "granted") return;
+    let active = true;
+    let unsubscribe: (() => void) | undefined;
+    void isSupported().then(supported => {
+      if (!active || !supported) return;
+      unsubscribe = onMessage(getMessaging(app), async payload => {
+        const title = payload.notification?.title || payload.data?.title || "Africhiko update";
+        const body = payload.notification?.body || payload.data?.body || "There is an update to your enquiry.";
+        const registration = await navigator.serviceWorker.ready;
+        await registration.showNotification(title, {
+          body, icon: "/africhiko-icon.svg", badge: "/africhiko-icon.svg",
+          tag: "africhiko-foreground-" + (payload.data?.enquiryId || "update"),
+          data: { link: typeof payload.data?.link === "string" && payload.data.link.startsWith("/") ? payload.data.link : role === "admin" ? "/admin" : "/account" },
+        });
+      });
+    }).catch(error => console.warn("Africhiko foreground notification listener failed:", error));
+    return () => { active = false; unsubscribe?.(); };
+  }, [state, user, role]);
   async function enable() {
     if (!user) { setState("error"); setMessage("Sign in first so this device can be linked to your Africhiko account."); return; }
     if (!hasFirebaseWebConfig) { setState("error"); setMessage("Firebase is not configured in this environment."); return; }
@@ -42,8 +61,11 @@ export function NotificationSettings({ user, role }: { user: User | null; role: 
     try {
       const supported = await isSupported();
       if (!supported) throw new Error("Firebase messaging is not supported by this browser.");
+      if (Notification.permission === "denied") {
+        throw new Error("Chrome is blocking Africhiko notifications, so this button cannot reopen the permission prompt. In Chrome, open africhiko.vercel.app, tap the site controls beside the address bar → Permissions → Notifications → Allow, then reload this page and try again.");
+      }
       const permission = Notification.permission === "granted" ? "granted" : await Notification.requestPermission();
-      if (permission !== "granted") throw new Error("Notifications were not allowed. You can enable them in this browser's site settings and try again.");
+      if (permission !== "granted") throw new Error("Notification permission was not granted. Choose Allow in Chrome’s permission prompt, then try again.");
       const registration = await navigator.serviceWorker.ready;
       const messaging = getMessaging(app);
       const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: registration });
@@ -78,7 +100,7 @@ export function NotificationSettings({ user, role }: { user: User | null; role: 
       });
       const result = await response.json().catch(() => ({})) as { sent?: boolean; error?: string };
       if (!response.ok || !result.sent) throw new Error(result.error || "Firebase Cloud Messaging did not accept the test notification.");
-      setMessage("Firebase Cloud Messaging accepted the test send. Put this app in the background and check the device notification tray; acceptance does not guarantee delivery.");
+      setMessage("Firebase accepted the test request for this registered device. This confirms server acceptance only, not that the phone displayed it. Put Africhiko in the background, check the notification tray and Chrome site permissions. If nothing arrives, reload Africhiko and register this device again.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "The test notification could not be requested.");
       setState("error");
