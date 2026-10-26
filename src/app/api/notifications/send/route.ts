@@ -43,6 +43,7 @@ export async function POST(request: Request) {
       if (!docs.length) continue;
       const result = await messaging.sendEachForMulticast({
         tokens: docs.map(item => String(item.data().token)),
+        notification: { title, body: message },
         data: { title, body: message, link: typeof body.link === "string" && body.link.startsWith("/") ? body.link : link, enquiryId: body.enquiryId },
         webpush: { fcmOptions: { link: publicUrl + link }, notification: { icon: "/africhiko-icon.svg", badge: "/africhiko-icon.svg", tag: "africhiko-" + body.enquiryId } },
       });
