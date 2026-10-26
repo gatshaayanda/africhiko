@@ -102,6 +102,7 @@ export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
           <Link href="/#work" onClick={() => setOpen(false)}>See completed work <ArrowRight size={15}/></Link>
         </>}
       </nav>
+      {view !== "admin" && <div className="af-guide-services"><span>FABRICATION SHORTCUTS</span><div><Link href="/enquiry?service=Gates%20%26%20security" onClick={() => setOpen(false)}>Gates &amp; security</Link><Link href="/enquiry?service=Steel%20structures" onClick={() => setOpen(false)}>Steel structures</Link><Link href="/enquiry?service=Welding%20%26%20repairs" onClick={() => setOpen(false)}>Welding &amp; repairs</Link><Link href="/enquiry" onClick={() => setOpen(false)}>Custom fabrication</Link></div></div>}
       <div className="af-guide-thread" aria-live="polite" aria-relevant="additions text">{messages.map(message => <p key={message.id} className={`af-guide-message af-guide-message-${message.from}`}>{message.text}</p>)}</div>
       <form className="af-guide-composer" onSubmit={sendText}><input value={input} onChange={event => setInput(event.target.value)} aria-label="Ask the Africhiko project guide" placeholder="Ask about a quote, project or status…" maxLength={300}/><button type="submit" disabled={!input.trim()} aria-label="Send message"><Send size={17}/></button></form>
       <p className="af-guide-disclaimer">Scripted guidance. It does not send messages or change enquiry status.</p>
