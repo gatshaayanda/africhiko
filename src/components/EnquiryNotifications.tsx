@@ -27,6 +27,8 @@ export async function sendAfrichikoPush(enquiryId: string, title: string, messag
 export function NotificationSettings({ user, role }: { user: User | null; role: "customer" | "admin" }) {
   const [state, setState] = useState<"idle" | "working" | "enabled" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [registeredToken, setRegisteredToken] = useState("");
+  const [testBusy, setTestBusy] = useState(false);
   async function enable() {
     if (!user) { setState("error"); setMessage("Sign in first so this device can be linked to your Africhiko account."); return; }
     if (!hasFirebaseWebConfig) { setState("error"); setMessage("Firebase is not configured in this environment."); return; }
@@ -53,6 +55,7 @@ export function NotificationSettings({ user, role }: { user: User | null; role: 
       });
       const result = await response.json().catch(() => ({})) as { error?: string };
       if (!response.ok) throw new Error(result.error || "This device could not be registered.");
+      setRegisteredToken(token);
       setState("enabled");
       setMessage(role === "admin" ? "This device is registered for workshop enquiry and message alerts." : "This device is registered for enquiry progress and workshop message alerts.");
     } catch (error) {
@@ -61,12 +64,32 @@ export function NotificationSettings({ user, role }: { user: User | null; role: 
     }
   }
 
+  async function sendTest() {
+    if (!user || !registeredToken || testBusy) return;
+    setTestBusy(true);
+    setMessage("");
+    try {
+      const idToken = await user.getIdToken();
+      const response = await fetch("/api/notifications/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + idToken },
+        body: JSON.stringify({ token: registeredToken }),
+      });
+      const result = await response.json().catch(() => ({})) as { sent?: boolean; error?: string };
+      if (!response.ok || !result.sent) throw new Error(result.error || "Firebase Cloud Messaging did not accept the test notification.");
+      setMessage("Firebase Cloud Messaging accepted the test send. Put this app in the background and check the device notification tray; acceptance does not guarantee delivery.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "The test notification could not be requested.");
+      setState("error");
+    } finally { setTestBusy(false); }
+  }
+
   return <section className="af-notification-settings" aria-label="Push notification settings">
     <div><p className="af-eyebrow">KEEP IN THE LOOP</p><h3>{role === "admin" ? "Workshop alerts" : "Enquiry alerts"}</h3>
       <p>{role === "admin" ? "Get a browser notification when a customer sends an enquiry message." : "Get updates when the workshop changes your enquiry status or replies to your message."}</p>
       {message && <p className={"af-form-message " + (state === "error" ? "af-error" : "")} role="status" aria-live="polite">{message}</p>}
     </div>
-    <button type="button" className="af-button af-button-outline" disabled={state === "working" || state === "enabled"} onClick={() => void enable()}>{state === "working" ? "Setting up…" : state === "enabled" ? "Notifications enabled ✓" : "Enable notifications ↗"}</button>
+    <div className="af-notification-actions"><button type="button" className="af-button af-button-outline" disabled={state === "working" || state === "enabled"} onClick={() => void enable()}>{state === "working" ? "Setting up…" : state === "enabled" ? "Notifications enabled ✓" : "Enable notifications ↗"}</button>{state === "enabled" && <button type="button" className="af-button" disabled={testBusy} onClick={() => void sendTest()}>{testBusy ? "Requesting test…" : "Send a test notification"}</button>}</div>
   </section>;
 }
 
