@@ -1,3 +1,35 @@
+// Handle notification taps before Firebase Messaging registers its default handler.
+// This only controls notification navigation; it does not change install/cache/offline logic.
+self.addEventListener("notificationclick", (event) => {
+  event.stopImmediatePropagation();
+  event.notification.close();
+
+  const notificationData = event.notification.data || {};
+  const fcmPayload = notificationData.FCM_MSG || {};
+  const fcmData = fcmPayload.data || {};
+  const fcmOptions = fcmPayload.webpush?.fcmOptions || {};
+  const candidate = notificationData.link || fcmData.link || fcmOptions.link || "/account";
+  let destination;
+  try {
+    destination = new URL(candidate, self.location.origin);
+    if (destination.origin !== self.location.origin) destination = new URL("/account", self.location.origin);
+  } catch {
+    destination = new URL("/account", self.location.origin);
+  }
+
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const client of windows) {
+      if (!client.url.startsWith(self.location.origin)) continue;
+      if (typeof client.navigate === "function" && client.url !== destination.href) {
+        try { await client.navigate(destination.href); } catch { /* Open a fresh same-origin window below if navigation fails. */ }
+      }
+      if (typeof client.focus === "function") return client.focus();
+    }
+    return self.clients.openWindow(destination.href);
+  })());
+});
+
 importScripts(
   "https://www.gstatic.com/firebasejs/11.9.0/firebase-app-compat.js",
   "https://www.gstatic.com/firebasejs/11.9.0/firebase-messaging-compat.js",
