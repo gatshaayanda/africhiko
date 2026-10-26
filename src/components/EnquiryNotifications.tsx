@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getMessaging, getToken, isSupported } from "firebase/messaging";
 import { addDoc, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
 import type { User } from "firebase/auth";
@@ -27,12 +27,6 @@ export async function sendAfrichikoPush(enquiryId: string, title: string, messag
 export function NotificationSettings({ user, role }: { user: User | null; role: "customer" | "admin" }) {
   const [state, setState] = useState<"idle" | "working" | "enabled" | "error">("idle");
   const [message, setMessage] = useState("");
-  useEffect(() => {
-    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
-      setMessage("Notifications are allowed in this browser. Enable this device below if it has not been registered yet.");
-    }
-  }, []);
-
   async function enable() {
     if (!user) { setState("error"); setMessage("Sign in first so this device can be linked to your Africhiko account."); return; }
     if (!hasFirebaseWebConfig) { setState("error"); setMessage("Firebase is not configured in this environment."); return; }
