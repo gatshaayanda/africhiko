@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { getMessaging, getToken, isSupported } from "firebase/messaging";
 import { addDoc, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
