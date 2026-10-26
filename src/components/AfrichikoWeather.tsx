@@ -22,8 +22,7 @@ export default function AfrichikoWeather() {
     setLoading(true);
     setError(false);
     try {
-      const url = "https://api.open-meteo.com/v1/forecast?latitude=-24.6282&longitude=25.9231&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=Africa%2FGaborone";
-      const response = await fetch(url, { cache: "no-store" });
+      const response = await fetch("/api/weather", { cache: "no-store" });
       if (!response.ok) throw new Error("Weather unavailable");
       const data = await response.json() as { current?: Weather };
       if (!data.current || typeof data.current.temperature_2m !== "number") throw new Error("Weather data missing");
@@ -36,7 +35,7 @@ export default function AfrichikoWeather() {
     }
   }, []);
   useEffect(() => { void loadWeather(); }, [loadWeather]);
-  const updated = weather?.time ? new Date(weather.time).toLocaleTimeString("en-BW", { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Gaborone" }) : "";
+  const updated = weather?.time ? weather.time.slice(11, 16) : "";
 
   return <section className="af-weather-card" aria-label="Current Gaborone weather">
     <div><p className="af-eyebrow">GABORONE · WORKSHOP WEATHER</p>
