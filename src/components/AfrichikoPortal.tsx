@@ -3,7 +3,7 @@ import Link from "next/link";
 import SparkCatcher from "@/components/SparkCatcher";
 import {useEffect,useRef,useState} from "react";
 import {useSearchParams} from "next/navigation";
-import {onAuthStateChanged,signInAnonymously,signInWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,linkWithPopup,signOut,type User} from "firebase/auth";
+import {onAuthStateChanged,signInAnonymously,signInWithPopup,GoogleAuthProvider,linkWithPopup,signOut,type User} from "firebase/auth";
 import {addDoc,collection,deleteDoc,doc,getDoc,onSnapshot,query,serverTimestamp,setDoc,updateDoc,where} from "firebase/firestore";
 import {auth,db,hasFirebaseWebConfig} from "@/lib/firebase/client";
 import {uploadFiles} from "@/lib/uploadthing";
