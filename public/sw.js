@@ -2,7 +2,7 @@ importScripts("https://www.gstatic.com/firebasejs/11.9.0/firebase-app-compat.js"
 
 // Push handling is additive: keep Africhiko's existing install, cache, update and
 // offline-fetch behaviour below unchanged. Firebase config is public web config.
-const afMessagingReady = fetch("/api/notifications/config", { cache: "no-store" })
+fetch("/api/notifications/config", { cache: "no-store" })
   .then(response => { if (!response.ok) throw new Error("Firebase messaging config unavailable"); return response.json(); })
   .then(config => {
     if (!firebase.apps.length) firebase.initializeApp(config);
