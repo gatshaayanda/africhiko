@@ -19,3 +19,6 @@
 .af-conversation-compose button{flex-shrink:0}
 .af-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:560px){.af-notification-settings{align-items:stretch;padding:15px}.af-notification-settings>.af-button{width:100%;justify-content:center}.af-conversation-compose{flex-direction:column;align-items:stretch}.af-conversation-compose textarea{width:100%;box-sizing:border-box}.af-conversation-compose button{width:100%}.af-message{width:94%}}
+
+.af-notification-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+@media(max-width:560px){.af-notification-actions{width:100%;flex-direction:column;align-items:stretch}.af-notification-actions>.af-button{width:100%;justify-content:center}}
