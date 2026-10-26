@@ -21,7 +21,7 @@ export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
   const launcherRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (view !== "home") return;
+    if (view !== "home" || document.querySelector(".af-install-card")) return;
     try {
       if (sessionStorage.getItem("africhiko-guide-teaser") === "dismissed" || sessionStorage.getItem("africhiko-guide-teaser") === "shown") return;
       const timer = window.setTimeout(() => {
@@ -36,12 +36,19 @@ export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
 
   useEffect(() => {
     if (!open) return;
-    const focusTimer = window.setTimeout(() => panelRef.current?.querySelector<HTMLButtonElement>("button")?.focus(), 0);
+    const focusTimer = window.setTimeout(() => panelRef.current?.querySelector<HTMLElement>('button:not([disabled]),a[href],input:not([disabled])')?.focus(), 0);
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpen(false);
         launcherRef.current?.focus();
+        return;
       }
+      if (event.key !== "Tab") return;
+      const focusable = panelRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled])');
+      if (!focusable?.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => { window.clearTimeout(focusTimer); window.removeEventListener("keydown", onKeyDown); };
@@ -79,7 +86,7 @@ export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
       <div><strong>Not sure where to start?</strong><p>I can point you to the right next step.</p><button type="button" onClick={() => { setTeaser(false); setOpen(true); }}>Help me choose <ArrowRight size={14}/></button></div>
       <button type="button" className="af-guide-dismiss" aria-label="Dismiss guide invitation" onClick={() => { setTeaser(false); try { sessionStorage.setItem("africhiko-guide-teaser", "dismissed"); } catch {} }}><X size={15}/></button>
     </aside>}
-    {open && <button type="button" className="af-guide-backdrop" aria-label="Close Africhiko guide" onClick={() => setOpen(false)} />}
+    {open && <button type="button" className="af-guide-backdrop" aria-label="Close Africhiko guide" onClick={() => { setOpen(false); launcherRef.current?.focus(); }} />}
     {open && <section ref={panelRef} className="af-guide-panel" role="dialog" aria-modal="true" aria-labelledby="af-guide-title">
       <header className="af-guide-head"><span className="af-guide-avatar"><Sparkles size={18}/></span><div><small>AFRICHIKO · PROJECT GUIDE</small><h2 id="af-guide-title">{view === "admin" ? "Operations sidekick" : "Your next step"}</h2><p>Quick help · Real page links</p></div><button type="button" aria-label="Close guide" onClick={() => { setOpen(false); launcherRef.current?.focus(); }}><X size={19}/></button></header>
       <div className="af-guide-intro"><strong>{intro}</strong><p>{view === "admin" ? "Jump to a real workshop tool or ask a quick question." : "Choose a useful shortcut or ask a quick question. You can always continue without chat."}</p></div>
