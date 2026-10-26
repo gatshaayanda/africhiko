@@ -9,7 +9,7 @@ import { app, auth, db, hasFirebaseWebConfig } from "@/lib/firebase/client";
 
 type Message = { id: string; senderUid: string; senderRole: "admin" | "customer"; body: string; createdAt?: string; createdAtServer?: { toDate?: () => Date } };
 
-export async function sendAfrichikoPush(enquiryId: string, title: string, message: string, link: string) {
+export async function sendAfrichikoPush(enquiryId: string, title: string, message: string, link: string, kind: "new-enquiry" | "status" | "message", messageId?: string) {
   const user = auth.currentUser;
   if (!user || !hasFirebaseWebConfig) return;
   try {
@@ -17,7 +17,7 @@ export async function sendAfrichikoPush(enquiryId: string, title: string, messag
     await fetch("/api/notifications/send", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
-      body: JSON.stringify({ enquiryId, title, message, link }),
+      body: JSON.stringify({ enquiryId, title, message, link, kind, messageId }),
     });
   } catch (error) {
     // The enquiry/message remains saved; push is an additional delivery channel.
@@ -117,7 +117,7 @@ export function EnquiryConversation({ enquiryId, user, role }: { enquiryId: stri
     if (body.length > 2000) { setError("Keep messages under 2,000 characters."); return; }
     setBusy(true); setError("");
     try {
-      await addDoc(collection(db, "enquiries", enquiryId, "messages"), {
+      const messageRef = await addDoc(collection(db, "enquiries", enquiryId, "messages"), {
         senderUid: user.uid,
         senderRole: role,
         body,
@@ -125,7 +125,7 @@ export function EnquiryConversation({ enquiryId, user, role }: { enquiryId: stri
         createdAtServer: serverTimestamp(),
       });
       setDraft("");
-      await sendAfrichikoPush(enquiryId, role === "admin" ? "Message from Africhiko" : "New customer message", body.slice(0, 180), role === "admin" ? "/account" : "/admin");
+      await sendAfrichikoPush(enquiryId, role === "admin" ? "Message from Africhiko" : "New customer message", body.slice(0, 180), role === "admin" ? "/account" : "/admin", "message", messageRef.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Your message was not sent. Please retry.");
     } finally { setBusy(false); }
