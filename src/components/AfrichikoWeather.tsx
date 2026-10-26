@@ -40,7 +40,7 @@ export default function AfrichikoWeather() {
   return <section className="af-weather-card" aria-label="Current Gaborone weather">
     <div><p className="af-eyebrow">GABORONE · WORKSHOP WEATHER</p>
       {weather ? <><div className="af-weather-current"><strong>{Math.round(weather.temperature_2m)}°C</strong><span>{condition(weather.weather_code)}</span></div><p>Feels like {Math.round(weather.apparent_temperature)}°C</p></> : <p className="af-weather-status" role="status">{loading ? "Checking current conditions…" : error ? "Weather is unavailable right now." : ""}</p>}
-      <small>{updated ? `Updated ${updated} local time · Open-Meteo` : "Current conditions · Open-Meteo"}</small>
+      <small>{updated ? `Updated ${updated} local time · Weather by Open-Meteo (CC BY 4.0)` : "Current conditions · Weather by Open-Meteo (CC BY 4.0)"}</small>
     </div>
     {weather && <div className="af-weather-details"><span><small>Humidity</small><strong>{weather.relative_humidity_2m}%</strong></span><span><small>Wind</small><strong>{Math.round(weather.wind_speed_10m)} km/h</strong></span></div>}
     <div className="af-weather-footer"><span>For the workshop area, not a project-site forecast.</span>{!loading && <button type="button" onClick={() => void loadWeather()}>{error ? "Try again" : "Refresh"}</button>}</div>
