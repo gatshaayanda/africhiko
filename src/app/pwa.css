@@ -22,3 +22,8 @@
 
 .af-notification-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
 @media(max-width:560px){.af-notification-actions{width:100%;flex-direction:column;align-items:stretch}.af-notification-actions>.af-button{width:100%;justify-content:center}}
+
+.af-enquiry-card{padding:17px 0;border-bottom:1px solid var(--line)}
+.af-enquiry-row-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.af-enquiry-row-head>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+@media(max-width:560px){.af-enquiry-row-head{gap:8px;flex-wrap:wrap}.af-enquiry-row-head .af-status{margin-left:auto}}
