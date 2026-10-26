@@ -1,1 +1,21 @@
 .offlineBanner{position:fixed;left:12px;right:12px;bottom:12px;z-index:100;background:#111827;color:#fff;padding:11px 16px;border-radius:12px;text-align:center;font-size:.8rem;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.18)}.af-install-card{position:fixed;right:18px;bottom:18px;z-index:70;width:min(330px,calc(100vw - 28px));display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:14px;background:rgba(255,255,255,.98);color:var(--ink,#17151d);border:1px solid #dedbe5;border-radius:14px;box-shadow:0 12px 34px rgba(39,20,63,.16);font-family:Arial,Helvetica,sans-serif}.af-install-brand{display:flex;align-items:center;gap:10px;min-width:0}.af-install-mark{position:relative;display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:10px;background:#6d28d9;color:#fff;font-size:1.25rem;font-weight:900}.af-install-mark span{position:absolute;right:-4px;top:-7px;color:#8be9f3;font-size:.85rem}.af-install-brand strong,.af-install-brand small{display:block}.af-install-brand strong{font-size:.78rem;letter-spacing:.13em}.af-install-brand small{margin-top:4px;color:#5f5a69;font-size:.54rem;font-weight:800;letter-spacing:.08em}.af-install-close{align-self:start;display:grid;place-items:center;width:28px;height:28px;padding:0;border:1px solid #dedbe5;border-radius:50%;background:#fff;color:#4c4656;font-size:1.2rem;line-height:1;cursor:pointer}.af-install-close:hover{background:#f1eafe;color:#3b176d}.af-install-action{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:40px;padding:10px 13px;border:1px solid #6d28d9;border-radius:8px;background:#6d28d9;color:#fff;font-size:.82rem;font-weight:800;cursor:pointer}.af-install-action:hover{background:#3b176d}.af-install-action span{color:#8be9f3;font-size:1rem}@media(max-width:560px){.offlineBanner{font-size:.74rem;line-height:1.4}.af-install-card{left:14px;right:14px;bottom:64px;width:auto;max-width:390px;margin:0 auto;padding:12px}}
+
+/* Enquiry conversations and opt-in push settings */
+.af-notification-settings{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin:18px 0;padding:18px 20px;border:1px solid #d8c9ea;border-left:4px solid #6d28d9;border-radius:14px;background:#faf7ff}
+.af-notification-settings>div{flex:1;min-width:min(100%,260px)}
+.af-notification-settings h3{margin:4px 0 6px;font-size:1.1rem}
+.af-notification-settings p{margin:5px 0;color:#51465f}
+.af-notification-settings .af-eyebrow{font-size:.72rem;letter-spacing:.12em;font-weight:800;color:#6d28d9}
+.af-conversation{margin-top:18px;padding-top:16px;border-top:1px solid #e5ddec;min-width:0}
+.af-conversation h4{margin:0 0 12px;font-size:1rem}
+.af-conversation-list{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow:auto;padding:2px}
+.af-message{align-self:flex-start;width:min(90%,560px);padding:11px 13px;border:1px solid #e6deee;border-radius:12px 12px 12px 3px;background:#faf8fc;overflow-wrap:anywhere}
+.af-message-own{align-self:flex-end;border-color:#d8c7f0;background:#f2eaff;border-radius:12px 12px 3px 12px}
+.af-message strong{display:block;font-size:.78rem;color:#5d3b80}
+.af-message p{margin:5px 0;white-space:pre-wrap}
+.af-message small{font-size:.72rem;color:#71677b}
+.af-conversation-compose{display:flex;align-items:flex-end;gap:10px;margin-top:12px}
+.af-conversation-compose textarea{flex:1;min-width:0;resize:vertical;padding:11px 12px;border:1px solid #d8cedf;border-radius:10px;font:inherit;background:#fff;color:#21152f}
+.af-conversation-compose button{flex-shrink:0}
+.af-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:560px){.af-notification-settings{align-items:stretch;padding:15px}.af-notification-settings>.af-button{width:100%;justify-content:center}.af-conversation-compose{flex-direction:column;align-items:stretch}.af-conversation-compose textarea{width:100%;box-sizing:border-box}.af-conversation-compose button{width:100%}.af-message{width:94%}}
