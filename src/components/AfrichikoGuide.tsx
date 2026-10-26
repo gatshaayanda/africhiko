@@ -1,13 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, MessageCircle, Send, Sparkles, X } from "lucide-react";
 
 type View = "home" | "account" | "admin";
 type Message = { id: number; from: "guide" | "you"; text: string };
 
-export default function AfrichikoGuide({ view, firstName }: { view: View; firstName?: string }) {
+export default function AfrichikoGuide() {
+  const pathname = usePathname();
+  const view: View = pathname === "/account" ? "account" : pathname === "/admin" ? "admin" : "home";
+  if (view === "admin") return null;
   const [open, setOpen] = useState(false);
   const [teaser, setTeaser] = useState(false);
   const [input, setInput] = useState("");
@@ -64,7 +68,7 @@ export default function AfrichikoGuide({ view, firstName }: { view: View; firstN
   const intro = view === "admin"
     ? "What needs your attention, Boss?"
     : view === "account"
-      ? (firstName ? `Dumela, ${firstName}. Need help with a project?` : "Dumela! Need help with a project?")
+      ? "Dumela! Need help with a project?"
       : "Dumela! What are you planning to build?";
 
   return <div className="af-guide-root">
