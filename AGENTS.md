@@ -74,3 +74,21 @@ Use Africhiko naming and the dedicated Africhiko project configuration in app-fa
 - Push notifications are best-effort; a successful FCM send response is not proof of device display. Keep permission-denied recovery instructions explicit and preserve the approved service-worker install/cache behavior.
 - Work-feed items live in `workFeed`; only published items are public. Interest signals are deduplicated per UID in `workInterests`, and customer identities must never be displayed publicly.
 - Preserve the approved PWA installation mechanism and UX during unrelated work.
+## My Africhiko account and social proof checkpoint — 2026-10-27
+
+- Customer account now prioritizes project history, status explanations, a recorded-update date when available, a repeat-enquiry action, a useful first-time/empty state, account help, and existing workshop conversations. Status explanations are descriptive, not promises of a completion date or quotation.
+- Repeat-enquiry action starts a fresh enquiry and identifies the prior enquiry reference in the notes. It does not duplicate or mutate the previous enquiry. Cross-account recovery and automatic merging are not implemented; preserve the UID ownership rule above.
+- Notification test copy distinguishes server acceptance from device display. Never claim delivery merely because FCM accepted a send request.
+- Homepage social proof may show the count of published workshop examples only when derived from the live published workFeed; it must not present fabricated popularity, visitor counts, reviews, jobs completed, or conversion claims.
+- Vercel Analytics and Speed Insights are already mounted in src/app/layout.tsx; meaningful, coarse analytics events are tracked in src/components/AfrichikoPortal.tsx. Keep exact traffic metrics private to authorized workshop/admin access. Raw visitor counts must never appear publicly or be disclosed per customer.
+- Outstanding analytics task: exact Vercel visitor/page-view summaries are not yet embedded inside the Africhiko Admin Hub. Vercel Analytics is available through the Vercel project dashboard; the current production environment has no VERCEL_API_TOKEN configured. If embedding summaries, implement a server-side endpoint that authenticates the Africhiko admin against the existing allowlist/role, calls the Vercel Analytics API using server-only credentials, returns only aggregate metrics, and fails closed with a clear unavailable state. Never expose a Vercel token to client code or create a public analytics endpoint. Verify visitor-vs-pageview definitions and supported retention/plan before labeling metrics.
+- Spark Catcher already exists as an optional homepage mini-game. Preserve its placement and implementation unless the product owner explicitly asks for a change.
+- PWA installation, manifest, service-worker registration, cache namespace, and offline behavior remain protected and were not part of this account update.
+
+## Checkpoint — 2026-10-27 account UX update
+
+- Repository: gatshaayanda/africhiko; target branch: main.
+- Scope: customer project-account UX, account-specific responsive styles, verified published-work count copy, and customer-friendly notification test feedback.
+- Guest enquiry creation, Google account linking, Firestore rules, message ownership, admin permissions, and installation infrastructure must remain unchanged.
+- Verification requirement: run npx tsc --noEmit, npm run lint, and npm run build against the final commit when a connected build environment is available. GitHub API writes alone do not prove a build passes. Confirm the actual Vercel deployment before calling this production-ready.
+- QA: test signed-out account, Google sign-in, loading/empty states, one enquiry per status, conversation send/read, repeat-enquiry reference, notification permission denied/granted/test, mobile layout, guest-first submission, and install flow unchanged.
