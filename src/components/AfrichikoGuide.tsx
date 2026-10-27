@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, MessageCircle, Send, Sparkles, X } from "lucide-react";
@@ -83,7 +84,7 @@ export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
 
   return <div className="af-guide-root">
     {!open && teaser && <aside className="af-guide-teaser" aria-label="Africhiko project guide invitation">
-      <div><strong>Not sure where to start?</strong><p>I can point you to the right next step.</p><button type="button" onClick={() => { setTeaser(false); setOpen(true); }}>Help me choose <ArrowRight size={14}/></button></div>
+      <div><strong>Not sure where to start?</strong><p>I can point you to the right next step.</p><button type="button" onClick={() => { track("guide_opened",{entry_point:"teaser"}); setTeaser(false); setOpen(true); }}>Help me choose <ArrowRight size={14}/></button></div>
       <button type="button" className="af-guide-dismiss" aria-label="Dismiss guide invitation" onClick={() => { setTeaser(false); try { sessionStorage.setItem("africhiko-guide-teaser", "dismissed"); } catch {} }}><X size={15}/></button>
     </aside>}
     {open && <button type="button" className="af-guide-backdrop" aria-label="Close Africhiko guide" onClick={() => { setOpen(false); launcherRef.current?.focus(); }} />}
@@ -97,7 +98,7 @@ export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
           <a href="#admin-announcements" onClick={() => setOpen(false)}>Announcements <ArrowRight size={15}/></a>
           <a href="#admin-work" onClick={() => setOpen(false)}>Completed work <ArrowRight size={15}/></a>
         </> : <>
-          <Link href="/enquiry" onClick={() => setOpen(false)}>Start a project <ArrowRight size={15}/></Link>
+          <Link href="/enquiry" onClick={() => { track("guide_shortcut_selected",{destination:"start_project"}); setOpen(false); }}>Start a project <ArrowRight size={15}/></Link>
           <Link href="/account#customer-enquiries" onClick={() => setOpen(false)}>My enquiries <ArrowRight size={15}/></Link>
           <Link href="/#work" onClick={() => setOpen(false)}>See completed work <ArrowRight size={15}/></Link>
         </>}
