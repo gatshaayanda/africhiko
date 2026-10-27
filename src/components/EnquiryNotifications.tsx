@@ -100,7 +100,7 @@ export function NotificationSettings({ user, role }: { user: User | null; role: 
       });
       const result = await response.json().catch(() => ({})) as { sent?: boolean; error?: string };
       if (!response.ok || !result.sent) throw new Error(result.error || "Firebase Cloud Messaging did not accept the test notification.");
-      setMessage("Firebase accepted the test request for this registered device. This confirms server acceptance only, not that the phone displayed it. Put Africhiko in the background, check the notification tray and Chrome site permissions. If nothing arrives, reload Africhiko and register this device again.");
+      setMessage("Africhiko’s notification service accepted the test request, but this cannot confirm that your device displayed it. Put Africhiko in the background and check your notification tray. If nothing appears, check this site’s notification permission and try registering this device again.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "The test notification could not be requested.");
       setState("error");
