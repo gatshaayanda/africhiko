@@ -45,6 +45,16 @@ The approved installation experience in Africhiko is a permanent reference for a
 - Never force-push or rewrite history.
 - For each checkpoint report repository, branch, commit, changed files, verification, configuration still needed, exact QA steps and deployment status.
 
+## Analytics and operational decision support
+
+- Use Vercel Web Analytics and Speed Insights already mounted in the root layout for aggregate traffic and performance. Do not add another analytics vendor or duplicate page-view tracking without approval.
+- Use `track` from `@vercel/analytics` for a small, documented set of meaningful events: enquiry form viewed, enquiry successfully submitted, submission failure stage, service added to quote, guide opened/shortcut used, customer Google sign-in success, and admin enquiry status updated.
+- Event properties must remain coarse and non-identifying. Never send names, email addresses, phone numbers, free-text enquiry/project notes, customer/Auth UIDs, enquiry IDs, media URLs, staff notes, tokens, or other personal/sensitive data to analytics. Do not treat a click or attempt as a completed business outcome.
+- Vercel custom event availability/retention depends on the current team plan. Verify event ingestion in the actual Vercel Analytics dashboard; if custom events are gated, do not claim they are visible and do not silently introduce a paid plan or a new analytics provider.
+- The Operations dashboard must prioritize actionable business workflow from authoritative Firestore records: new requests, quotations, accepted/completed jobs, follow-ups due/overdue, and old unreviewed enquiries where timestamps are valid. Clearly label the source and definitions; handle missing timestamps without inventing ages.
+- Public social proof must use verified, owner-approved facts only. Never expose customer identities, private enquiry data, internal notes, unpublished work, or fabricated popularity/conversion claims.
+- For analytics changes, verify event names/properties, confirm no personal data is emitted, test success and failure paths, and check that tracking failures cannot block enquiries or admin operations. Never make analytics a dependency for saving business data.
+
 ## Contextual experience
 
 - Use a warm, restrained greeting: customer first name once where available, and a time-aware “Boss” greeting for authorized workshop admin. Do not overuse names or invent activity counts.
