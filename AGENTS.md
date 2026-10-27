@@ -41,6 +41,7 @@ The approved installation experience in Africhiko is a permanent reference for a
 - Preserve working features and keep changes focused.
 - Include useful validation, loading, empty, error and success feedback; no dead controls or fake success.
 - Before a meaningful checkpoint, run `npx tsc --noEmit`, `npm run lint` and `npm run build` when the environment permits. Report checks that were not run honestly.
+- A fresh commit can trigger another Vercel deployment attempt, but does not bypass Vercel build-rate limits. Confirm the resulting deployment status before reporting success.
 - Do not infer production deployment success from a GitHub push or a successful build.
 - Never force-push or rewrite history.
 - For each checkpoint report repository, branch, commit, changed files, verification, configuration still needed, exact QA steps and deployment status.
