@@ -40,7 +40,7 @@ The approved installation experience in Africhiko is a permanent reference for a
 - Customer experience first; admin/staff workflows second.
 - Preserve working features and keep changes focused.
 - Include useful validation, loading, empty, error and success feedback; no dead controls or fake success.
-- Before a meaningful checkpoint, run npx tsc --noEmit, npm run lint and npm run build when the environment permits. Report checks that were not run honestly.
+- Before a meaningful checkpoint, run `npx tsc --noEmit`, `npm run lint` and `npm run build` when the environment permits. Report checks that were not run honestly.
 - Do not infer production deployment success from a GitHub push or a successful build.
 - Never force-push or rewrite history.
 - For each checkpoint report repository, branch, commit, changed files, verification, configuration still needed, exact QA steps and deployment status.
@@ -59,7 +59,7 @@ The approved installation experience in Africhiko is a permanent reference for a
 
 - Use a warm, restrained greeting: customer first name once where available, and a time-aware “Boss” greeting for authorized workshop admin. Do not overuse names or invent activity counts.
 - The contextual Africhiko guide is deterministic and honest about its limits. Reuse existing page links and actions; never claim a message was sent, a status changed, or a human/AI replied when no such operation occurred. Keep it keyboard-accessible, dismissible and clear of key mobile actions.
-- Current weather is for the Gaborone workshop area only. Use the server-only `OPEN_METEO_API_KEY` with Open-Meteo's commercial API, keep credentials off the client, show the update time and attribution, and provide an honest unavailable/retry state. Do not use the free non-commercial API endpoint for this business app.
+- Current weather is for the Gaborone workshop area only. It now uses Open-Meteo's free public forecast endpoint without an API key, cached for 30 minutes, with update time and attribution and an honest unavailable/retry state. Open-Meteo's free endpoint is intended for non-commercial use; verify the provider's current terms before using this configuration for commercial production or reuse in business apps. Do not put a secret key in client code.
 - Admin session UX expires after 24 hours and restores a valid existing session without forcing the Google account chooser. This client-side timeout is not a replacement for server token verification or Firestore rules.
 
 ## Project identity
