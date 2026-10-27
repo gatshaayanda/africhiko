@@ -58,14 +58,14 @@ export default function AfrichikoGuide({ view: viewOverride }: Props = {}) {
   if (view === "admin" && !viewOverride) return null;
 
   function say(text: string) {
-    setMessages(current => [...current, { id: Date.now() + Math.random(), from: "guide", text }].slice(-6));
+    setMessages(current => [...current, { id: Date.now() + Math.random(), from: "guide" as const, text }].slice(-6));
   }
 
   function sendText(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const text = input.trim();
     if (!text) return;
-    setMessages(current => [...current, { id: Date.now(), from: "you", text }].slice(-6));
+    setMessages(current => [...current, { id: Date.now(), from: "you" as const, text }].slice(-6));
     setInput("");
     const normalized = text.toLowerCase();
     if (/weather|rain|hot|wind/.test(normalized)) say("The Gaborone workshop weather card shows current conditions and its last update. It’s a useful guide, not a promise about conditions at your project site.");
