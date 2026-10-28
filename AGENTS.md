@@ -93,3 +93,10 @@ Use Africhiko naming and the dedicated Africhiko project configuration in app-fa
 - Verification requirement: run npx tsc --noEmit, npm run lint, and npm run build against the final commit when a connected build environment is available. GitHub API writes alone do not prove a build passes. Confirm the actual Vercel deployment before calling this production-ready.
 - Current verification result for this checkpoint: GitHub's Vercel status reports a build-rate-limit failure; this is not a code-test result. A local clone could not be created in the current execution environment, so TypeScript, lint, and production build have not been run here. Recheck the latest deployment after Vercel permits another build.
 - QA: test signed-out account, Google sign-in, loading/empty states, one enquiry per status, conversation send/read, repeat-enquiry reference, notification permission denied/granted/test, mobile layout, guest-first submission, and install flow unchanged.
+
+## Fresh Vercel build retry — 2026-10-28
+
+- Product owner requested a fresh chore commit to test whether a new Git push can trigger a deployment after the Vercel build-rate-limit failure.
+- This is a documentation-only retry marker; it does not change application behavior or bypass Vercel plan/build limits.
+- After this commit, inspect the actual Vercel/GitHub status. If the provider still reports build-rate-limit failure, stop retrying commits and wait for the limit to reset or for the owner to resolve the Vercel plan/usage restriction.
+- Keep exact Vercel visitor analytics private. Public social proof remains limited to verified aggregate published-work counts until a secure admin-only analytics endpoint is implemented.
