@@ -100,3 +100,16 @@ Use Africhiko naming and the dedicated Africhiko project configuration in app-fa
 - This is a documentation-only retry marker; it does not change application behavior or bypass Vercel plan/build limits.
 - After this commit, inspect the actual Vercel/GitHub status. If the provider still reports build-rate-limit failure, stop retrying commits and wait for the limit to reset or for the owner to resolve the Vercel plan/usage restriction.
 - Keep exact Vercel visitor analytics private. Public social proof remains limited to verified aggregate published-work counts until a secure admin-only analytics endpoint is implemented.
+
+
+## Workshop walk-in queue and shared job progress — 2026-11-01
+
+- The owner/staff Operations surface includes a separate Workshop / Walk-in Queue for work that has actually been agreed or accepted in person/by phone. An enquiry is not automatically a job, quote, or accepted order.
+- Private operational records live in `workJobs/{jobId}`; only authorized Africhiko admins can read or write them.
+- Customer progress pages live in `sharedWork/{shareId}`. The share ID is a random 32-character identifier. Public documents contain only the project title, work type, customer-facing summary, current stage, timestamps and explicitly shared progress notes/photos. Never copy customer phone numbers, full names, email addresses, internal notes, or private job data into this collection.
+- Supported stages: Received, Assessing, Awaiting approval, In fabrication, Ready for collection, Completed and On hold. Staff updates are mirrored atomically to the private job and public share record.
+- Public customer route: `/work/[shareId]`. Customers can view progress and photos; no account is required. Sharing is prepared through the customer's WhatsApp app or copied as a link. The app does not claim that WhatsApp messages were sent.
+- Progress images use the existing Africhiko UploadThing file uploader, with a 4 MB image limit. Upload completion is required before a photo is added to the shared timeline.
+- Firestore rules permit public direct reads only of published `sharedWork` documents; `workJobs` remains admin-only. Do not weaken these rules or add customer contact details to public records.
+- The approved PWA installation, manifest, icons, service-worker registration, cache namespace, offline behaviour and install UX are protected and must remain untouched by this feature.
+- QA: create a walk-in job as an authorized owner; confirm it appears live in the queue; update its stage and add a note/photo; copy and open the share URL in a signed-out/private browser; verify the customer page shows only approved project/progress content; verify phone/name/email/internal notes are absent; verify an unauthorized account cannot read `workJobs` or write either collection.

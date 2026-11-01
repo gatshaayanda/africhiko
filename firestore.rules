@@ -159,6 +159,20 @@ service cloud.firestore {
       }
     }
 
+
+    // Private workshop job records are visible only to authorized Africhiko staff.
+    match /workJobs/{jobId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Unpredictable customer share IDs expose only deliberately published progress.
+    // Contact details and internal notes remain in workJobs and are never copied here.
+    match /sharedWork/{shareId} {
+      allow get: if isAdmin() || resource.data.published == true;
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
