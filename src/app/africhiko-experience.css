@@ -335,3 +335,24 @@
 .af-shared-timeline article img{display:block;width:100%;height:auto;max-height:520px;object-fit:contain;border-radius:10px}
 .af-shared-footnote{margin:22px 0;color:#756c7d!important;font-size:.72rem}
 @media(max-width:620px){.af-jobs-stats{gap:7px}.af-jobs-stats>div{padding:12px 9px}.af-jobs-stats strong{font-size:1.4rem}.af-job-card{padding:14px}.af-job-card-head{flex-direction:column}.af-jobs-list-heading{align-items:flex-start;flex-direction:column}.af-shared-header{padding:16px}.af-shared-card{margin:5px 12px 30px;padding:22px 17px;border-radius:12px}}
+
+
+/* WashRide-reference adaptation: compact customer shortcuts and unobstructed workshop media. */
+.af-home-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:1240px;margin:0 auto;padding:18px 22px 22px}
+.af-home-shortcuts>a{position:relative;display:flex;min-width:0;min-height:116px;flex-direction:column;justify-content:center;gap:6px;padding:15px 40px 15px 16px;border:1px solid #ded4e9;border-radius:12px;background:linear-gradient(145deg,#fff,#f8f5fb);color:#251633;text-decoration:none;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.af-home-shortcuts>a:hover{transform:translateY(-2px);border-color:#b9a3d4;box-shadow:0 10px 24px #2b183c12}
+.af-home-shortcuts>a>span{color:#6d28d9;font-size:.59rem;font-weight:900;letter-spacing:.12em}
+.af-home-shortcuts>a>strong{font-size:.92rem;line-height:1.2}
+.af-home-shortcuts>a>small{color:#6a6172;font-size:.7rem;line-height:1.4}
+.af-home-shortcuts>a>b{position:absolute;top:50%;right:14px;color:#6d28d9;font-size:1.15rem;transform:translateY(-50%)}
+.af-home-shortcuts>a:focus-visible{outline:3px solid #087f8c;outline-offset:3px}
+/* Remove the full-media pseudo overlay that darkened and obscured showcase images/video. */
+.af-home-work-media::after{content:none!important;display:none!important}
+.af-home-work-media video,.af-home-work-media img{z-index:0}
+.af-home-work-media>span{top:auto;bottom:14px;z-index:2;padding:7px 10px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(23,18,31,.72);color:#fff;backdrop-filter:blur(8px)}
+.af-home-work-media .af-video-sound{z-index:3}
+.af-home-work-card>div:last-child{padding:18px 19px 20px}
+.af-home-work-card>div:last-child>p:not(.af-eyebrow){min-height:0}
+@media(max-width:900px){.af-home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));padding-top:14px}}
+@media(max-width:620px){.af-home-shortcuts{gap:8px;padding:12px 17px 18px}.af-home-shortcuts>a{min-height:104px;padding:12px 34px 12px 12px;border-radius:10px}.af-home-shortcuts>a>strong{font-size:.84rem}.af-home-shortcuts>a>small{font-size:.66rem}.af-home-work{padding-top:36px;padding-bottom:40px}.af-home-work .af-section-heading h1{font-size:clamp(2.55rem,11vw,3.7rem)}}
+@media(prefers-reduced-motion:reduce){.af-home-shortcuts>a{transition:none}}
