@@ -40,7 +40,7 @@ export default function AfrichikoJobs() {
       rows.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       setJobs(rows);
       setLoading(false);
-    }, () => { setError("Workshop jobs could not be loaded. Check the connection and Firestore permissions."); setLoading(false); });
+    }, snapshotError => { setError("Workshop jobs could not be loaded (" + snapshotError.code + "): " + snapshotError.message); setLoading(false); });
   }, []);
 
   const shareUrl = (shareId: string) => typeof window === "undefined" ? "" : window.location.origin + "/work/" + shareId;
