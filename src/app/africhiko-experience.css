@@ -356,3 +356,92 @@
 @media(max-width:900px){.af-home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));padding-top:14px}}
 @media(max-width:620px){.af-home-shortcuts{gap:8px;padding:12px 17px 18px}.af-home-shortcuts>a{min-height:104px;padding:12px 34px 12px 12px;border-radius:10px}.af-home-shortcuts>a>strong{font-size:.84rem}.af-home-shortcuts>a>small{font-size:.66rem}.af-home-work{padding-top:36px;padding-bottom:40px}.af-home-work .af-section-heading h1{font-size:clamp(2.55rem,11vw,3.7rem)}}
 @media(prefers-reduced-motion:reduce){.af-home-shortcuts>a{transition:none}}
+
+
+/* Admin Hub visual direction: a compact, mobile-first control room inspired by the
+   Iteration 13 WashRide reference (strong identity, clear primary action, grouped shortcuts). */
+.af-admin-wrap{max-width:1320px;margin:0 auto;padding-top:34px;padding-bottom:64px}
+.af-admin-heading{align-items:center;margin-bottom:18px;padding:clamp(22px,4vw,38px);border-radius:18px;background:radial-gradient(circle at 85% 15%,#3c3160 0,transparent 38%),linear-gradient(125deg,#17151f,#282033 70%,#18353d);color:#fff;box-shadow:0 18px 45px #21142d20}
+.af-admin-heading .af-eyebrow{color:#7fe7ef}
+.af-admin-heading h1{color:#fff;letter-spacing:-.075em}
+.af-admin-heading h1 em{color:#8de8ef}
+.af-admin-heading .af-admin-greeting-subtitle{margin:10px 0 0;color:#d8d1e2;font-size:.9rem}
+.af-admin-heading>.af-button{flex:0 0 auto;border-color:#ffffff50;background:#ffffff12;color:#fff}
+.af-admin-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 22px}
+.af-admin-shortcuts>a{position:relative;display:flex;min-width:0;min-height:104px;flex-direction:column;justify-content:center;gap:5px;padding:14px 38px 14px 15px;border:1px solid #e0d8e9;border-radius:12px;background:linear-gradient(145deg,#fff,#f8f5fb);color:#251633;text-decoration:none;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.af-admin-shortcuts>a:hover{transform:translateY(-2px);border-color:#b9a3d4;box-shadow:0 10px 24px #2b183c12}
+.af-admin-shortcuts>a>span{color:#6d28d9;font-size:.58rem;font-weight:900;letter-spacing:.11em}
+.af-admin-shortcuts>a>strong{font-size:.9rem;line-height:1.2}
+.af-admin-shortcuts>a>small{color:#6a6172;font-size:.68rem;line-height:1.35}
+.af-admin-shortcuts>a>b{position:absolute;top:50%;right:13px;color:#6d28d9;font-size:1.1rem;transform:translateY(-50%)}
+.af-admin-shortcuts>a.af-admin-primary-link{border-color:#292039;background:linear-gradient(135deg,#282033,#3b2855);color:#fff}
+.af-admin-shortcuts>a.af-admin-primary-link>span{color:#91eaf0}
+.af-admin-shortcuts>a.af-admin-primary-link>small{color:#ded7e8}
+.af-admin-shortcuts>a.af-admin-primary-link>b{color:#91eaf0}
+.af-admin-shortcuts>a:focus-visible{outline:3px solid #087f8c;outline-offset:3px}
+.af-admin-grid{gap:16px}
+.af-admin-panel{padding:20px;border-radius:14px;box-shadow:0 5px 20px #25173c08}
+.af-admin-panel h2{margin-bottom:10px;font-size:1.35rem;letter-spacing:-.035em}
+.af-admin-panel>p:not(.af-eyebrow){max-width:780px;color:#625b6b;font-size:.82rem;line-height:1.55}
+#admin-overview,#admin-work,#admin-work-queue,#admin-enquiries{grid-column:1/-1}
+#admin-overview .af-admin-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:17px}
+#admin-overview .af-admin-service{display:flex;min-width:0;min-height:88px;justify-content:space-between;align-items:center;gap:10px;padding:13px;border:1px solid #e8e2ed;border-radius:10px;background:#fbf9fd}
+#admin-overview .af-admin-service>div{gap:5px}
+#admin-overview .af-admin-service strong{font-size:.82rem}
+#admin-overview .af-admin-service>strong{flex:0 0 auto;color:#6d28d9;font-size:1.65rem;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
+#admin-overview .af-admin-service span{font-size:.67rem;line-height:1.35}
+#admin-overview>h3{margin:20px 0 8px;font-size:.92rem}
+#admin-overview>p:not(.af-eyebrow){display:inline-flex;gap:5px;margin:4px 8px 0 0;padding:7px 10px;border-radius:8px;background:#f2eef7;font-size:.72rem}
+#admin-services .af-admin-list,#admin-announcements .af-admin-list{margin-top:17px}
+.af-admin-service{gap:8px;padding:12px 0}
+.af-admin-service>div{min-width:0;gap:4px}
+.af-admin-service span{line-height:1.4;overflow-wrap:anywhere}
+.af-admin-enquiry{margin-top:12px;padding:17px;border:1px solid #e7e0ed;border-radius:12px;background:linear-gradient(145deg,#fff,#fcfaff)}
+.af-admin-enquiry+.af-admin-enquiry{margin-top:10px}
+.af-admin-enquiry h3{margin:9px 0 4px;font-size:1.05rem}
+.af-admin-enquiry p{margin:7px 0;font-size:.8rem}
+.af-admin-enquiry small{line-height:1.4}
+.af-admin-enquiry-top{align-items:center}
+.af-admin-enquiry-top>span{padding:5px 9px;border-radius:999px;background:#eee8f7}
+.af-admin-enquiry label{margin-top:11px}
+.af-admin-enquiry select,.af-admin-enquiry textarea,.af-admin-enquiry input{font:inherit}
+.af-admin-enquiry .af-button{min-height:38px}
+.af-jobs-panel .af-jobs-stats{gap:9px}
+.af-jobs-panel .af-jobs-stats>div{border-radius:10px}
+.af-jobs-panel .af-job-card{border-radius:12px}
+.af-admin-wrap .af-form{gap:13px}
+.af-admin-wrap .af-form input,.af-admin-wrap .af-form select,.af-admin-wrap .af-form textarea{padding:10px 12px}
+.af-admin-wrap .af-form label{gap:6px;margin-bottom:5px;font-size:.75rem}
+.af-admin-wrap .af-form textarea{min-height:84px}
+.af-admin-wrap .af-form-grid{gap:12px}
+.af-admin-wrap .af-inline-actions{gap:8px}
+@media(max-width:900px){
+ .af-admin-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #admin-overview .af-admin-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+ .af-admin-wrap{padding:18px 14px 44px}
+ .af-admin-heading{align-items:flex-start;gap:12px;margin-bottom:12px;padding:20px 17px;border-radius:14px}
+ .af-admin-heading h1{font-size:clamp(2.6rem,12vw,3.7rem)}
+ .af-admin-heading .af-admin-greeting-subtitle{max-width:230px;font-size:.78rem}
+ .af-admin-heading>.af-button{min-height:35px;padding:7px 9px;font-size:.68rem}
+ .af-admin-shortcuts{gap:8px;margin-bottom:14px}
+ .af-admin-shortcuts>a{min-height:91px;padding:11px 30px 11px 11px;border-radius:10px}
+ .af-admin-shortcuts>a>strong{font-size:.82rem}
+ .af-admin-shortcuts>a>small{font-size:.64rem}
+ .af-admin-panel{padding:15px;border-radius:12px}
+ .af-admin-panel h2{font-size:1.2rem}
+ #admin-overview .af-admin-list{gap:7px;margin-top:13px}
+ #admin-overview .af-admin-service{min-height:82px;gap:6px;padding:10px}
+ #admin-overview .af-admin-service strong{font-size:.72rem}
+ #admin-overview .af-admin-service>strong{font-size:1.35rem}
+ #admin-overview .af-admin-service span{font-size:.61rem}
+ .af-admin-service{grid-template-columns:minmax(0,1fr) auto auto;gap:6px}
+ .af-admin-service button{padding:7px 8px;font-size:.66rem}
+ .af-admin-enquiry{padding:13px}
+ .af-admin-enquiry-top{font-size:.66rem}
+ .af-admin-enquiry label{font-size:.7rem}
+ .af-admin-enquiry select{padding:9px}
+ .af-admin-wrap .af-form-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){.af-admin-shortcuts>a{transition:none}}
