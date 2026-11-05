@@ -24,7 +24,7 @@ Do not force account creation before an enquiry. Do not describe an enquiry as a
 - Never commit .env.local, production credentials, service-account JSON or secrets.
 
 ## Media and integrations
-Inspect the actual implementation and environment before claiming an integration is present. The current enquiry form imports Firebase Storage for reference attachments; no UploadThing route/package was present at the last repository inspection. Do not claim UploadThing is active until the code and configuration are implemented and verified. Do not change Firebase Storage rules unless explicitly authorized; this project's current request is focused on Firestore and the customer enquiry journey.
+Inspect the actual implementation and environment before claiming an integration is present. Keep the two media workflows distinct: enquiry-form reference attachments have historically used Firebase Storage, while the walk-in/shared-work progress-photo workflow is documented as using the Africhiko UploadThing uploader. Verify the current source and configuration for the exact workflow before changing or describing either integration. Do not migrate storage providers or change Firebase Storage/UploadThing authorization as part of unrelated UX work.
 
 ## PWA installation — protected infrastructure
 The approved installation experience in Africhiko is a permanent reference for all projects. Do not redesign, rewrite, refactor, replace, remove or alter the install mechanism, beforeinstallprompt lifecycle, event listeners, state, dismissible branded card, responsive positioning, manifest, icons or service-worker behaviour unless the product owner explicitly authorizes that specific installation change. For unrelated work, leave installation files untouched. For iOS Safari, describe Share → Add to Home Screen accurately; do not invent support for Chromium's beforeinstallprompt on iOS.
@@ -113,3 +113,96 @@ Use Africhiko naming and the dedicated Africhiko project configuration in app-fa
 - Firestore rules permit public direct reads only of published `sharedWork` documents; `workJobs` remains admin-only. Do not weaken these rules or add customer contact details to public records.
 - The approved PWA installation, manifest, icons, service-worker registration, cache namespace, offline behaviour and install UX are protected and must remain untouched by this feature.
 - QA: create a walk-in job as an authorized owner; confirm it appears live in the queue; update its stage and add a note/photo; copy and open the share URL in a signed-out/private browser; verify the customer page shows only approved project/progress content; verify phone/name/email/internal notes are absent; verify an unauthorized account cannot read `workJobs` or write either collection.
+
+
+## Visible work, loading and operational transparency — 2026-11-05
+
+This standard applies across Africhiko's public catalogue, quote/enquiry journey, customer account, private conversations, published-work feed, workshop walk-in queue, shared job-progress pages and Admin Hub. It improves clarity and recovery around real application work; it is not permission to replace working architecture.
+
+### Product principle
+- Make genuine application work understandable in plain language: loading services, checking a quote request, saving an enquiry, retrieving project history, uploading a reference/progress photo, sending a private reply, updating a workshop stage or synchronising a pending change.
+- Keep the experience concise, customer-first, mobile-first and consistent with Africhiko's own brand. Do not copy JTS salon language, palette or business workflows.
+- Never manufacture effort, add artificial delays, fake progress, invent activity or slow the application to make it appear more substantial.
+- Prefer one clear next action and useful contextual feedback over decorative progress theatre or additional dashboards.
+
+### Loading and asynchronous states
+- Important asynchronous sections must distinguish initial loading, loaded content, a genuinely empty result, refresh/revalidation where relevant, and failure.
+- Prefer content-shaped skeletons for known layouts and restrained activity indicators for indeterminate operations. Never show a fabricated percentage for Firestore reads, authentication, message delivery or other work without measurable progress from the underlying provider.
+- Use task-specific descriptions where useful, such as loading services, retrieving project enquiries, checking workshop jobs or refreshing published work.
+- Do not show an empty state before the initial read/subscription has resolved. Avoid blank screens and endless spinners after terminal errors.
+- Keep independent data sources independently understandable. A failed work-feed query must not imply the enquiry inbox failed; a queue subscription error must not hide already-loaded services or other operational areas.
+- Provide contextual retry/recovery for transient failures. Preserve usable content and entered data where safe.
+- Respect reduced-motion preferences; animation must be subtle and never essential to understanding state.
+
+### Enquiry, quote and offline persistence truth
+- Distinguish a local form draft, a locally persisted/offline-pending change (only where the actual persistence API confirms it), a backend-acknowledged enquiry, a request reviewed by Africhiko, a quotation issued, and a job/order explicitly accepted.
+- An enquiry submission is not a quotation, confirmed order, accepted job or promise of a completion date. Keep the existing customer journey and account-creation choice intact.
+- Do not claim that an enquiry is saved merely because the submit button was clicked or a local optimistic update appeared. Use the actual Firestore write acknowledgement and report failure accurately.
+- Where offline persistence and pending-write state can be observed reliably, explain that the request is waiting to synchronise and update the customer only when backend acknowledgement is confirmed. Reconnection alone is not proof of synchronisation.
+- If a write fails, preserve recoverable customer input/local reference where safe, explain what failed and offer a safe retry. Inspect record identity/idempotency before changing retry logic; prevent accidental duplicate enquiries.
+- Do not alter Firestore schema, security rules, authentication, customer UID ownership or offline persistence merely to improve presentation. Any data-contract change requires separate review and a migration/compatibility plan.
+
+### Private messaging and media attachments
+- Conversation views must distinguish initial loading, loaded messages, a genuinely empty thread, refresh/error and retry. Never show “No messages yet” while the first read is unresolved.
+- Keep customer and staff views connected to the same authorized enquiry conversation. Preserve customer ownership, staff authorization, unread/read state and existing message/thread identity.
+- Message persistence, notification acceptance, device display and recipient read state are separate events. Say a message is saved/sent only after the corresponding write is acknowledged; never claim a push notification was displayed or read based only on FCM acceptance or token registration.
+- Upload completion, attachment association and message submission are separate steps. Show a percentage only when the active upload provider supplies measurable progress. Do not conflate the enquiry attachment storage flow with the UploadThing workflow used for shared-work progress photos; verify the exact implementation before editing either.
+- Failed sends, uploads or read-state updates need contextual errors and safe retry. Avoid discarding a draft or completed upload when a later step fails.
+- Public shared-work records must contain only explicitly approved customer-facing project/progress information. Never expose names, phone numbers, email addresses, internal notes, private enquiry data or storage credentials.
+
+### Public catalogue, work feed and shared progress
+- Public services/catalogue, published work and shared progress pages must distinguish loading, available content, no published/available content and temporary failure.
+- Offer retry where a transient retrieval failure can reasonably be retried; do not disguise permission/configuration errors as an empty catalogue or empty job history.
+- Use genuine authorized fabrication/workshop media only. Do not fabricate reviews, popularity, completed jobs, customer interest or project outcomes.
+- Keep service names, prices, quote actions and project-status wording consistent with the actual catalogue and authoritative records.
+- A public shared-progress page may show only the fields and media deliberately copied into its public share document. Never use a public share ID as permission to expose private workJobs or enquiries records.
+
+### Admin and workshop operations feedback
+- Give independently loaded areas—enquiries, services, work feed, announcements, workshop queue, shared-job updates and reporting—their own truthful loading, empty and failure states where appropriate.
+- A subscription/read failure in one panel must not imply the entire Admin Hub is unavailable. Show the affected operation and a relevant recovery action.
+- Confirm consequential actions with precise outcomes only after the corresponding operation succeeds: enquiry status saved, quote updated, service saved, work-feed item published, workshop stage updated, progress note/photo attached or private reply saved.
+- Disable duplicate submissions while an action is genuinely in progress, show visible working feedback, and restore controls after success/failure. Never leave a dead button or report fake success.
+- Keep the distinction between an enquiry and an accepted walk-in/workshop job. A request must not silently become a job.
+- Preserve role-controlled admin access and existing Firestore security boundaries. Never weaken rules to suppress permission errors or make private collections public.
+- Financial/operational reporting must distinguish an enquiry, quotation, accepted job, recorded transaction and independently verified payment. Do not label a quote or expected job value as revenue.
+
+### Error recovery, diagnostics and identity
+- Errors should identify the affected task, state whether entered data or previously saved content remains safe, and offer a supported next step such as retry, reconnect or contact Africhiko.
+- Keep technical diagnostics out of ordinary customer copy. Authorized admin diagnostics may expose a restrained error code/message where useful, but never tokens, credentials, private records or sensitive backend payloads.
+- Do not silently swallow failures that leave the user uncertain. Log only minimal non-sensitive diagnostics; never log credentials, tokens, message contents, private enquiry notes or unnecessary personal data.
+- Keep all customer-facing loading, error, offline, notification and recovery surfaces under Africhiko's identity. Remove inherited third-party identity only when the relevant surface is safely touched; do not perform risky infrastructure renames.
+
+### Analytics and privacy
+- Keep public discovery analytics, an individual customer's own enquiry/account information, and authorized business/admin reporting as separate information boundaries.
+- Analytics events must remain coarse, privacy-safe, best-effort and PII-free. Never send names, email addresses, phone numbers, Auth UIDs, enquiry/job IDs, free-text notes, message contents, exact project locations, private media URLs, tokens or payment evidence.
+- Do not equate views, clicks, interest signals or feed engagement with enquiries, accepted jobs, completed work or revenue. Reconcile business metrics against authorized source records and label definitions accurately.
+- Use the existing Vercel Analytics/Speed Insights and documented event contract. Do not add another analytics vendor, duplicate page-view tracking or a client-writable public event collection without explicit approval.
+- Analytics failure must never block an enquiry, message, upload, status update or other business operation.
+
+### PWA, offline and service-worker protection
+- PWA installation, beforeinstallprompt, install-card lifecycle/UX, manifest, icons, service-worker registration/scope, cache namespace, offline routes/caching, notification integration and update lifecycle are protected infrastructure.
+- This standard does not authorize changing installation, service-worker activation/reload behaviour, cache strategy, notification delivery or offline data handling.
+- Any separately approved PWA/update work must be isolated and tested against the approved Africhiko installation experience. For unrelated loading, messaging, analytics or admin work, leave protected installation/service-worker files untouched.
+- A browser permission grant or saved push token is not proof that a notification was delivered or read.
+
+### Implementation sequence
+1. Inspect the exact component, data source, subscription/write lifecycle, current state, integration and security boundary before editing. Reuse existing APIs and event names where possible.
+2. Correct misleading loading, empty, success and error states without changing business/data contracts.
+3. Improve enquiry acknowledgement and offline-pending/synchronised/failed feedback only where the actual Firestore lifecycle can be observed reliably.
+4. Standardize private conversation initial-loading, empty, send, unread/read and retry feedback; verify the customer/staff thread remains the same.
+5. Make upload progress truthful for the provider actually used in each workflow; keep upload, attachment association and message submission distinct.
+6. Standardize public catalogue/feed/shared-progress and independent Admin Hub loading/recovery states.
+7. Audit analytics event names/properties and privacy before adding any missing events.
+8. Treat PWA/service-worker lifecycle discrepancies as separate work requiring explicit approval and dedicated QA.
+
+### Release gates
+- Test initial loading versus genuinely empty results for every affected subscription.
+- Test transient read failure, permission/configuration failure where safely reproducible, and successful retry; confirm independent sections remain usable.
+- Test enquiry submission online, offline only where supported, reconnection, eventual acknowledgement, failed write and retry without duplicate records.
+- Test customer/staff conversation first load, empty thread, existing messages, replies, unread/read state, failed send and attachment upload/recovery.
+- Test catalogue, published work and shared-progress loading, empty and unavailable states on mobile.
+- Test Admin Hub action feedback for enquiry updates, service saves, publishing, workshop stage/note/photo updates and private replies.
+- Verify public shared-work records exclude private customer/contact/internal fields; verify unauthorized users cannot read private enquiries or workJobs.
+- Verify no PII leaks into analytics/logs and analytics failures cannot block business operations.
+- Preserve guest enquiry flow, Google account linking, customer UID continuity, Firestore rules/schema/auth, storage authorization, UploadThing authorization and protected PWA/install/offline behaviour unless a separately approved task explicitly changes them.
+- Run identity verification, npx tsc --noEmit, lint and production build when an execution environment is available. Inspect the final diff and verify the resulting branch/commit. Then perform preview/device QA for the affected customer and admin journeys; source/build success is not a substitute for end-to-end QA.
