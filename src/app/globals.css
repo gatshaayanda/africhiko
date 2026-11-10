@@ -228,3 +228,71 @@
  .af-account-state{padding:16px}
  .af-account-project-actions{flex-direction:column;gap:12px}
 }
+
+
+/* Compact operations workspace — progressive disclosure, Iteration 13 admin density. */
+.af-admin-wrap{max-width:1320px;margin:0 auto;padding:28px 22px 54px}
+.af-admin-heading{align-items:center;margin-bottom:18px}
+.af-admin-heading h1{font-size:clamp(2.1rem,4vw,3.35rem);line-height:.98}
+.af-admin-heading .af-eyebrow{margin-bottom:7px}
+.af-admin-greeting-subtitle{margin:8px 0 0;color:var(--muted);font-size:.86rem}
+.af-admin-shortcuts{position:sticky;top:72px;z-index:15;display:flex;gap:7px;overflow-x:auto;padding:9px;margin:0 0 16px;border:1px solid var(--line);border-radius:10px;background:#ffffffed;backdrop-filter:blur(12px);scrollbar-width:thin}
+.af-admin-shortcuts a{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:0 0 auto;min-height:36px;padding:8px 12px;border:1px solid transparent;border-radius:7px;color:#51495d;font-size:.76rem;font-weight:800;white-space:nowrap}
+.af-admin-shortcuts a:hover,.af-admin-shortcuts a:focus-visible{border-color:#d8c9e9;background:#f3eef9;color:var(--violet-dark)}
+.af-admin-shortcuts a:first-child{background:var(--violet-dark);color:#fff}
+.af-admin-shortcuts a b{display:grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:99px;background:var(--cyan);color:var(--ink);font-size:.68rem}
+.af-admin-utility{margin:9px 0;border:1px solid var(--line);border-radius:9px;background:#fff}
+.af-admin-utility>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;cursor:pointer;font-size:.8rem;font-weight:850;list-style:none}
+.af-admin-utility>summary::-webkit-details-marker,.af-admin-section>summary::-webkit-details-marker{display:none}
+.af-admin-utility>summary:after,.af-admin-section>summary:after{content:"＋";margin-left:auto;color:var(--violet-dark);font-size:1rem}
+.af-admin-utility[open]>summary:after,.af-admin-section[open]>summary:after{content:"−"}
+.af-admin-utility>summary span{color:var(--muted);font-size:.72rem;font-weight:600}
+.af-admin-utility>*:not(summary){margin:0 14px 14px}
+.af-admin-grid{display:flex;flex-direction:column;gap:10px}
+.af-admin-section{min-width:0;overflow:clip;border:1px solid #dcd6e5;border-radius:11px;background:#fff;box-shadow:0 3px 12px #21152f08;scroll-margin-top:130px}
+.af-admin-section>summary{display:grid;grid-template-columns:minmax(110px,.24fr) minmax(150px,.45fr) minmax(0,1fr) auto;align-items:center;gap:12px;min-height:58px;padding:11px 16px;cursor:pointer;list-style:none}
+.af-admin-section>summary>span{color:var(--violet-dark);font-size:.62rem;font-weight:900;letter-spacing:.1em}
+.af-admin-section>summary>strong{font-size:.9rem;letter-spacing:-.015em}
+.af-admin-section>summary>small{color:var(--muted);font-size:.73rem}
+.af-admin-section>summary:focus-visible{outline:3px solid #087f8c;outline-offset:-3px}
+.af-admin-section[open]>summary{border-bottom:1px solid var(--line);background:#fbfaff}
+.af-admin-section>.af-admin-panel{padding:18px;border:0;border-radius:0;box-shadow:none}
+.af-admin-panel h2{margin-bottom:12px;font-size:1.25rem}
+.af-admin-panel>p:not(.af-eyebrow){margin:6px 0 12px;color:var(--muted);font-size:.78rem;line-height:1.5}
+.af-admin-panel .af-admin-list{margin-top:14px}
+.af-admin-service{gap:9px;padding:10px 0}
+.af-admin-service span{line-height:1.4}
+.af-admin-panel .af-form{gap:12px}
+.af-admin-panel .af-form label{gap:6px;margin-bottom:8px;font-size:.75rem}
+.af-admin-panel .af-form input,.af-admin-panel .af-form select,.af-admin-panel .af-form textarea{min-height:40px;padding:9px 11px;font-size:.82rem}
+.af-admin-panel .af-form textarea{min-height:72px}
+.af-admin-panel .af-button{min-height:38px;padding:9px 12px;font-size:.76rem}
+.af-admin-panel .af-admin-enquiry{padding:14px 0}
+.af-admin-enquiries-section{border-color:#c9b6e2}
+.af-admin-enquiries-section>summary{background:#f7f2fc}
+.af-admin-enquiries-section[open]>summary{background:#f1eafa}
+.af-admin-enquiry h3{margin:8px 0 4px;font-size:1rem}
+.af-admin-enquiry p{margin:6px 0;font-size:.78rem}
+.af-admin-enquiry label{margin-top:9px;font-size:.72rem}
+.af-admin-enquiry select,.af-admin-enquiry textarea{min-height:38px;padding:8px 10px;font-size:.8rem}
+.af-admin-enquiry .af-button{min-height:36px;padding:8px 11px}
+.af-admin-enquiry .af-enquiry-conversation{margin-top:12px}
+.af-admin-wrap>.af-form-footnote{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:.7rem}
+@media(max-width:720px){
+ .af-admin-wrap{padding:20px 14px 38px}
+ .af-admin-heading{align-items:flex-start;margin-bottom:14px}
+ .af-admin-heading h1{font-size:2.35rem}
+ .af-admin-heading>.af-button{min-height:36px;padding:8px 10px;font-size:.72rem}
+ .af-admin-shortcuts{top:60px;margin-right:-14px;margin-left:-14px;padding:7px 14px;border-right:0;border-left:0;border-radius:0}
+ .af-admin-shortcuts a{min-height:34px;padding:7px 10px;font-size:.72rem}
+ .af-admin-section>summary{grid-template-columns:minmax(0,1fr) auto;gap:3px 9px;padding:11px 13px}
+ .af-admin-section>summary>span{grid-column:1}
+ .af-admin-section>summary>strong{grid-column:1;font-size:.86rem}
+ .af-admin-section>summary>small{grid-column:1;font-size:.7rem}
+ .af-admin-section>summary:after{grid-column:2;grid-row:1/4}
+ .af-admin-section>.af-admin-panel{padding:14px}
+ .af-admin-service{grid-template-columns:minmax(0,1fr) auto auto}
+ .af-admin-service button{padding:7px 8px}
+ .af-admin-utility>summary{align-items:flex-start;flex-direction:column;gap:3px}
+}
+@media(prefers-reduced-motion:reduce){.af-admin-shortcuts{scroll-behavior:auto}}
